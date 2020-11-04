@@ -1,0 +1,9 @@
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+JoyGameProject2020/x64
+JoyGameProject2020/JoyGameProject2020/x64
+.vs/
