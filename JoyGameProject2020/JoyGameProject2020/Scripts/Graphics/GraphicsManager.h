@@ -34,11 +34,11 @@ public:
 	void CheckShaderCompileResult(HRESULT result, ID3DBlob* error);
 
 	void LoadModel(const std::string& filePath, const std::string& modelName);
-	std::shared_ptr<ObjModel> GetObjModel(const std::string& modelName);
+	ObjModel* GetObjModel(const std::string& modelName);
 
 private:
 	std::map<std::string, std::shared_ptr<Texture>> m_textureMap;
-	std::map<std::string, std::shared_ptr<ObjModel>> m_objModelMap;
+	std::map<std::string, std::unique_ptr<ObjModel>> m_objModelMap;
 	std::map<std::string, ComPtr<ID3DBlob>> m_shaderMap;
 };
 

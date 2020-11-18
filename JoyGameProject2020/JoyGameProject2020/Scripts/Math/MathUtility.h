@@ -5,5 +5,7 @@ namespace MathUtility {
 	float ToRadian(float degree);
 	float ToDegree(float radian);
 	float Lerp(float start, float end, float t);
+	bool IsZero(float value);
+	float EpsilonToZero(float value);
 };
 

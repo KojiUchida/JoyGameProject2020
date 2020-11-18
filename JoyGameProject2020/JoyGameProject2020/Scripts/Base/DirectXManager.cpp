@@ -139,12 +139,14 @@ void DirectXManager::InitDepthBuffer() {
 		1, 0, 1, 0,
 		D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL);
 
+	auto heapprop = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
+	auto clearvalue = CD3DX12_CLEAR_VALUE(DXGI_FORMAT_D32_FLOAT, 1.0f, NULL);
 	auto result = GetDevice()->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+		&heapprop,
 		D3D12_HEAP_FLAG_NONE,
 		&depthResDesc,
 		D3D12_RESOURCE_STATE_DEPTH_WRITE,
-		&CD3DX12_CLEAR_VALUE(DXGI_FORMAT_D32_FLOAT, 1.0f, NULL),
+		&clearvalue,
 		IID_PPV_ARGS(m_depthBuffer.ReleaseAndGetAddressOf()));
 	_ASSERT_EXPR(SUCCEEDED(result), L"深度バッファの生成に失敗しました");
 
@@ -193,7 +195,8 @@ void DirectXManager::BeginScene(const Color4& color) {
 
 	m_viewport = CD3DX12_VIEWPORT(0.0f, 0.0f, Screen::WIDTH, Screen::HEIGHT);
 	m_cmdList->RSSetViewports(1, &m_viewport);
-	m_cmdList->RSSetScissorRects(1, &CD3DX12_RECT(0, 0, Screen::WIDTH, Screen::HEIGHT));
+	auto rect = CD3DX12_RECT(0, 0, Screen::WIDTH, Screen::HEIGHT);
+	m_cmdList->RSSetScissorRects(1, &rect);
 }
 
 void DirectXManager::EndScene() {

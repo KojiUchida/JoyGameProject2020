@@ -1,5 +1,6 @@
 #include "MathUtility.h"
 #define _USE_MATH_DEFINES
+#define EPSILON 0.00001
 #include <cmath>
 
 float MathUtility::Clamp(float value, float min, float max) {
@@ -16,4 +17,12 @@ float MathUtility::ToDegree(float radian) {
 
 float MathUtility::Lerp(float start, float end, float t) {
 	return (1.0f - t) * start + t * end;
+}
+
+bool MathUtility::IsZero(float value) {
+	return abs(value) < EPSILON;
+}
+
+float MathUtility::EpsilonToZero(float value) {
+	return IsZero(value) ? 0 : value;
 }

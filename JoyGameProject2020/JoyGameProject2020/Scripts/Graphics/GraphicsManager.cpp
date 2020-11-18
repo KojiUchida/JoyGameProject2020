@@ -69,11 +69,11 @@ void GraphicsManager::CheckShaderCompileResult(HRESULT result, ID3DBlob* error) 
 }
 
 void GraphicsManager::LoadModel(const std::string& filePath, const std::string& modelName) {
-	m_objModelMap.emplace(modelName, std::make_shared<ObjModel>(filePath));
+	m_objModelMap.emplace(modelName, std::make_unique<ObjModel>(filePath));
 }
 
-std::shared_ptr<ObjModel> GraphicsManager::GetObjModel(const std::string& modelName) {
+ObjModel* GraphicsManager::GetObjModel(const std::string& modelName) {
 	_ASSERT_EXPR(m_objModelMap.count(modelName) != 0, L"ÉÇÉfÉãñºÇ™ä‘à·Ç¡ÇƒÇ¢ÇÈÇ©ÅAì«Ç›çûÇ‹ÇÍÇƒÇ¢Ç‹ÇπÇÒ");
-	return m_objModelMap[modelName];
+	return m_objModelMap[modelName].get();
 }
 

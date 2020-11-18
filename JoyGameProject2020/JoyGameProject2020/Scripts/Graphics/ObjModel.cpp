@@ -7,6 +7,19 @@
 #include "GameObject/GameObject.h"
 #include "Graphics/Texture.h"
 
+ObjModel::ObjModel(const ObjModel& other) :
+	m_dxManager(other.m_dxManager),
+	m_graphicsManager(other.m_graphicsManager),
+	m_vbView(other.m_vbView),
+	m_ibView(other.m_ibView),
+	m_subsets(other.m_subsets),
+	m_textureMap(other.m_textureMap),
+	m_materials(other.m_materials),
+	m_materialDescHeap(other.m_materialDescHeap) {
+
+	CreateTransformBuffer();
+}
+
 ObjModel::ObjModel(const std::string& filePath) :
 	m_dxManager(DirectXManager::Instance()),
 	m_graphicsManager(GraphicsManager::Instance()),
@@ -240,10 +253,12 @@ void ObjModel::LoadMtl(const std::string& filePath) {
 }
 
 void ObjModel::CreateVertexBuffer() {
+	auto heapprop = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
+	auto resdesc = CD3DX12_RESOURCE_DESC::Buffer(m_vertices.size() * sizeof(m_vertices[0]));
 	auto result = DirectXManager::Instance().GetDevice()->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+		&heapprop,
 		D3D12_HEAP_FLAG_NONE,
-		&CD3DX12_RESOURCE_DESC::Buffer(m_vertices.size() * sizeof(m_vertices[0])),
+		&resdesc,
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
 		IID_PPV_ARGS(&m_vertexBuffer)
@@ -263,10 +278,12 @@ void ObjModel::CreateVertexBuffer() {
 }
 
 void ObjModel::CreateIndexBuffer() {
+	auto heapprop = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
+	auto resdesc = CD3DX12_RESOURCE_DESC::Buffer(m_indices.size() * sizeof(m_indices[0]));
 	auto result = DirectXManager::Instance().GetDevice()->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+		&heapprop,
 		D3D12_HEAP_FLAG_NONE,
-		&CD3DX12_RESOURCE_DESC::Buffer(m_indices.size() * sizeof(m_indices[0])),
+		&resdesc,
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
 		IID_PPV_ARGS(&m_indexBuffer)
@@ -288,10 +305,12 @@ void ObjModel::CreateIndexBuffer() {
 void ObjModel::CreateTransformBuffer() {
 	UINT transformBufferSize = (sizeof(Transform) + 0xff) & ~0xff;
 
+	auto heapprop = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
+	auto resdesc = CD3DX12_RESOURCE_DESC::Buffer(transformBufferSize * m_materials.size());
 	auto result = m_dxManager.GetDevice()->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+		&heapprop,
 		D3D12_HEAP_FLAG_NONE,
-		&CD3DX12_RESOURCE_DESC::Buffer(transformBufferSize * m_materials.size()),
+		&resdesc,
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
 		IID_PPV_ARGS(m_transformBuffer.ReleaseAndGetAddressOf())
@@ -322,10 +341,12 @@ void ObjModel::CreateMaterialBuffer() {
 
 	UINT materialBufferSize = (sizeof(SurfaceMaterial) + 0xff) & ~0xff;
 
+	auto heapprop = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
+	auto resdesc = CD3DX12_RESOURCE_DESC::Buffer(materialBufferSize * m_materials.size());
 	auto result = m_dxManager.GetDevice()->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+		&heapprop,
 		D3D12_HEAP_FLAG_NONE,
-		&CD3DX12_RESOURCE_DESC::Buffer(materialBufferSize * m_materials.size()),
+		&resdesc,
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
 		IID_PPV_ARGS(m_materialBuffer.ReleaseAndGetAddressOf())

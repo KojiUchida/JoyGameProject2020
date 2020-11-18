@@ -64,6 +64,7 @@ private:
 	};
 
 public:
+	ObjModel(const ObjModel& other);
 	ObjModel(const std::string& filePath);
 	~ObjModel();
 

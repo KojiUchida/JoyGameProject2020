@@ -41,9 +41,9 @@ public:
 
 	ColliderType3D GetType() { return m_type; };
 
-	Vector3 Right() { return Vector3(1, 0, 0) * Matrix4::RotateRollPitchYaw(*&GetRotation()); }
-	Vector3 Top() { return Vector3(0, 1, 0) * Matrix4::RotateRollPitchYaw(*&GetRotation()); }
-	Vector3 Front() { return Vector3(0, 0, 1) * Matrix4::RotateRollPitchYaw(*&GetRotation()); }
+	Vector3 Right() { return Vector3(1, 0, 0) * Matrix4::RotateRollPitchYaw(GetRotation()); }
+	Vector3 Top() { return Vector3(0, 1, 0) * Matrix4::RotateRollPitchYaw(GetRotation()); }
+	Vector3 Front() { return Vector3(0, 0, 1) * Matrix4::RotateRollPitchYaw(GetRotation()); }
 
 protected:
 	ColliderType3D m_type;

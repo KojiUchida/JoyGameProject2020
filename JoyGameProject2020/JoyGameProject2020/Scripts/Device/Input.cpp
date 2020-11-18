@@ -1,9 +1,11 @@
 #include "Input.h"
 #include "Math/Vector2.h"
+#include "Math/Vector3.h"
 #include <hidsdi.h>
 #include <SetupAPI.h>
 #include <vector>
 #include <string>
+#include <iostream>
 #pragma comment(lib, "winmm.lib")
 #pragma comment(lib, "hid.lib")
 #pragma comment(lib, "setupapi.lib")
@@ -22,10 +24,13 @@ static DIJOYSTATE previousJoyState;
 static HWND m_hwnd;
 static const float stickDeadZone = ANALOG_STICK_VALUE / 100.0f * STICK_DEAD_ZONE_PARCENT;
 
-JOYINFOEX JoyInfoEx;
-HIDP_CAPS m_hidCaps;
-HIDP_VALUE_CAPS m_hidValCaps;
 HANDLE ds4Handle;
+BYTE* buf;
+OVERLAPPED overlapped;
+HIDP_CAPS caps;
+DWORD bytesRead;
+static DS4STATE ds4state;
+static JOYCONSTATE joystate;
 
 Input& Input::Instance() {
 	static Input instance;
@@ -94,7 +99,7 @@ bool Input::Init(HWND hwnd, HINSTANCE hinstance) {
 		return false;
 	}
 
-	//InitController(hwnd);
+	InitController(hwnd);
 
 	return true;
 }
@@ -133,14 +138,14 @@ bool Input::InitController(HWND hwnd) {
 
 	for (auto i = 0; i < paths.size(); ++i) {
 		/* デバイスへのハンドル作成 */
-		HANDLE handle = ::CreateFile(paths[i].c_str(),
+		HANDLE handle = ::CreateFileW(paths[i].c_str(),
 			(GENERIC_READ | GENERIC_WRITE), (FILE_SHARE_READ | FILE_SHARE_WRITE),
 			NULL, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, NULL);
 
 		/* 事前解析データの読み込み */
 		PHIDP_PREPARSED_DATA preparsedData;
 		if (HidD_GetPreparsedData(handle, &preparsedData)) {
-			WCHAR deviceName[126];
+			WCHAR deviceName[126]{};
 			ULONG maxLength = sizeof(wchar_t) * 126;
 			HidD_GetProductString(handle, deviceName, maxLength);
 
@@ -149,7 +154,13 @@ bool Input::InitController(HWND hwnd) {
 			if (deviceNameString.find(L"Controller") != std::wstring::npos) {
 				ds4Handle = handle;
 
-				//ReadFile(handle, )
+				HidP_GetCaps(preparsedData, &caps);
+
+				buf = new BYTE[caps.InputReportByteLength];
+				ZeroMemory(buf, caps.InputReportByteLength);
+				overlapped = {};
+				overlapped.hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+
 				break;
 			}
 
@@ -192,6 +203,64 @@ void Input::Update() {
 		}
 		result = devjoystick->GetDeviceState(sizeof(DIJOYSTATE), &currentJoyState);
 	}
+
+	if (buf) {
+		auto a = ReadFile(ds4Handle, buf, caps.InputReportByteLength, &bytesRead, &overlapped);
+
+		/* スティック */
+		ds4state.lX = buf[1];
+		ds4state.lY = buf[2];
+		ds4state.rX = buf[3];
+		ds4state.rY = buf[4];
+
+		/* POV */
+		ds4state.rgdwPOV[0] = (buf[5] >> 0) & 1;
+		ds4state.rgdwPOV[1] = (buf[5] >> 1) & 1;
+		ds4state.rgdwPOV[2] = (buf[5] >> 2) & 1;
+		ds4state.rgdwPOV[3] = (buf[5] >> 3) & 1;
+
+		/* ボタン */
+		ds4state.rgbButtons[0] = (buf[5] >> 4) & 1;
+		ds4state.rgbButtons[1] = (buf[5] >> 5) & 1;
+		ds4state.rgbButtons[2] = (buf[5] >> 6) & 1;
+		ds4state.rgbButtons[3] = (buf[5] >> 7) & 1;
+		ds4state.rgbButtons[4] = (buf[6] >> 0) & 1;
+		ds4state.rgbButtons[5] = (buf[6] >> 1) & 1;
+		ds4state.rgbButtons[6] = (buf[6] >> 2) & 1;
+		ds4state.rgbButtons[7] = (buf[6] >> 3) & 1;
+		ds4state.rgbButtons[8] = (buf[6] >> 4) & 1;
+		ds4state.rgbButtons[9] = (buf[6] >> 5) & 1;
+		ds4state.rgbButtons[10] = (buf[6] >> 6) & 1;
+		ds4state.rgbButtons[11] = (buf[6] >> 7) & 1;
+		ds4state.rgbButtons[12] = (buf[7] >> 0) & 1;
+		ds4state.rgbButtons[13] = (buf[7] >> 1) & 1;
+
+		/* ジャイロ */
+		ds4state.gyroX = ((buf[14] << 8) | buf[13]);
+		ds4state.gyroY = ((buf[16] << 8) | buf[15]);
+		ds4state.gyroZ = ((buf[18] << 8) | buf[17]);
+
+		/* 加速 */
+		ds4state.accelX = ((buf[20] << 8) | buf[19]);
+		ds4state.accelY = ((buf[22] << 8) | buf[21]);
+		ds4state.accelZ = ((buf[24] << 8) | buf[23]);
+
+		/* ジャイロ */
+		joystate.gyroX = ((buf[14] << 8) | buf[13]);
+		joystate.gyroY = ((buf[16] << 8) | buf[15]);
+		joystate.gyroZ = ((buf[18] << 8) | buf[17]);
+
+		/* 加速 */
+		joystate.accelX = ((buf[20] << 8) | buf[19]);
+		joystate.accelY = ((buf[22] << 8) | buf[21]);
+		joystate.accelZ = ((buf[24] << 8) | buf[23]);
+
+	}
+}
+
+void Input::Shutdown() {
+	delete buf;
+	buf = nullptr;
 }
 
 bool Input::IsKeyDown(BYTE key) {
@@ -295,6 +364,21 @@ Vector2 Input::RightStickValue() {
 		-stickDeadZone > -currentJoyState.lRz ?
 		(-currentJoyState.lRz + stickDeadZone) / (ANALOG_STICK_VALUE - stickDeadZone) : 0
 	);
+}
+
+Vector3 Input::Gyro() {
+	/* コントローラーを固定しても数値がぶれるため、0に近い値になるように調整している */
+	auto gyro = Vector3(-ds4state.gyroX + 1.5f, -ds4state.gyroY + 0.5f, ds4state.gyroZ + 19) / 0xffff * 360.0f;
+
+	gyro.x = abs(gyro.x) < 0.1f ? 0 : gyro.x;
+	gyro.y = abs(gyro.y) < 0.1f ? 0 : gyro.y;
+	gyro.z = abs(gyro.z) < 0.1f ? 0 : gyro.z;
+
+	return gyro;
+}
+
+Vector3 Input::Accel() {
+	return Vector3(ds4state.accelX, ds4state.accelY, ds4state.accelZ) / 0xffff * 360.0f;
 }
 
 BOOL Input::EnumJoystickCallBack(const DIDEVICEINSTANCE* pdidInstance, VOID* pContext) {

@@ -7,8 +7,8 @@
 ObjRenderer::ObjRenderer(const std::string& modelName) :
 	m_dxManager(DirectXManager::Instance()),
 	m_graphicsManager(GraphicsManager::Instance()) {
-
-	m_model = m_graphicsManager.GetObjModel(modelName);
+	
+	m_model = std::make_shared<ObjModel>(*m_graphicsManager.GetObjModel(modelName));
 
 	CreateRootSignature();
 	CreatePipeline();

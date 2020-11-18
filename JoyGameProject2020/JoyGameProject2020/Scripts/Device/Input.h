@@ -45,7 +45,32 @@ enum class DPad {
 	UPLEFT = 7,
 };
 
+struct DS4STATE {
+	LONG    lX;
+	LONG    lY;
+	LONG    rX;
+	LONG    rY;
+	DWORD   rgdwPOV[4];
+	BYTE    rgbButtons[32];
+	SHORT    gyroX;
+	SHORT    gyroY;
+	SHORT    gyroZ;
+	SHORT    accelX;
+	SHORT    accelY;
+	SHORT    accelZ;
+};
+
+struct JOYCONSTATE {
+	SHORT    gyroX;
+	SHORT    gyroY;
+	SHORT    gyroZ;
+	SHORT    accelX;
+	SHORT    accelY;
+	SHORT    accelZ;
+};
+
 struct Vector2;
+struct Vector3;
 class Input {
 
 private:
@@ -59,6 +84,7 @@ public:
 	bool Init(HWND hwnd, HINSTANCE hinstance);
 	bool InitController(HWND hwnd);
 	void Update();
+	void Shutdown();
 
 	/* キーが押された瞬間か？ */
 	static bool IsKeyDown(BYTE key);
@@ -100,6 +126,10 @@ public:
 	static Vector2 LeftStickValue();
 	/* 右スティックの傾き取得 */
 	static Vector2 RightStickValue();
+
+	static Vector3 Gyro();
+
+	static Vector3 Accel();
 
 private:
 	/* ジョイスティック列挙用コールバック */

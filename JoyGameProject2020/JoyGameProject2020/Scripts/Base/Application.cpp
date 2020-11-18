@@ -128,6 +128,7 @@ void Application::Shutdown() {
 	ImGui::DestroyContext();
 
 	m_sceneManager->Shutdown();
+	m_input.Shutdown();
 	UnregisterClass(m_windowClass.lpszClassName, m_windowClass.hInstance);
 	ShowCursor(true);
 }

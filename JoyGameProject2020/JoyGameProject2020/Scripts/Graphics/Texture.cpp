@@ -58,8 +58,9 @@ void Texture::LoadTextureFromFile(const std::string& filePath) {
 	texResDesc.MipLevels = (UINT16)metadata.mipLevels;
 	texResDesc.SampleDesc.Count = 1;
 
+	auto heapprop = CD3DX12_HEAP_PROPERTIES(D3D12_CPU_PAGE_PROPERTY_WRITE_BACK, D3D12_MEMORY_POOL_L0);
 	result = m_dxManager.GetDevice()->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_CPU_PAGE_PROPERTY_WRITE_BACK, D3D12_MEMORY_POOL_L0),
+		&heapprop,
 		D3D12_HEAP_FLAG_NONE,
 		&texResDesc,
 		D3D12_RESOURCE_STATE_GENERIC_READ,
