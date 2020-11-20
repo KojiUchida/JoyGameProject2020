@@ -42,7 +42,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -152,8 +152,10 @@
     <ClCompile Include="Scripts\Device\Camera.cpp" />
     <ClCompile Include="Scripts\Device\GameTime.cpp" />
     <ClCompile Include="Scripts\Device\Input.cpp" />
+    <ClCompile Include="Scripts\GameObject\Event\EventManager.cpp" />
     <ClCompile Include="Scripts\GameObject\GameObject.cpp" />
     <ClCompile Include="Scripts\GameObject\GameObjectManager.cpp" />
+    <ClCompile Include="Scripts\GameObject\Event\StartCall.cpp" />
     <ClCompile Include="Scripts\Graphics\GraphicsManager.cpp" />
     <ClCompile Include="Scripts\Graphics\ObjModel.cpp" />
     <ClCompile Include="Scripts\Graphics\Texture.cpp" />
@@ -172,6 +174,7 @@
     <ClCompile Include="Scripts\Math\Vector3.cpp" />
     <ClCompile Include="Scripts\Scene\SceneManager.cpp" />
     <ClCompile Include="Scripts\Scene\TestScene.cpp" />
+    <ClCompile Include="Scripts\Scene\TestScene2.cpp" />
     <ClCompile Include="Scripts\Utility\Color4.cpp" />
     <ClCompile Include="Scripts\Utility\FileUtility.cpp" />
     <ClCompile Include="Scripts\Utility\Random.cpp" />
@@ -190,8 +193,11 @@
     <ClInclude Include="Scripts\Device\Camera.h" />
     <ClInclude Include="Scripts\Device\GameTime.h" />
     <ClInclude Include="Scripts\Device\Input.h" />
+    <ClInclude Include="Scripts\GameObject\Event\iEvent.h" />
+    <ClInclude Include="Scripts\GameObject\Event\EventManager.h" />
     <ClInclude Include="Scripts\GameObject\GameObject.h" />
     <ClInclude Include="Scripts\GameObject\GameObjectManager.h" />
+    <ClInclude Include="Scripts\GameObject\Event\StartCall.h" />
     <ClInclude Include="Scripts\Graphics\GraphicsManager.h" />
     <ClInclude Include="Scripts\Graphics\ObjModel.h" />
     <ClInclude Include="Scripts\Graphics\Texture.h" />
@@ -212,6 +218,7 @@
     <ClInclude Include="Scripts\Scene\IScene.h" />
     <ClInclude Include="Scripts\Scene\SceneManager.h" />
     <ClInclude Include="Scripts\Scene\TestScene.h" />
+    <ClInclude Include="Scripts\Scene\TestScene2.h" />
     <ClInclude Include="Scripts\Utility\Color4.h" />
     <ClInclude Include="Scripts\Utility\FileUtility.h" />
     <ClInclude Include="Scripts\Utility\Random.h" />
