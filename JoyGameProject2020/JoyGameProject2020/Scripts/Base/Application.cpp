@@ -5,6 +5,7 @@
 #include "Device/GameTime.h"
 #include "Scene/SceneManager.h"
 #include "Scene/TestScene.h"
+#include "Scene/TestScene2.h"
 #include "Graphics/GraphicsManager.h"
 #include "Component/Update/CollisionManager.h"
 #include "ImGui/imgui.h"
@@ -83,7 +84,8 @@ bool Application::Init() {
 
 	m_sceneManager = std::make_unique<SceneManager>();
 	m_sceneManager->AddScene(std::make_shared<TestScene>(), "Test");
-	m_sceneManager->ChangeScene("Test");
+	m_sceneManager->AddScene(std::make_shared<TestScene2>(), "Test2");
+	m_sceneManager->ChangeScene("Test2");
 
 	/* ‚±‚±‚Ü‚Å‰Šú‰»ˆ— */
 
