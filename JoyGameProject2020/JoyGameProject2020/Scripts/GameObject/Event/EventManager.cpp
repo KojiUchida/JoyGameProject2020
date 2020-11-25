@@ -9,10 +9,12 @@ EventManager & EventManager::Instance()
 
 EventManager::~EventManager()
 {
-	for (int i = 0; i < playevent.size(); ++i)
+	for (int i=0;i<playevent.size();)
 	{
-		EraseEvent(*playevent[i]);
+		delete(playevent[i]);
+		++i;
 	}
+	playevent.clear();
 }
 
 void EventManager::initialize()
@@ -21,28 +23,28 @@ void EventManager::initialize()
 
 void EventManager::update()
 {
-	for (int i = 0; i < playevent.size(); ++i)
+	for (int i = 0; i < playevent.size();)
 	{
-		playevent[i]->update();
-	}
-
-	for (int i = 0; i < playevent.size(); ++i)
-	{
-		if (playevent[i]->IsEnd)
+		
+		if (playevent[i]->IsEnd())
 		{
-			EraseEvent(*playevent[i]);
+			EraseEvent(i);
+			continue;
 		}
+		playevent[i]->update();
+		++i;
 	}
 }
 
 void EventManager::SetEvent(iEvent* event)
 {
 	playevent.emplace_back(event);
+	event->initialize();
 }
 
-void EventManager::EraseEvent(iEvent* event)
+void EventManager::EraseEvent(int place)
 {
-	auto itr = std::find(playevent.begin(), playevent.end(), event);
-	delete(*itr);
-	playevent.erase(itr);
+	delete(playevent[place]);
+	playevent[place] = playevent.back();
+	playevent.pop_back();
 }

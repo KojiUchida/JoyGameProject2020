@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -153,9 +153,14 @@
     <ClCompile Include="Scripts\Device\GameTime.cpp" />
     <ClCompile Include="Scripts\Device\Input.cpp" />
     <ClCompile Include="Scripts\GameObject\Event\EventManager.cpp" />
+    <ClCompile Include="Scripts\GameObject\Event\ManualUI.cpp" />
     <ClCompile Include="Scripts\GameObject\GameObject.cpp" />
     <ClCompile Include="Scripts\GameObject\GameObjectManager.cpp" />
     <ClCompile Include="Scripts\GameObject\Event\StartCall.cpp" />
+    <ClCompile Include="Scripts\GameObject\Particle\Particle.cpp" />
+    <ClCompile Include="Scripts\GameObject\Particle\ParticleEmitter.cpp" />
+    <ClCompile Include="Scripts\GameObject\Particle\ParticleManager.cpp" />
+    <ClCompile Include="Scripts\GameObject\Particle\WaterSprash.cpp" />
     <ClCompile Include="Scripts\Graphics\GraphicsManager.cpp" />
     <ClCompile Include="Scripts\Graphics\ObjModel.cpp" />
     <ClCompile Include="Scripts\Graphics\Texture.cpp" />
@@ -195,9 +200,14 @@
     <ClInclude Include="Scripts\Device\Input.h" />
     <ClInclude Include="Scripts\GameObject\Event\iEvent.h" />
     <ClInclude Include="Scripts\GameObject\Event\EventManager.h" />
+    <ClInclude Include="Scripts\GameObject\Event\ManualUI.h" />
     <ClInclude Include="Scripts\GameObject\GameObject.h" />
     <ClInclude Include="Scripts\GameObject\GameObjectManager.h" />
     <ClInclude Include="Scripts\GameObject\Event\StartCall.h" />
+    <ClInclude Include="Scripts\GameObject\Particle\Particle.h" />
+    <ClInclude Include="Scripts\GameObject\Particle\ParticleEmitter.h" />
+    <ClInclude Include="Scripts\GameObject\Particle\ParticleManager.h" />
+    <ClInclude Include="Scripts\GameObject\Particle\WaterSprash.h" />
     <ClInclude Include="Scripts\Graphics\GraphicsManager.h" />
     <ClInclude Include="Scripts\Graphics\ObjModel.h" />
     <ClInclude Include="Scripts\Graphics\Texture.h" />

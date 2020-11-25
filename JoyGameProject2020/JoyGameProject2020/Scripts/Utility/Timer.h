@@ -30,9 +30,9 @@ public:
 	float GetRatioRemaining();
 
 private:
-	float m_startTime;
-	float m_elapsedTime;
-	float m_maxTime;
+	double m_startTime;
+	double m_elapsedTime;
+	double m_maxTime;
 	bool m_isUpdate;
 	bool m_isLoop;
 	bool m_isTime;

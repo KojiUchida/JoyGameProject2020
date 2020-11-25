@@ -4,8 +4,8 @@
 #include "Device/GameTime.h"
 
 Timer::Timer(float maxTime, bool loopFlag) :
-	m_startTime(0.0f),
-	m_elapsedTime(0.0f),
+	m_startTime(0.0),
+	m_elapsedTime(0.0),
 	m_maxTime(maxTime),
 	m_isLoop(loopFlag),
 	m_isUpdate(false),
@@ -17,7 +17,7 @@ Timer::~Timer() {
 
 void Timer::Update() {
 	if (!m_isUpdate)return;
-	m_elapsedTime = (float)GameTime::CurrentTime() - m_startTime;
+	m_elapsedTime = GameTime::CurrentTime() - m_startTime;
 
 	if (!m_isLoop)return;
 	if (m_elapsedTime <= m_maxTime)return;
@@ -26,8 +26,8 @@ void Timer::Update() {
 
 void Timer::Start() {
 	m_isUpdate = true;
-	m_elapsedTime = 0.0f;
-	m_startTime = (float)GameTime::CurrentTime();
+	m_elapsedTime = 0.0;
+	m_startTime = GameTime::CurrentTime();
 }
 
 void Timer::Stop() {
@@ -35,8 +35,8 @@ void Timer::Stop() {
 }
 
 void Timer::Reset() {
-	m_elapsedTime = 0.0f;
-	m_startTime = (float)GameTime::CurrentTime();
+	m_elapsedTime = 0.0;
+	m_startTime = GameTime::CurrentTime();
 }
 
 void Timer::SetLimit(const float maxTime) {

@@ -16,7 +16,7 @@ public:
 	void update();
 
 	void SetEvent(iEvent* event);
-	void EraseEvent(iEvent* event);
+	void EraseEvent(int place);
 
 
 private:

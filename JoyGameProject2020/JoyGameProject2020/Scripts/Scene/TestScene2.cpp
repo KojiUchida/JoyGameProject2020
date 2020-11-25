@@ -11,6 +11,8 @@
 #include "ImGui/imgui_impl_win32.h"
 #include "ImGui/imgui_impl_dx12.h"
 #include "Base/DirectXManager.h"
+#include "GameObject/Event/StartCall.h"
+#include "GameObject/Particle/ParticleManager.h"
 
 void TestScene2::Init()
 {
@@ -19,9 +21,7 @@ void TestScene2::Init()
 
 	m_objManager = std::make_shared<GameObjectManager>();
 
-	
-	startcall = new StartCall();
-	startcall->initialize();
+	eventManager = new EventManager();
 }
 
 void TestScene2::Update()
@@ -40,8 +40,16 @@ void TestScene2::Update()
 
 	cam.SetRotation(cam.GetRotation() + rot);
 	cam.SetPosition(cam.GetPosition() + forward);
+	
+	if (Input::IsKeyDown(DIK_Z))
+	{
+		eventManager->SetEvent(new StartCall());
+		//ParticleManager::Instance().AddParticleEmitter(new WaterSprash(Vector3(0),300,330));
 
-	startcall->update();
+	}
+
+	eventManager->update();
+	//ParticleManager::Instance().update();
 
 	ImGui_ImplDX12_NewFrame();
 	ImGui_ImplWin32_NewFrame();
@@ -73,8 +81,8 @@ void TestScene2::Update()
 
 void TestScene2::Shutdown()
 {
+	delete(eventManager);
 	m_objManager->Shutdown();
-	delete(startcall);
 }
 
 std::string TestScene2::NextScene()

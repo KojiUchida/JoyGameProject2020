@@ -1,6 +1,7 @@
 #pragma once
 #include "IScene.h"
-#include "GameObject/Event/StartCall.h"
+#include "GameObject/Event/EventManager.h"
+#include "GameObject/Particle/WaterSprash.h"
 
 class GameObject;
 class GameObjectManager;
@@ -26,5 +27,6 @@ private:
 	std::shared_ptr<GameObject>m_obj4;
 	std::shared_ptr<GameObject>m_obj5;
 
-	StartCall*startcall;
+	EventManager*eventManager;
+	WaterSprash*w;
 };
