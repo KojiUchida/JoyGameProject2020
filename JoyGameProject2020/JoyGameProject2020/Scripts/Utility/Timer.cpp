@@ -16,12 +16,15 @@ Timer::~Timer() {
 }
 
 void Timer::Update() {
+<<<<<<< HEAD
 	if (!m_isUpdate)return;
 	m_elapsedTime = GameTime::CurrentTime() - m_startTime;
+=======
+	CheckLoop();
+>>>>>>> 263b11929e89f83198e84014590285521c54a9b2
 
-	if (!m_isLoop)return;
-	if (m_elapsedTime <= m_maxTime)return;
-	Reset();
+	if (!m_isUpdate)return;
+	m_elapsedTime = (float)(GameTime::CurrentTime() - m_startTime);
 }
 
 void Timer::Start() {
@@ -48,7 +51,7 @@ void Timer::SetLoop(const bool loopFlag) {
 }
 
 bool Timer::IsTime() {
-	return m_isTime;
+	return m_elapsedTime >= m_maxTime;
 }
 
 float Timer::GetElapsed() {
@@ -65,5 +68,11 @@ float Timer::GetRemaining() {
 
 float Timer::GetRatioRemaining() {
 	return 1.0f - GetRatioElapsed();
+}
+
+void Timer::CheckLoop() {
+	if (!m_isLoop)return;
+	if (!IsTime())return;
+	Reset();
 }
 
