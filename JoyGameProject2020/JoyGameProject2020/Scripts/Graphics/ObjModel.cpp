@@ -77,7 +77,7 @@ void ObjModel::UpdateConstantBuffer(GameObject* gameObject) {
 	transformMap->view = Camera::Instance().GetViewMatrix();
 	transformMap->proj = Camera::Instance().GetProjectionMatrix();
 	transformMap->mvp = transformMap->world * transformMap->view * transformMap->proj;
-	transformMap->lightDir = Vector3(0, 1, 0).Normalize();
+	transformMap->lightDir = Vector3(0, -1, 1).Normalize();
 	m_transformBuffer->Unmap(0, nullptr);
 }
 

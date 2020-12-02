@@ -15,5 +15,5 @@ public:
 
 	static double CurrentTime();
 	static double ElapsedTime();
-	static float DeltaTime();
+	static double DeltaTime();
 };

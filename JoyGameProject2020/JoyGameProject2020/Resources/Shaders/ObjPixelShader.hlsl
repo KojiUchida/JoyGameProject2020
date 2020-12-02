@@ -1,7 +1,7 @@
 #include "ObjShaderHeader.hlsli"
 
 float4 PSmain(VSOutput input) : SV_TARGET {
-	float intensity = saturate(dot(normalize(input.normal), lightDir));
+	float intensity = saturate(dot(normalize(input.normal), -lightDir));
 
 	float4 diffuseTexColor = diffuseTex.Sample(smp, input.uv);
 	float3 diffuse = intensity * diffuseColor;

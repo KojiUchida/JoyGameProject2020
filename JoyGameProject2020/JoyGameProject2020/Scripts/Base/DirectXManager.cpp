@@ -213,7 +213,7 @@ void DirectXManager::EndScene() {
 	WaitForCommandQueue();
 	m_cmdAllocator->Reset();
 	m_cmdList->Reset(m_cmdAllocator.Get(), nullptr);
-	m_swapchain->Present(1, 0);
+	m_swapchain->Present(0, 0);
 }
 
 void DirectXManager::WaitForCommandQueue() {

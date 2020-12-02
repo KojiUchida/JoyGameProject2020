@@ -12,10 +12,12 @@
 #include "ImGui/imgui_impl_dx12.h"
 #include "Base/DirectXManager.h"
 #include "Math/MathUtility.h"
+#include "GameObject/Player.h"
 #include <iostream>
 
 TestScene::TestScene() :
-	m_camera(Camera::Instance()) {
+	m_camera(Camera::Instance()),
+	m_isFreeCam(false) {
 }
 
 TestScene::~TestScene() {
@@ -26,61 +28,57 @@ void TestScene::Init() {
 
 	m_objManager = std::make_shared<GameObjectManager>();
 
-	m_obj1 = std::make_shared<GameObject>();
-	m_obj1->AddComponent(std::make_shared<ObjRenderer>("skydome"));
-	m_obj1->SetRotation(Vector3(180, 180, 0));
-	m_obj1->SetScale(Vector3(5.0f));
-	m_objManager->Add(m_obj1);
+	player = std::make_shared<Player>();
+	m_objManager->Add(player);
 
-	m_obj2 = std::make_shared<GameObject>();
-	m_obj2->AddComponent(std::make_shared<ObjRenderer>("dosei"));
-	m_obj2->SetRotation(Vector3(0, 180, 0));
-	m_obj2->SetScale(Vector3(0.03f));
-	m_objManager->Add(m_obj2);
+	auto ground = std::make_shared<GameObject>();
+	ground->AddComponent(std::make_shared<ObjRenderer>("cube"));
+	ground->SetPosition(Vector3(0, -30, 0));
+	ground->SetScale(Vector3(100, 25, 1));
+	m_objManager->Add(ground);
 
-	auto obj = std::make_shared<GameObject>();
-	obj->AddComponent(std::make_shared<ObjRenderer>("dosei"));
-	obj->SetRotation(Vector3(0, 180, 0));
-	obj->SetScale(Vector3(0.03f));
-	obj->SetPosition(Vector3(1, 0, 0));
-	m_objManager->Add(obj);
+	auto wall1 = std::make_shared<GameObject>();
+	wall1->AddComponent(std::make_shared<ObjRenderer>("cube"));
+	wall1->SetPosition(Vector3(-120, 25, 0));
+	wall1->SetScale(Vector3(50, 1000, 1));
+	m_objManager->Add(wall1);
 
-	m_obj3 = std::make_shared<GameObject>();
-	m_obj3->AddComponent(std::make_shared<ObjRenderer>("ground"));
-	m_obj3->SetPosition(Vector3(0, -3, 0));
-	m_obj3->SetScale(Vector3(10, 1, 10));
-	m_objManager->Add(m_obj3);
+	auto wall2 = std::make_shared<GameObject>();
+	wall2->AddComponent(std::make_shared<ObjRenderer>("cube"));
+	wall2->SetPosition(Vector3(120, 25, 0));
+	wall2->SetScale(Vector3(50, 1000, 1));
+	m_objManager->Add(wall2);
+
+	Random rnd{};
+	float height = 0.0f;
+	for (int i = 0; i < 30; ++i) {
+		const float wdif = 20;
+		const float ydif = 10;
+		const float heightInterval = 30;
+		auto w = rnd.GetRand(-1.0f, 1.0f);
+		auto y = rnd.GetRand(0.0f, 1.0f);
+
+		height += heightInterval + ydif * y;
+
+		auto obj1 = std::make_shared<GameObject>();
+		obj1->AddComponent(std::make_shared<ObjRenderer>("cube"));
+		obj1->SetPosition(Vector3(-60 + wdif * w, height, 0));
+		obj1->SetScale(Vector3(50, 1, 1));
+		m_objManager->Add(obj1);
+
+		auto obj2 = std::make_shared<GameObject>();
+		obj2->AddComponent(std::make_shared<ObjRenderer>("cube"));
+		obj2->SetPosition(Vector3(60 + wdif * w, height, 0));
+		obj2->SetScale(Vector3(50, 1, 1));
+		m_objManager->Add(obj2);
+	}
 }
 
 void TestScene::Update() {
-
-	if (Input::IsButtonDown(PadButton::A)) m_isStart = !m_isStart;
-
-	/* ƒvƒŒƒCƒ„[‚Ì“®‚« */
-	auto up = Vector3(0, 1, 0) * Matrix4::RotateZ(m_obj2->GetRotation().z);
-	auto accX = MathUtility::IsZero(up.x) ? -m_velocity.x * 0.01f : up.x > 0 ? -0.3f : 0.3f;
-	auto accY = up.y * m_isStart ? 0.5f : -0.5f;
-	m_velocity += Vector3(accX, accY, 0);
-	m_velocity.y = MathUtility::Clamp(m_velocity.y, 0, 20);
-	auto vel = m_velocity;
-	m_obj2->SetPosition(m_obj2->GetPosition() + m_velocity * GameTime::DeltaTime());
-
-	auto rot = Vector3(0, 0, -Input::Gyro().z);
-	m_velocity.y = MathUtility::Clamp(m_velocity.y, 0, 20);
-	m_obj2->SetRotation(m_obj2->GetRotation() + rot);
-
-
-	if (m_obj2->GetPosition().y <= 0) {
-		m_obj2->SetPosition(m_obj2->GetPosition() * Vector3(1, 0, 1));
-		m_velocity = 0;
-	}
-
-
-
-
-	m_camera.SetPosition(m_obj2->GetPosition() + Vector3(0, 0, -30));
-	m_obj1->SetPosition(m_camera.GetPosition());
 	m_objManager->Update();
+	if (!m_isFreeCam) {
+		m_camera.SetPosition(player->GetPosition() + Vector3(0, 0, -100));
+	}
 
 	GUIUpdate();
 }
@@ -122,6 +120,8 @@ void TestScene::GUIUpdate() {
 	float camrot[3] = { m_camera.GetRotation().x, m_camera.GetRotation().y, m_camera.GetRotation().z };
 	ImGui::DragFloat3("Camera Rotation", camrot, 1);
 	m_camera.SetRotation(Vector3(camrot[0], camrot[1], camrot[2]));
+
+	ImGui::Checkbox("Free Camera", &m_isFreeCam);
 
 	ImGui::End();
 }
