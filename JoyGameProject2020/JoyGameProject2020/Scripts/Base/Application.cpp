@@ -70,16 +70,10 @@ bool Application::Init() {
 	m_graphicsManager.LoadModel("Resources/Models/ground/ground.obj", "ground");
 	m_graphicsManager.LoadModel("Resources/Models/plane/plane.obj", "plane");
 	m_graphicsManager.LoadModel("Resources/Models/skydome/skydome.obj", "skydome");
+	m_graphicsManager.LoadModel("Resources/Models/sphere/sphere.obj", "sphere");
 
 	m_graphicsManager.LoadShader("Resources/Shaders/ObjVertexShader.hlsl", "VSmain", "vs_5_0", "ObjVS");
 	m_graphicsManager.LoadShader("Resources/Shaders/ObjPixelShader.hlsl", "PSmain", "ps_5_0", "ObjPS");
-
-	m_graphicsManager.LoadShader("Resources/Shaders/FbxVertexShader.hlsl", "VSmain", "vs_5_0", "FbxVS");
-	m_graphicsManager.LoadShader("Resources/Shaders/FbxPixelShader.hlsl", "PSmain", "ps_5_0", "FbxPS");
-
-	m_graphicsManager.LoadShader("Resources/Shaders/KadaiVertexShader.hlsl", "VSmain", "vs_5_0", "KadaiVS");
-	m_graphicsManager.LoadShader("Resources/Shaders/KadaiGeometoryShader.hlsl", "GSmain", "gs_5_0", "KadaiGS");
-	m_graphicsManager.LoadShader("Resources/Shaders/KadaiPixelShader.hlsl", "PSmain", "ps_5_0", "KadaiPS");
 
 	m_sceneManager = std::make_unique<SceneManager>();
 	m_sceneManager->AddScene(std::make_shared<TestScene>(), "Test");

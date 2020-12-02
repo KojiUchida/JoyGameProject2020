@@ -18,6 +18,7 @@ GameTime& GameTime::Instance() {
 
 void GameTime::Init() {
 	startTime = CurrentTime();
+	previousTime = startTime;
 }
 
 void GameTime::Update() {
@@ -34,7 +35,7 @@ double GameTime::ElapsedTime() {
 	return CurrentTime() - startTime;
 }
 
-float GameTime::DeltaTime() {
-	return (float)deltaTime;
+double GameTime::DeltaTime() {
+	return deltaTime;
 }
 

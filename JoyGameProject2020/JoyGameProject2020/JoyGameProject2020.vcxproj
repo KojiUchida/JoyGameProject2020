@@ -143,6 +143,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Scripts\GameObject\Player.cpp" />
     <ClCompile Include="Scripts\Base\Application.cpp" />
     <ClCompile Include="Scripts\Base\DirectXManager.cpp" />
     <ClCompile Include="Scripts\Component\Draw\ObjRenderer.cpp" />
@@ -178,6 +179,7 @@
     <ClCompile Include="Scripts\Utility\Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Scripts\GameObject\Player.h" />
     <ClInclude Include="Scripts\Base\Application.h" />
     <ClInclude Include="Scripts\Base\DirectXManager.h" />
     <ClInclude Include="Scripts\Component\Component.h" />
