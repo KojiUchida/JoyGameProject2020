@@ -13,6 +13,8 @@
 #include "Base/DirectXManager.h"
 #include "GameObject/Event/StartCall.h"
 #include "GameObject/Particle/ParticleManager.h"
+#include "Game/Ranking.h"
+#include <iostream>
 
 void TestScene2::Init()
 {
@@ -22,6 +24,7 @@ void TestScene2::Init()
 	m_objManager = std::make_shared<GameObjectManager>();
 
 	eventManager = new EventManager();
+	Ranking::Instance().ResetRanking();
 }
 
 void TestScene2::Update()
@@ -43,9 +46,14 @@ void TestScene2::Update()
 	
 	if (Input::IsKeyDown(DIK_Z))
 	{
-		eventManager->SetEvent(new StartCall());
+		//eventManager->SetEvent(new StartCall());
 		//ParticleManager::Instance().AddParticleEmitter(new WaterSprash(Vector3(0),300,330));
 
+		double time = rand() % 1000;
+		Ranking::Instance().SetRanking(time);
+		//デバッグ用↓
+		Ranking::Instance().GetMyRanking(time);
+		Ranking::Instance().GetAllRanking();
 	}
 
 	eventManager->update();

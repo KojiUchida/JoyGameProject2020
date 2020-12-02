@@ -31,7 +31,7 @@ void GameTime::Update() {
 	time += DeltaTime();
 	++count;
 	if (time > 1) {
-		std::cout << count << std::endl;
+		//std::cout << count << std::endl;
 		time = 0;
 		count = 0;
 	}

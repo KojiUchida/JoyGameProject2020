@@ -162,6 +162,7 @@
     <ClCompile Include="Scripts\GameObject\Particle\ParticleEmitter.cpp" />
     <ClCompile Include="Scripts\GameObject\Particle\ParticleManager.cpp" />
     <ClCompile Include="Scripts\GameObject\Particle\WaterSprash.cpp" />
+    <ClCompile Include="Scripts\Game\Ranking.cpp" />
     <ClCompile Include="Scripts\Graphics\GraphicsManager.cpp" />
     <ClCompile Include="Scripts\Graphics\ObjModel.cpp" />
     <ClCompile Include="Scripts\Graphics\Texture.cpp" />
@@ -210,6 +211,7 @@
     <ClInclude Include="Scripts\GameObject\Particle\ParticleEmitter.h" />
     <ClInclude Include="Scripts\GameObject\Particle\ParticleManager.h" />
     <ClInclude Include="Scripts\GameObject\Particle\WaterSprash.h" />
+    <ClInclude Include="Scripts\Game\Ranking.h" />
     <ClInclude Include="Scripts\Graphics\GraphicsManager.h" />
     <ClInclude Include="Scripts\Graphics\ObjModel.h" />
     <ClInclude Include="Scripts\Graphics\Texture.h" />
