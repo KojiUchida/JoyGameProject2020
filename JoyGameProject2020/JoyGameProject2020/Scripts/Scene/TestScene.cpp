@@ -12,7 +12,7 @@
 #include "ImGui/imgui_impl_dx12.h"
 #include "Base/DirectXManager.h"
 #include "Math/MathUtility.h"
-#include "GameObject/Player.h"
+#include "Game/Player.h"
 #include <iostream>
 
 TestScene::TestScene() :

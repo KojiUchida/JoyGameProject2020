@@ -25,6 +25,7 @@ static HWND m_hwnd;
 static const float stickDeadZone = ANALOG_STICK_VALUE / 100.0f * STICK_DEAD_ZONE_PARCENT;
 
 HANDLE ds4Handle;
+HANDLE joyconHandle;
 BYTE* buf;
 OVERLAPPED overlapped;
 HIDP_CAPS caps;
@@ -163,6 +164,18 @@ bool Input::InitController(HWND hwnd) {
 
 				break;
 			}
+			if (deviceNameString.find(L"Gamepad") != std::wstring::npos) {
+				joyconHandle = handle;
+
+				HidP_GetCaps(preparsedData, &caps);
+
+				buf = new BYTE[caps.InputReportByteLength];
+				ZeroMemory(buf, caps.InputReportByteLength);
+				overlapped = {};
+				overlapped.hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+
+				break;
+			}
 
 			HidD_FreePreparsedData(preparsedData);
 		}
@@ -204,7 +217,7 @@ void Input::Update() {
 		result = devjoystick->GetDeviceState(sizeof(DIJOYSTATE), &currentJoyState);
 	}
 
-	if (buf) {
+	if (ds4Handle) {
 		auto a = ReadFile(ds4Handle, buf, caps.InputReportByteLength, &bytesRead, &overlapped);
 
 		/* スティック */
@@ -244,11 +257,13 @@ void Input::Update() {
 		ds4state.accelX = ((buf[20] << 8) | buf[19]);
 		ds4state.accelY = ((buf[22] << 8) | buf[21]);
 		ds4state.accelZ = ((buf[24] << 8) | buf[23]);
+	}
 
+	if (joyconHandle) {
 		/* ジャイロ */
-		joystate.gyroX = ((buf[14] << 8) | buf[13]);
-		joystate.gyroY = ((buf[16] << 8) | buf[15]);
-		joystate.gyroZ = ((buf[18] << 8) | buf[17]);
+		joystate.gyroX = ((buf[32] << 8) | buf[31]);
+		joystate.gyroY = ((buf[34] << 8) | buf[33]);
+		joystate.gyroZ = ((buf[36] << 8) | buf[35]);
 
 		/* 加速 */
 		joystate.accelX = ((buf[20] << 8) | buf[19]);

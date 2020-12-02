@@ -422,11 +422,4 @@ void ObjModel::CreateMaterialBuffer() {
 			textureBuffer, &srvDesc, descHandle);
 		descHandle.ptr += incSize;
 	}
-
-	if (texturename != "")
-	{
-		auto textureBuffer = m_graphicsManager.GetTexture(texturename);
-		m_dxManager.GetDevice->CreateShaderResourceView(textureBuffer->GetBuffer(),
-			&srvDesc, descHandle);
-	}
 }
