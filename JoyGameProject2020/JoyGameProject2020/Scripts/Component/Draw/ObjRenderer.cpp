@@ -9,7 +9,6 @@ ObjRenderer::ObjRenderer(const std::string& modelName) :
 	m_graphicsManager(GraphicsManager::Instance()) {
 	
 	m_model = std::make_shared<ObjModel>(*m_graphicsManager.GetObjModel(modelName));
-
 	CreateRootSignature();
 	CreatePipeline();
 }
