@@ -70,6 +70,8 @@ public:
 
 	void Draw(GameObject* gameObject);
 
+	void SetTexture(const std::string& texturename);//$moe
+
 private:
 	void UpdateConstantBuffer(GameObject* gameObject);
 	void LoadObj(const std::string& filePath);
@@ -104,5 +106,7 @@ private:
 	ComPtr<ID3D12DescriptorHeap> m_materialDescHeap;
 
 	std::map<std::string, Texture> m_textureMap;
+
+	std::string texturename;
 };
 

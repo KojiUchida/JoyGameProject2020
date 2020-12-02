@@ -64,6 +64,7 @@ bool Application::Init() {
 	m_graphicsManager.Init();
 
 	m_graphicsManager.LoadTexture("Resources/Textures/ultnontan.jpg", "nontan");
+	m_graphicsManager.LoadTexture("Resources/Textures/ready.png", "ready");
 
 	m_graphicsManager.LoadModel("Resources/Models/cube/cube.obj", "cube");
 	m_graphicsManager.LoadModel("Resources/Models/dosei/dosei_quad.obj", "dosei");

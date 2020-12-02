@@ -16,14 +16,14 @@ public:
 
 private:
 	std::shared_ptr<GameObjectManager>m_objManager;
-	std::shared_ptr<GameObject>objs[1];
+	std::shared_ptr<GameObject>obj;
+	std::shared_ptr<GameObject>background;
 
 	Timer*timer;
 
 	Vector3 firstpos;
 	Vector3 endpos;
 	double posMoverate;
-	double time;
 
 	
 };
