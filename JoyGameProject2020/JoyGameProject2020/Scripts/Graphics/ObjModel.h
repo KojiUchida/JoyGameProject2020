@@ -70,8 +70,6 @@ public:
 
 	void Draw(GameObject* gameObject);
 
-	void SetTexture(const std::string& texturename);//$moe
-
 private:
 	void UpdateConstantBuffer(GameObject* gameObject);
 	void LoadObj(const std::string& filePath);

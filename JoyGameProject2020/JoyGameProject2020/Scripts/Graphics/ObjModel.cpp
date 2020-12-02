@@ -65,11 +65,6 @@ void ObjModel::Draw(GameObject* gameObject) {
 	}
 }
 
-void ObjModel::SetTexture(const std::string & texturename)
-{
-	this->texturename=texturename;
-}
-
 void ObjModel::UpdateConstantBuffer(GameObject* gameObject) {
 	Transform* transformMap = nullptr;
 	m_transformBuffer->Map(0, nullptr, (void**)&transformMap);
@@ -421,12 +416,5 @@ void ObjModel::CreateMaterialBuffer() {
 		m_dxManager.GetDevice()->CreateShaderResourceView(
 			textureBuffer, &srvDesc, descHandle);
 		descHandle.ptr += incSize;
-	}
-
-	if (texturename != "")
-	{
-		auto textureBuffer = m_graphicsManager.GetTexture(texturename);
-		m_dxManager.GetDevice->CreateShaderResourceView(textureBuffer->GetBuffer(),
-			&srvDesc, descHandle);
 	}
 }
