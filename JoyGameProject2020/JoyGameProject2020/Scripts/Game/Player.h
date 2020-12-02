@@ -1,15 +1,15 @@
 #pragma once
-#include "GameObject.h"
+#include "GameObject/GameObject.h"
 #include "Math/Vector3.h"
 
-class Player :public GameObject{
+class Player : public GameObject {
 
 	enum {
 		Idle,
 		Charge,
 		Move,
 	};
-	
+
 public:
 	Player();
 	~Player();
