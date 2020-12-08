@@ -11,6 +11,8 @@ Player::Player() :
 	rotSpeed(30.0f),
 	gauge(0.0f),
 	gaugeMax(100.0f),
+	gaugeIncRatio(0.002f),
+	gaugeDecRatio(0.05f),
 	attackGauge(10.0f),
 	currentSpeed(0.0f),
 	flySpeed(100.0f),
@@ -40,6 +42,8 @@ void Player::Update() {
 	Move();
 	attackTimer->Update();
 	stunTimer->Update();
+
+	std::cout << gauge << std::endl;
 }
 
 void Player::Shutdown() {
@@ -69,8 +73,7 @@ void Player::Rotation() {
 }
 
 void Player::Charge() {
-	/* TODO 加速度対応！！！ */
-	gauge += 0.1f;
+	gauge += Input::Accel().Length() * gaugeIncRatio;
 }
 
 void Player::Attack() {
@@ -82,11 +85,11 @@ void Player::Attack() {
 }
 
 void Player::Fly() {
+	gauge -= gaugeDecRatio;
 	if (!CanAttack()) return;
 	auto speed = GaugeRatio() * flySpeed * GameTime::DeltaTime();
 	speed = MathUtility::Clamp(speed, 0, currentSpeed);
 	velocity = up * speed;
-	gauge -= 0.05f;
 }
 
 void Player::Move() {
@@ -95,6 +98,7 @@ void Player::Move() {
 	accel.y -= grav;
 	velocity += accel * GameTime::DeltaTime();
 	auto resist = velocity.x / abs(velocity.x) * airResist * GameTime::DeltaTime();
+	resist = velocity.x < 0.001f ? 0 : resist;
 	velocity.x -= resist;
 
 	auto pos = GetPosition();
@@ -110,4 +114,8 @@ float Player::GaugeRatio() {
 
 bool Player::CanAttack() {
 	return gauge > attackGauge;
+}
+
+float Player::Gauge() {
+	return gauge;
 }

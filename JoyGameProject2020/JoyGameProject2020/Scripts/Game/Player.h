@@ -23,11 +23,15 @@ public:
 	float GaugeRatio();
 	bool CanAttack();
 
+	float Gauge();
+
 private:
 	const float rotSpeed;
 
 	float gauge;
 	const float gaugeMax;
+	const float gaugeIncRatio;
+	const float gaugeDecRatio;
 	const float attackGauge;
 
 	float currentSpeed;
