@@ -80,7 +80,7 @@ bool Application::Init() {
 	m_sceneManager = std::make_unique<SceneManager>();
 	m_sceneManager->AddScene(std::make_shared<TestScene>(), "Test");
 	m_sceneManager->AddScene(std::make_shared<TestScene2>(), "Test2");
-	m_sceneManager->ChangeScene("Test2");
+	m_sceneManager->ChangeScene("Test");
 
 	/* ‚±‚±‚Ü‚Å‰Šú‰»ˆ— */
 

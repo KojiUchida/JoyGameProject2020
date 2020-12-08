@@ -260,6 +260,8 @@ void Input::Update() {
 	}
 
 	if (joyconHandle) {
+		auto a = ReadFile(joyconHandle, buf, caps.InputReportByteLength, &bytesRead, &overlapped);
+
 		/* ÉWÉÉÉCÉç */
 		joystate.gyroX = ((buf[32] << 8) | buf[31]);
 		joystate.gyroY = ((buf[34] << 8) | buf[33]);
