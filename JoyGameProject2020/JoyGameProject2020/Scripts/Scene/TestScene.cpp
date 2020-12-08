@@ -124,4 +124,12 @@ void TestScene::GUIUpdate() {
 	ImGui::Checkbox("Free Camera", &m_isFreeCam);
 
 	ImGui::End();
+
+	ImGui::Begin("Player State");
+	ImGui::SetWindowSize(ImVec2(512, 96), ImGuiCond_::ImGuiCond_FirstUseEver);
+	ImGui::SetWindowPos(ImVec2(32, 256), ImGuiCond_::ImGuiCond_FirstUseEver);
+
+	ImGui::Text("Gauge : %f", player->Gauge());
+
+	ImGui::End();
 }

@@ -31,6 +31,7 @@ OVERLAPPED overlapped;
 HIDP_CAPS caps;
 DWORD bytesRead;
 static DS4STATE ds4state;
+static DS4STATE previousDS4state;
 static JOYCONSTATE joystate;
 
 Input& Input::Instance() {
@@ -218,6 +219,8 @@ void Input::Update() {
 	}
 
 	if (ds4Handle) {
+		previousDS4state = ds4state;
+
 		auto a = ReadFile(ds4Handle, buf, caps.InputReportByteLength, &bytesRead, &overlapped);
 
 		/* スティック */
@@ -260,6 +263,8 @@ void Input::Update() {
 	}
 
 	if (joyconHandle) {
+		auto a = ReadFile(joyconHandle, buf, caps.InputReportByteLength, &bytesRead, &overlapped);
+
 		/* ジャイロ */
 		joystate.gyroX = ((buf[32] << 8) | buf[31]);
 		joystate.gyroY = ((buf[34] << 8) | buf[33]);
@@ -269,7 +274,6 @@ void Input::Update() {
 		joystate.accelX = ((buf[20] << 8) | buf[19]);
 		joystate.accelY = ((buf[22] << 8) | buf[21]);
 		joystate.accelZ = ((buf[24] << 8) | buf[23]);
-
 	}
 }
 
@@ -393,7 +397,18 @@ Vector3 Input::Gyro() {
 }
 
 Vector3 Input::Accel() {
-	return Vector3(ds4state.accelX, ds4state.accelY, ds4state.accelZ) / 0xffff * 360.0f;
+	//return Vector3(ds4state.accelX, ds4state.accelY, ds4state.accelZ) / 0xffff * 360.0f;
+	auto accel = Vector3(
+		previousDS4state.accelX - ds4state.accelX,
+		previousDS4state.accelY - ds4state.accelY, 
+		previousDS4state.accelZ - ds4state.accelZ
+	) / 0xffff * 1000.0f;
+
+	accel.x = abs(accel.x) < 1 ? 0 : accel.x;
+	accel.y = abs(accel.y) < 1 ? 0 : accel.y;
+	accel.z = abs(accel.z) < 1 ? 0 : accel.z;
+
+	return accel;
 }
 
 BOOL Input::EnumJoystickCallBack(const DIDEVICEINSTANCE* pdidInstance, VOID* pContext) {
