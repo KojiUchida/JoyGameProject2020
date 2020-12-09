@@ -74,6 +74,9 @@ bool Application::Init() {
 	m_graphicsManager.LoadModel("Resources/Models/skydome/skydome.obj", "skydome");
 	m_graphicsManager.LoadModel("Resources/Models/sphere/sphere.obj", "sphere");
 
+	m_graphicsManager.LoadShader("Resources/Shaders/SpriteVertexShader.hlsl", "VSmain", "vs_5_0", "SpriteVS");
+	m_graphicsManager.LoadShader("Resources/Shaders/SpritePixelShader.hlsl", "PSmain", "ps_5_0", "SpritePS");
+
 	m_graphicsManager.LoadShader("Resources/Shaders/ObjVertexShader.hlsl", "VSmain", "vs_5_0", "ObjVS");
 	m_graphicsManager.LoadShader("Resources/Shaders/ObjPixelShader.hlsl", "PSmain", "ps_5_0", "ObjPS");
 
