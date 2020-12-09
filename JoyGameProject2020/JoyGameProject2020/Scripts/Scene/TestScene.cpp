@@ -7,6 +7,7 @@
 #include "Math/Vector2.h"
 #include "Math/Vector3.h"
 #include "Component/Draw/ObjRenderer.h"
+#include "Component/Draw/Sprite.h"
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_impl_win32.h"
 #include "ImGui/imgui_impl_dx12.h"
@@ -72,6 +73,11 @@ void TestScene::Init() {
 		obj2->SetScale(Vector3(50, 1, 1));
 		m_objManager->Add(obj2);
 	}
+
+	auto obj = std::make_shared<GameObject>();
+	obj->AddComponent(std::make_shared<Sprite>("nontan"));
+	obj->SetScale(200);
+	m_objManager->Add(obj);
 }
 
 void TestScene::Update() {
