@@ -4,7 +4,7 @@
 #include "Math/Vector3.h"
 #include "Component/Draw/ObjRenderer.h"
 #include "Math/Easing.h"
-#include "Math/MathUtility.h"
+#include "Math/MathUtil.h"
 #include <iostream>
 
 GameTimer::GameTimer()

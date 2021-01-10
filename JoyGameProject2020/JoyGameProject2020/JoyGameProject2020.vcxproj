@@ -144,6 +144,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Scripts\Component\Draw\Sprite.cpp" />
+    <ClCompile Include="Scripts\GameObject\Event\GameTimer.cpp" />
     <ClCompile Include="Scripts\Game\Moe_Sprite.cpp" />
     <ClCompile Include="Scripts\Game\Player.cpp" />
     <ClCompile Include="Scripts\Base\Application.cpp" />
@@ -195,6 +196,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scripts\Component\Draw\Sprite.h" />
+    <ClInclude Include="Scripts\GameObject\Event\GameTimer.h" />
     <ClInclude Include="Scripts\Game\Moe_Sprite.h" />
     <ClInclude Include="Scripts\Game\Player.h" />
     <ClInclude Include="Scripts\Base\Application.h" />
