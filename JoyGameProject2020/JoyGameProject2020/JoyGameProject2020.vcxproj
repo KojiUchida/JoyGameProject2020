@@ -175,8 +175,8 @@
     <ClCompile Include="Scripts\ImGui\imgui_widgets.cpp" />
     <ClCompile Include="Scripts\main.cpp" />
     <ClCompile Include="Scripts\Math\Easing.cpp" />
-    <ClCompile Include="Scripts\Math\MathUtility.cpp" />
     <ClCompile Include="Scripts\Math\Matrix4.cpp" />
+    <ClCompile Include="Scripts\Math\Quaternion.cpp" />
     <ClCompile Include="Scripts\Math\Rect.cpp" />
     <ClCompile Include="Scripts\Math\Vector2.cpp" />
     <ClCompile Include="Scripts\Math\Vector3.cpp" />
@@ -226,9 +226,11 @@
     <ClInclude Include="Scripts\ImGui\imstb_textedit.h" />
     <ClInclude Include="Scripts\ImGui\imstb_truetype.h" />
     <ClInclude Include="Scripts\Math\Easing.h" />
-    <ClInclude Include="Scripts\Math\MathUtility.h" />
+    <ClInclude Include="Scripts\Math\MathUtil.h" />
     <ClInclude Include="Scripts\Math\Matrix4.h" />
+    <ClInclude Include="Scripts\Math\Quaternion.h" />
     <ClInclude Include="Scripts\Math\Rect.h" />
+    <ClInclude Include="Scripts\Math\Transform.h" />
     <ClInclude Include="Scripts\Math\Vector2.h" />
     <ClInclude Include="Scripts\Math\Vector3.h" />
     <ClInclude Include="Scripts\Scene\IScene.h" />

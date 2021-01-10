@@ -70,10 +70,10 @@ void ObjModel::UpdateConstantBuffer(GameObject* gameObject) {
 	m_transformBuffer->Map(0, nullptr, (void**)&transformMap);
 	transformMap->world =
 		Matrix4::Scale(gameObject->GetScale()) *
-		Matrix4::RotateRollPitchYaw(gameObject->GetRotation()) *
-		gameObject->GetBillboard() *
+		Matrix4::RotationFromQuaternion(gameObject->transform.rotation) *
+		gameObject->billboard *
 		Matrix4::Translate(gameObject->GetPosition());
-	transformMap->rot = Matrix4::RotateRollPitchYaw(gameObject->GetRotation());
+	transformMap->rot = Matrix4::RotationFromQuaternion(gameObject->transform.rotation);
 	transformMap->view = Camera::Instance().GetViewMatrix();
 	transformMap->proj = Camera::Instance().GetProjectionMatrix();
 	transformMap->mvp = transformMap->world * transformMap->view * transformMap->proj;

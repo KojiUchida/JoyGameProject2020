@@ -163,6 +163,7 @@ bool Input::InitController(HWND hwnd) {
 				overlapped = {};
 				overlapped.hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
 
+				HidD_FreePreparsedData(preparsedData);
 				break;
 			}
 			if (deviceNameString.find(L"Gamepad") != std::wstring::npos) {
@@ -175,6 +176,7 @@ bool Input::InitController(HWND hwnd) {
 				overlapped = {};
 				overlapped.hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
 
+				HidD_FreePreparsedData(preparsedData);
 				break;
 			}
 
@@ -264,6 +266,7 @@ void Input::Update() {
 
 	if (joyconHandle) {
 		auto a = ReadFile(joyconHandle, buf, caps.InputReportByteLength, &bytesRead, &overlapped);
+		auto b =  HRESULT_FROM_WIN32(GetLastError());
 
 		/* ÉWÉÉÉCÉç */
 		joystate.gyroX = ((buf[32] << 8) | buf[31]);
@@ -280,6 +283,12 @@ void Input::Update() {
 void Input::Shutdown() {
 	delete buf;
 	buf = nullptr;
+	if(ds4Handle){
+		CloseHandle(ds4Handle);
+	}
+	if (joyconHandle) {
+		CloseHandle(joyconHandle);
+	}
 }
 
 bool Input::IsKeyDown(BYTE key) {

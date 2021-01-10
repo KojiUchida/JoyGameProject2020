@@ -29,5 +29,6 @@ private:
 
 	Camera& m_camera;
 	bool m_isFreeCam;
+	bool m_showDebugMenu;
 };
 

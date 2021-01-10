@@ -12,7 +12,7 @@
 #include "ImGui/imgui_impl_win32.h"
 #include "ImGui/imgui_impl_dx12.h"
 #include "Base/DirectXManager.h"
-#include "Math/MathUtility.h"
+#include "Math/MathUtil.h"
 #include "Game/Player.h"
 #include <iostream>
 
@@ -102,10 +102,6 @@ bool TestScene::IsEnd() {
 }
 
 void TestScene::GUIUpdate() {
-	ImGui_ImplDX12_NewFrame();
-	ImGui_ImplWin32_NewFrame();
-	ImGui::NewFrame();
-
 	ImGui::StyleColorsDark();
 	ImGui::GetStyle().WindowRounding = 0;
 	ImGui::GetStyle().FrameRounding = 0;

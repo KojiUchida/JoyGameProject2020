@@ -4,9 +4,9 @@
 GameObject::GameObject() :
 	m_isDestroy(false),
 	m_isCollision(false),
-	m_size(1),
+	transform(),
 	m_tag(""),
-	m_billboard(Matrix4::Identity()) {
+	billboard(Matrix4::Identity()) {
 }
 
 GameObject::~GameObject() {
@@ -17,35 +17,27 @@ void GameObject::Destroy() {
 }
 
 void GameObject::SetPosition(const Vector3& pos) {
-	m_position = pos;
+	transform.position = pos;
 }
 
 Vector3 GameObject::GetPosition() {
-	return m_position;
+	return transform.position;
 }
 
-void GameObject::SetScale(const Vector3& size) {
-	m_size = size;
+void GameObject::SetScale(const Vector3& scale) {
+	transform.scale= scale;
 }
 
 Vector3 GameObject::GetScale() {
-	return m_size;
+	return transform.scale;
 }
 
 void GameObject::SetRotation(const Vector3& rotation) {
-	m_rotation = rotation;
+	transform.rotation = Quaternion::Euler(rotation);
 }
 
 Vector3 GameObject::GetRotation() {
-	return m_rotation;
-}
-
-void GameObject::SetBillboard(const Matrix4& billboard) {
-	m_billboard = billboard;
-}
-
-Matrix4 GameObject::GetBillboard() {
-	return m_billboard;
+	return transform.rotation.EulerAngles();
 }
 
 void GameObject::SetTag(const std::string& tag) {

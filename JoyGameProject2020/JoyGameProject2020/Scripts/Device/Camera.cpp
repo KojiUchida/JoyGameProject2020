@@ -1,5 +1,5 @@
 #include "Camera.h"
-#include "Math/MathUtility.h"
+#include "Math/MathUtil.h"
 #include "Def/Screen.h"
 
 Camera::Camera() :

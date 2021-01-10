@@ -2,7 +2,7 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include "Math/Vector3.h"
+#include "Math/Transform.h"
 #include "Math/Matrix4.h"
 
 class Component;
@@ -45,11 +45,6 @@ public:
 	/* 回転取得 */
 	Vector3 GetRotation();
 
-	/* 回転設定 */
-	void SetBillboard(const Matrix4& billboard);
-	/* 回転取得 */
-	Matrix4 GetBillboard();
-
 	/* タグ設定 */
 	void SetTag(const std::string& tag);
 	/* タグ取得 */
@@ -72,6 +67,9 @@ public:
 	/* コンポーネントの取得 */
 	std::vector<std::shared_ptr<Component>> GetComponents();
 
+	Transform transform;
+	Matrix4 billboard;
+
 protected:
 	std::weak_ptr<GameObject> m_parent;
 	std::vector<std::shared_ptr<GameObject>> m_children;
@@ -79,10 +77,5 @@ protected:
 	bool m_isDestroy;
 	bool m_isCollision;
 	std::string m_tag;
-
-	Vector3 m_position;
-	Vector3 m_size;
-	Vector3 m_rotation;
-	Matrix4 m_billboard;
 };
 

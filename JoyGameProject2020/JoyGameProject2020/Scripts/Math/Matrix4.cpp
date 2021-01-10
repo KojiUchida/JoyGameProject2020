@@ -2,6 +2,7 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 #include "Vector3.h"
+#include "Quaternion.h"
 
 Matrix4::Matrix4() :
 	m{ 0 } {
@@ -54,6 +55,25 @@ const Matrix4 Matrix4::Translate(const Vector3& vec) {
 	);
 }
 
+const Matrix4 Matrix4::RotationFromQuaternion(const Quaternion& q) {
+	float xx = q.x * q.x * 2.0f;
+	float yy = q.y * q.y * 2.0f;
+	float zz = q.z * q.z * 2.0f;
+	float xy = q.x * q.y * 2.0f;
+	float xz = q.x * q.z * 2.0f;
+	float yz = q.y * q.z * 2.0f;
+	float wx = q.w * q.x * 2.0f;
+	float wy = q.w * q.y * 2.0f;
+	float wz = q.w * q.z * 2.0f;
+
+	return Matrix4(
+		1.0f - yy - zz, xy + wz, xz - wy, 0.0f,
+		xy - wz, 1.0f - xx - zz, yz + wx, 0.0f,
+		xz + wy, yz - wx, 1.0f - xx - yy, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f
+	);
+}
+
 const Matrix4 Matrix4::Rotation(const Vector3& x, const Vector3& y, const Vector3& z) {
 	return Matrix4(
 		x.x, y.x, z.x, 0,
@@ -63,31 +83,28 @@ const Matrix4 Matrix4::Rotation(const Vector3& x, const Vector3& y, const Vector
 	);
 }
 
-const Matrix4 Matrix4::RotateX(const float angle) {
-	float rad = angle * (float)M_PI / 180.0f;
+const Matrix4 Matrix4::RotateX(const Radian rot) {
 	return Matrix4(
 		1, 0, 0, 0,
-		0, cos(rad), sin(rad), 0,
-		0, -sin(rad), cos(rad), 0,
+		0, cos(rot), sin(rot), 0,
+		0, -sin(rot), cos(rot), 0,
 		0, 0, 0, 1
 	);
 }
 
-const Matrix4 Matrix4::RotateY(const float angle) {
-	float rad = angle * (float)M_PI / 180.0f;
+const Matrix4 Matrix4::RotateY(const Radian rot) {
 	return Matrix4(
-		cos(rad), 0, -sin(rad), 0,
+		cos(rot), 0, -sin(rot), 0,
 		0, 1, 0, 0,
-		sin(rad), 0, cos(rad), 0,
+		sin(rot), 0, cos(rot), 0,
 		0, 0, 0, 1
 	);
 }
 
-const Matrix4 Matrix4::RotateZ(const float angle) {
-	float rad = angle * (float)M_PI / 180.0f;
+const Matrix4 Matrix4::RotateZ(const Radian rot) {
 	return Matrix4(
-		cos(rad), sin(rad), 0, 0,
-		-sin(rad), cos(rad), 0, 0,
+		cos(rot), sin(rot), 0, 0,
+		-sin(rot), cos(rot), 0, 0,
 		0, 0, 1, 0,
 		0, 0, 0, 1
 	);
@@ -97,7 +114,7 @@ const Matrix4 Matrix4::RotateRollPitchYaw(const Vector3& vec) {
 	return Matrix4::RotateZ(vec.z) * Matrix4::RotateX(vec.x) * Matrix4::RotateY(vec.y);
 }
 
-const Matrix4 Matrix4::RotateRollPitchYaw(const float pitch, const float yaw, const float roll) {
+const Matrix4 Matrix4::RotateRollPitchYaw(const Radian pitch, const Radian yaw, const Radian roll) {
 	return Matrix4::RotateZ(roll) * Matrix4::RotateX(pitch) * Matrix4::RotateY(yaw);
 }
 
@@ -127,7 +144,17 @@ const Matrix4 Matrix4::LookAt(const Vector3& eye, const Vector3& target, const V
 }
 
 Matrix4 Matrix4::transpose() const {
-	double Result[4][4];
+	Matrix4 mat;
+	for (auto row = 0; row < 4; ++row) {
+		for (auto col = 0; col < 4; ++col) {
+			mat.m[row][col] = m[col][row];
+		}
+	}
+	return mat;
+}
+
+Matrix4 Matrix4::Inverse() const {
+	double result[4][4];
 	double tmp[12];
 	double src[16];
 	double det;
@@ -152,22 +179,22 @@ Matrix4 Matrix4::transpose() const {
 	tmp[10] = src[8] * src[13];
 	tmp[11] = src[9] * src[12];
 
-	Result[0][0] = tmp[0] * src[5] + tmp[3] * src[6] + tmp[4] * src[7];
-	Result[0][0] -= tmp[1] * src[5] + tmp[2] * src[6] + tmp[5] * src[7];
-	Result[0][1] = tmp[1] * src[4] + tmp[6] * src[6] + tmp[9] * src[7];
-	Result[0][1] -= tmp[0] * src[4] + tmp[7] * src[6] + tmp[8] * src[7];
-	Result[0][2] = tmp[2] * src[4] + tmp[7] * src[5] + tmp[10] * src[7];
-	Result[0][2] -= tmp[3] * src[4] + tmp[6] * src[5] + tmp[11] * src[7];
-	Result[0][3] = tmp[5] * src[4] + tmp[8] * src[5] + tmp[11] * src[6];
-	Result[0][3] -= tmp[4] * src[4] + tmp[9] * src[5] + tmp[10] * src[6];
-	Result[1][0] = tmp[1] * src[1] + tmp[2] * src[2] + tmp[5] * src[3];
-	Result[1][0] -= tmp[0] * src[1] + tmp[3] * src[2] + tmp[4] * src[3];
-	Result[1][1] = tmp[0] * src[0] + tmp[7] * src[2] + tmp[8] * src[3];
-	Result[1][1] -= tmp[1] * src[0] + tmp[6] * src[2] + tmp[9] * src[3];
-	Result[1][2] = tmp[3] * src[0] + tmp[6] * src[1] + tmp[11] * src[3];
-	Result[1][2] -= tmp[2] * src[0] + tmp[7] * src[1] + tmp[10] * src[3];
-	Result[1][3] = tmp[4] * src[0] + tmp[9] * src[1] + tmp[10] * src[2];
-	Result[1][3] -= tmp[5] * src[0] + tmp[8] * src[1] + tmp[11] * src[2];
+	result[0][0] = tmp[0] * src[5] + tmp[3] * src[6] + tmp[4] * src[7];
+	result[0][0] -= tmp[1] * src[5] + tmp[2] * src[6] + tmp[5] * src[7];
+	result[0][1] = tmp[1] * src[4] + tmp[6] * src[6] + tmp[9] * src[7];
+	result[0][1] -= tmp[0] * src[4] + tmp[7] * src[6] + tmp[8] * src[7];
+	result[0][2] = tmp[2] * src[4] + tmp[7] * src[5] + tmp[10] * src[7];
+	result[0][2] -= tmp[3] * src[4] + tmp[6] * src[5] + tmp[11] * src[7];
+	result[0][3] = tmp[5] * src[4] + tmp[8] * src[5] + tmp[11] * src[6];
+	result[0][3] -= tmp[4] * src[4] + tmp[9] * src[5] + tmp[10] * src[6];
+	result[1][0] = tmp[1] * src[1] + tmp[2] * src[2] + tmp[5] * src[3];
+	result[1][0] -= tmp[0] * src[1] + tmp[3] * src[2] + tmp[4] * src[3];
+	result[1][1] = tmp[0] * src[0] + tmp[7] * src[2] + tmp[8] * src[3];
+	result[1][1] -= tmp[1] * src[0] + tmp[6] * src[2] + tmp[9] * src[3];
+	result[1][2] = tmp[3] * src[0] + tmp[6] * src[1] + tmp[11] * src[3];
+	result[1][2] -= tmp[2] * src[0] + tmp[7] * src[1] + tmp[10] * src[3];
+	result[1][3] = tmp[4] * src[0] + tmp[9] * src[1] + tmp[10] * src[2];
+	result[1][3] -= tmp[5] * src[0] + tmp[8] * src[1] + tmp[11] * src[2];
 
 	tmp[0] = src[2] * src[7];
 	tmp[1] = src[3] * src[6];
@@ -183,38 +210,34 @@ Matrix4 Matrix4::transpose() const {
 	tmp[10] = src[0] * src[5];
 	tmp[11] = src[1] * src[4];
 
-	Result[2][0] = tmp[0] * src[13] + tmp[3] * src[14] + tmp[4] * src[15];
-	Result[2][0] -= tmp[1] * src[13] + tmp[2] * src[14] + tmp[5] * src[15];
-	Result[2][1] = tmp[1] * src[12] + tmp[6] * src[14] + tmp[9] * src[15];
-	Result[2][1] -= tmp[0] * src[12] + tmp[7] * src[14] + tmp[8] * src[15];
-	Result[2][2] = tmp[2] * src[12] + tmp[7] * src[13] + tmp[10] * src[15];
-	Result[2][2] -= tmp[3] * src[12] + tmp[6] * src[13] + tmp[11] * src[15];
-	Result[2][3] = tmp[5] * src[12] + tmp[8] * src[13] + tmp[11] * src[14];
-	Result[2][3] -= tmp[4] * src[12] + tmp[9] * src[13] + tmp[10] * src[14];
-	Result[3][0] = tmp[2] * src[10] + tmp[5] * src[11] + tmp[1] * src[9];
-	Result[3][0] -= tmp[4] * src[11] + tmp[0] * src[9] + tmp[3] * src[10];
-	Result[3][1] = tmp[8] * src[11] + tmp[0] * src[8] + tmp[7] * src[10];
-	Result[3][1] -= tmp[6] * src[10] + tmp[9] * src[11] + tmp[1] * src[8];
-	Result[3][2] = tmp[6] * src[9] + tmp[11] * src[11] + tmp[3] * src[8];
-	Result[3][2] -= tmp[10] * src[11] + tmp[2] * src[8] + tmp[7] * src[9];
-	Result[3][3] = tmp[10] * src[10] + tmp[4] * src[8] + tmp[9] * src[9];
-	Result[3][3] -= tmp[8] * src[9] + tmp[11] * src[10] + tmp[5] * src[8];
+	result[2][0] = tmp[0] * src[13] + tmp[3] * src[14] + tmp[4] * src[15];
+	result[2][0] -= tmp[1] * src[13] + tmp[2] * src[14] + tmp[5] * src[15];
+	result[2][1] = tmp[1] * src[12] + tmp[6] * src[14] + tmp[9] * src[15];
+	result[2][1] -= tmp[0] * src[12] + tmp[7] * src[14] + tmp[8] * src[15];
+	result[2][2] = tmp[2] * src[12] + tmp[7] * src[13] + tmp[10] * src[15];
+	result[2][2] -= tmp[3] * src[12] + tmp[6] * src[13] + tmp[11] * src[15];
+	result[2][3] = tmp[5] * src[12] + tmp[8] * src[13] + tmp[11] * src[14];
+	result[2][3] -= tmp[4] * src[12] + tmp[9] * src[13] + tmp[10] * src[14];
+	result[3][0] = tmp[2] * src[10] + tmp[5] * src[11] + tmp[1] * src[9];
+	result[3][0] -= tmp[4] * src[11] + tmp[0] * src[9] + tmp[3] * src[10];
+	result[3][1] = tmp[8] * src[11] + tmp[0] * src[8] + tmp[7] * src[10];
+	result[3][1] -= tmp[6] * src[10] + tmp[9] * src[11] + tmp[1] * src[8];
+	result[3][2] = tmp[6] * src[9] + tmp[11] * src[11] + tmp[3] * src[8];
+	result[3][2] -= tmp[10] * src[11] + tmp[2] * src[8] + tmp[7] * src[9];
+	result[3][3] = tmp[10] * src[10] + tmp[4] * src[8] + tmp[9] * src[9];
+	result[3][3] -= tmp[8] * src[9] + tmp[11] * src[10] + tmp[5] * src[8];
 
-	det = src[0] * Result[0][0] + src[1] * Result[0][1] + src[2] * Result[0][2] + src[3] * Result[0][3];
+	det = src[0] * result[0][0] + src[1] * result[0][1] + src[2] * result[0][2] + src[3] * result[0][3];
 
 	det = 1.0f / det;
 
-	Matrix4 FloatResult;
+	Matrix4 floatResult;
 	for (unsigned int i = 0; i < 4; i++) {
 		for (unsigned int j = 0; j < 4; j++) {
-			FloatResult.m[i][j] = float(Result[i][j] * det);
+			floatResult.m[i][j] = float(result[i][j] * det);
 		}
 	}
-	return FloatResult;
-}
-
-Matrix4 Matrix4::Inverse() const {
-	return Matrix4();
+	return floatResult;
 }
 
 Vector3 Matrix4::transform(const Vector3& vec, const Matrix4& mat) const {

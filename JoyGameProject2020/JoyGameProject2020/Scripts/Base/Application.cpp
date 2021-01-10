@@ -109,6 +109,10 @@ void Application::Run() {
 
 		m_dxManager.BeginScene();
 
+		ImGui_ImplDX12_NewFrame();
+		ImGui_ImplWin32_NewFrame();
+		ImGui::NewFrame();
+
 		m_sceneManager->Update();
 		m_collisionManager.Update();
 

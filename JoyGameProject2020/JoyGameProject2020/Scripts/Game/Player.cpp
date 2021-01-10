@@ -1,7 +1,7 @@
 #include "Player.h"
 #include "Component/Draw/ObjRenderer.h"
 #include "Math/Matrix4.h"
-#include "Math/MathUtility.h"
+#include "Math/MathUtil.h"
 #include "Device/GameTime.h"
 #include "Device/Input.h"
 #include "Utility/Timer.h"
@@ -16,7 +16,7 @@ Player::Player() :
 	attackGauge(10.0f),
 	currentSpeed(0.0f),
 	flySpeed(100.0f),
-	attackSpeed(150.0f),
+	attackSpeed(300.0f),
 	grav(0.1f),
 	airResist(0.01f) {
 }
@@ -38,7 +38,7 @@ void Player::Init() {
 void Player::Update() {
 	Rotation();
 	Manipulation();
-	gauge = MathUtility::Clamp(gauge, 0, 100);
+	gauge = MathUtil::Clamp(gauge, 0.0f, 100.0f);
 	Move();
 	attackTimer->Update();
 	stunTimer->Update();
@@ -69,7 +69,7 @@ void Player::Rotation() {
 	SetRotation(rot);
 
 	up = Vector3(0, 1, 0);
-	up = (up * Matrix4::RotateRollPitchYaw(rot.x, -rot.y, rot.z)).Normalize();
+	up = (up * Matrix4::RotationFromQuaternion(transform.rotation)).Normalize();
 }
 
 void Player::Charge() {
@@ -87,8 +87,8 @@ void Player::Attack() {
 void Player::Fly() {
 	gauge -= gaugeDecRatio;
 	if (!CanAttack()) return;
-	auto speed = GaugeRatio() * flySpeed * GameTime::DeltaTime();
-	speed = MathUtility::Clamp(speed, 0, currentSpeed);
+	float speed = GaugeRatio() * flySpeed * GameTime::DeltaTime();
+	speed = MathUtil::Clamp(speed, 0.0f, currentSpeed);
 	velocity = up * speed;
 }
 
@@ -103,8 +103,8 @@ void Player::Move() {
 
 	auto pos = GetPosition();
 	pos += velocity;
-	pos.x = MathUtility::Clamp(pos.x, -65, 65);
-	pos.y = MathUtility::Clamp(pos.y, 0, 1000);
+	pos.x = MathUtil::Clamp(pos.x, -65.0f, 65.0f);
+	pos.y = MathUtil::Clamp(pos.y, 0.0f, 1000.0f);
 	SetPosition(pos);
 }
 

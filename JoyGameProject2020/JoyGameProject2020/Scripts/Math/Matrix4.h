@@ -1,7 +1,12 @@
 #pragma once
+#include "Quaternion.h"
 
 struct Vector3;
+struct Quaternion;
 struct Matrix4 {
+
+	typedef float Degree;
+	typedef float Radian;
 
 	float m[4][4];
 
@@ -25,21 +30,22 @@ struct Matrix4 {
 	/* •½sˆÚ“®s—ñ */
 	static const Matrix4 Translate(const Vector3& vec);
 
+	static const Matrix4 RotationFromQuaternion(const Quaternion& q);
 	/* X²‰ñ“]s—ñ */
 	static const Matrix4 Rotation(const Vector3& x, const Vector3& y, const Vector3& z);
 	/* X²‰ñ“]s—ñ */
-	static const Matrix4 RotateX(const float angle);
+	static const Matrix4 RotateX(const Radian rot);
 	/* Y²‰ñ“]s—ñ */
-	static const Matrix4 RotateY(const float angle);
+	static const Matrix4 RotateY(const Radian rot);
 	/* Z²‰ñ“]s—ñ */
-	static const Matrix4 RotateZ(const float angle);
+	static const Matrix4 RotateZ(const Radian rot);
 	/* RollPitchYawŠp‚É‚æ‚é‰ñ“]s—ñ */
 	static const Matrix4 RotateRollPitchYaw(const Vector3& vec);
-	static const Matrix4 RotateRollPitchYaw(const float pitch, const  float yaw, const  float roll);
+	static const Matrix4 RotateRollPitchYaw(const Radian pitch, const  Radian yaw, const  Radian roll);
 
 	/* “§‹•ÏŠ·s—ñ */
 	static const Matrix4 Perspective(
-		const float fov, const float aspect, const float near, const float far);
+		const Degree fov, const float aspect, const float near, const float far);
 	/* ‹–ì•ÏŠ·s—ñ */
 	static const Matrix4 LookAt(const Vector3& eye, const Vector3& target, const Vector3& up);
 
