@@ -1,31 +1,25 @@
-#include "TestScene2.h"
+#include "GamePlay.h"
+#include "Math/Vector2.h"
+#include "Math/Vector3.h"
 #include "Device/Input.h"
 #include "Device/Camera.h"
 #include "Device/GameTime.h"
 #include "GameObject/GameObject.h"
 #include "GameObject/GameObjectManager.h"
-#include "Math/Vector2.h"
-#include "Math/Vector3.h"
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_impl_win32.h"
 #include "ImGui/imgui_impl_dx12.h"
-#include "Base/DirectXManager.h"
-#include "GameObject/Event/StartCall.h"
-#include "GameObject/Particle/ParticleManager.h"
-#include "Game/Ranking.h"
-#include <iostream>
 
-void TestScene2::Init()
+void GamePlay::Init()
 {
 	auto& cam = Camera::Instance();
+
 	cam.SetPosition(Vector3(0, 0, -10));
 
 	m_objManager = std::make_shared<GameObjectManager>();
-
-	Ranking::Instance().ResetRanking();
 }
 
-void TestScene2::Update()
+void GamePlay::Update()
 {
 	auto& cam = Camera::Instance();
 	auto rotx = -Input::RightStickValue().y;
@@ -45,18 +39,30 @@ void TestScene2::Update()
 	if (Input::IsKeyDown(DIK_Z))
 	{
 		//eventManager->SetEvent(new StartCall());
-		//ParticleManager::Instance().AddParticleEmitter(new WaterSprash(Vector3(0),300,330));
-
-		double time = rand() % 1000;
-		Ranking::Instance().SetRanking(time);
-		//デバッグ用↓
-		Ranking::Instance().GetMyRanking(time);
-		Ranking::Instance().GetAllRanking();
 	}
 
 	EventManager::Instance().update();
-	//ParticleManager::Instance().update();
+	GUIUpdate();
+}
 
+void GamePlay::Shutdown()
+{
+	m_objManager->Shutdown();
+}
+
+std::string GamePlay::NextScene()
+{
+	return "Clear";
+}
+
+bool GamePlay::IsEnd()
+{
+	return Input::IsKeyDown(DIK_SPACE);
+}
+
+void GamePlay::GUIUpdate()
+{
+	auto& cam = Camera::Instance();
 	ImGui_ImplDX12_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
@@ -83,19 +89,11 @@ void TestScene2::Update()
 	cam.SetRotation(Vector3(camrot[0], camrot[1], camrot[2]));
 
 	ImGui::End();
-}
 
-void TestScene2::Shutdown()
-{
-	m_objManager->Shutdown();
-}
+	ImGui::Begin("GamePlay");
+	ImGui::SetWindowSize(ImVec2(512, 96), ImGuiCond_::ImGuiCond_FirstUseEver);
+	ImGui::SetWindowPos(ImVec2(32, 170), ImGuiCond_::ImGuiCond_FirstUseEver);
 
-std::string TestScene2::NextScene()
-{
-	return "Test";
-}
 
-bool TestScene2::IsEnd()
-{
-	return Input::IsKeyDown(DIK_SPACE);
+	ImGui::End();
 }

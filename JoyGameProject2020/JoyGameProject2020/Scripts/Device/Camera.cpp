@@ -30,6 +30,71 @@ Vector3 Camera::GetRotation() {
 	return m_rotation;
 }
 
+Matrix4 Camera::GetBillboard()
+{
+	//視点座標
+	Vector3 eyePosition = m_position;
+
+	Vector3 target(0, 0, 1);
+
+	target = target * m_rotationMatrix;
+	target = m_position + target;
+	//注視点座標
+	Vector3 targetPosition =target;
+	//上方向
+	Vector3 upVector = Vector3(0, 1, 0);
+
+	//*************************************************************************
+
+		//カメラZ軸(視線方向）
+	Vector3 cameraAxisZ = targetPosition - eyePosition;
+
+	//0ベクトルだと向きが定まらないので除外
+	//_ASSERT_EXPR(cameraAxisZ != Vector3(0), L"");
+	//assert(!XMVector3IsInfinite(cameraAxisZ));
+	//_ASSERT_EXPR(upVector != Vector3(0), L"");
+	//assert(!XMVector3IsInfinite(upVector));
+
+	//ベクトルを正規化
+	cameraAxisZ = cameraAxisZ.Normalize();
+
+	//*************************************************************************
+
+	//*************************************************************************
+
+		//カメラX軸(右方向)
+	Vector3 cameraAxisX;
+	//x軸は上方向→Z軸の外積で求まる
+	cameraAxisX = Vector3::Cross(upVector, cameraAxisZ);
+	//正規化
+	cameraAxisX = cameraAxisX.Normalize();
+
+	//*************************************************************************
+
+	//*************************************************************************
+
+	//カメラY軸(右方向)
+	Vector3 cameraAxisY;
+	//y軸はZ軸→X軸の外積で求まる
+	cameraAxisY = Vector3::Cross(cameraAxisZ, cameraAxisX);
+	//正規化
+	cameraAxisY = cameraAxisY.Normalize();
+
+
+	//*************************************************************************
+
+	//カメラ回転行列
+	//カメラ座標系→ワールド座標系の変換行列
+	Matrix4 matCameraRot = Matrix4(
+		cameraAxisX.x, cameraAxisX.y, cameraAxisX.z, 0,
+		cameraAxisY.x, cameraAxisY.y, cameraAxisY.z, 0,
+		cameraAxisZ.x, cameraAxisZ.y, cameraAxisZ.z, 0,
+		0, 0, 0, 1
+	);
+
+	return matCameraRot;
+}
+
 void Camera::SetZoom(const float zoom) {
 	m_zoom = zoom;
 }
