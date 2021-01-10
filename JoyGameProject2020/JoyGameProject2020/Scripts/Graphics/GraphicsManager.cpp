@@ -3,7 +3,7 @@
 #include "Base/DirectXManager.h"
 #include "Def/Screen.h"
 #include "Utility/FileUtility.h"
-#include "Graphics/ObjModel.h"
+#include "Graphics/Model.h"
 
 GraphicsManager::GraphicsManager() {
 }
@@ -68,12 +68,12 @@ void GraphicsManager::CheckShaderCompileResult(HRESULT result, ID3DBlob* error) 
 	}
 }
 
-void GraphicsManager::LoadModel(const std::string& filePath, const std::string& modelName) {
-	m_objModelMap.emplace(modelName, std::make_unique<ObjModel>(filePath));
+void GraphicsManager::LoadModelData(const std::string& filePath, const std::string& modelName, bool smooth) {
+	m_modelDataMap.emplace(modelName, std::make_shared<ModelData>(filePath, smooth));
 }
 
-ObjModel* GraphicsManager::GetObjModel(const std::string& modelName) {
-	_ASSERT_EXPR(m_objModelMap.count(modelName) != 0, L"モデル名が間違っているか、読み込まれていません");
-	return m_objModelMap[modelName].get();
+std::shared_ptr<ModelData> GraphicsManager::GetModelData(const std::string& modelName) {
+	_ASSERT_EXPR(m_modelDataMap.count(modelName) != 0, L"モデル名が間違っているか、読み込まれていません");
+	return std::make_shared<ModelData>(*m_modelDataMap[modelName]);
 }
 

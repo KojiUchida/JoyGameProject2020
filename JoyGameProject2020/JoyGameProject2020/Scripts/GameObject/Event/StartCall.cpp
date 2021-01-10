@@ -2,7 +2,7 @@
 #include "GameObject/GameObject.h"
 #include "GameObject/GameObjectManager.h"
 #include "Math/Vector3.h"
-#include "Component/Draw/ObjRenderer.h"
+#include "Graphics/Model.h"
 #include "Math/Easing.h"
 #include "Math/MathUtil.h"
 #include <iostream>
@@ -24,14 +24,14 @@ void StartCall::initialize()
 	endpos = Vector3(-4, 0, 0);
 
 	obj = std::make_shared<GameObject>();
-	obj->AddComponent(std::make_shared<ObjRenderer>("plane"));
+	obj->AddComponent(std::make_shared<Model>("plane"));
 	obj->SetRotation(Vector3(-90, 0, 0));
 	obj->SetScale(Vector3(0.6f * 5, 1, 0.6f));
 	obj->SetPosition(firstpos);
 	m_objManager->Add(obj);
 
 	background = std::make_shared<GameObject>();
-	background->AddComponent(std::make_shared<ObjRenderer>("plane"));
+	background->AddComponent(std::make_shared<Model>("plane"));
 	background->SetRotation(Vector3(-90, 0, 0));
 	background->SetScale(Vector3(30, 1, 0));
 	background->SetPosition(Vector3(0, 0, 1));

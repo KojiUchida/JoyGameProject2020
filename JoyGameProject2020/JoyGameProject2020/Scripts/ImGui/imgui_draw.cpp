@@ -2623,7 +2623,7 @@ const ImWchar*  ImFontAtlas::GetGlyphRangesChineseSimplifiedCommon()
 const ImWchar*  ImFontAtlas::GetGlyphRangesJapanese()
 {
     // 1946 common ideograms code points for Japanese
-    // Sourced from http://theinstructionlimit.com/common-kanji-character-ranges-for-xna-font-rendering
+    // Sourced from http://theinstructionlimit.com/common-kanji-character-ranges-for-xna-spritefont-rendering
     // FIXME: Source a list of the revised 2136 Joyo Kanji list from 2010 and rebuild this.
     // You can use ImFontGlyphRangesBuilder to create your own ranges derived from this, by merging existing ranges or adding new characters.
     // (Stored as accumulative offsets from the initial unicode codepoint 0x4E00. This encoding is designed to helps us compact the source code size.)

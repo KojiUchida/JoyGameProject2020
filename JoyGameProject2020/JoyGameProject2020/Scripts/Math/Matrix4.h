@@ -1,5 +1,4 @@
 #pragma once
-#include "Quaternion.h"
 
 struct Vector3;
 struct Quaternion;

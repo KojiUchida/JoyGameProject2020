@@ -52,21 +52,12 @@ struct DS4STATE {
 	LONG    rY;
 	DWORD   rgdwPOV[4];
 	BYTE    rgbButtons[32];
-	SHORT    gyroX;
-	SHORT    gyroY;
-	SHORT    gyroZ;
-	SHORT    accelX;
-	SHORT    accelY;
-	SHORT    accelZ;
-};
-
-struct JOYCONSTATE {
-	SHORT    gyroX;
-	SHORT    gyroY;
-	SHORT    gyroZ;
-	SHORT    accelX;
-	SHORT    accelY;
-	SHORT    accelZ;
+	SHORT   gyroX;
+	SHORT   gyroY;
+	SHORT   gyroZ;
+	SHORT   accelX;
+	SHORT   accelY;
+	SHORT   accelZ;
 };
 
 struct Vector2;

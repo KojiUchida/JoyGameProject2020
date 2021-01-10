@@ -1,33 +1,71 @@
-#include "ObjRenderer.h"
-#include "Base/DirectXManager.h"
-#include "Graphics/GraphicsManager.h"
-#include "GameObject/GameObject.h"
-#include "Graphics/ObjModel.h"
+#include "Renderer.h"
+#include "Base/DirectXmanager.h"
+#include "GraphicsManager.h"
+#include "Model.h"
+#include <iterator>
+#include <omp.h>
 
-ObjRenderer::ObjRenderer(const std::string& modelName) :
+Renderer::Renderer() :
 	m_dxManager(DirectXManager::Instance()),
 	m_graphicsManager(GraphicsManager::Instance()) {
-	
-	m_model = std::make_shared<ObjModel>(*m_graphicsManager.GetObjModel(modelName));
+}
+
+Renderer::~Renderer() {
+}
+
+Renderer& Renderer::Instance() {
+	static Renderer instance;
+	return instance;
+}
+
+void Renderer::Init() {
 	CreateRootSignature();
 	CreatePipeline();
 }
 
-ObjRenderer::~ObjRenderer() {
+void Renderer::Update() {
+
 }
 
-void ObjRenderer::Update() {
-	Draw();
-}
-
-void ObjRenderer::Draw() {
+void Renderer::Draw() {
 	m_dxManager.GetCommandList()->SetGraphicsRootSignature(m_rootSignature.Get());
 	m_dxManager.GetCommandList()->SetPipelineState(m_pipelineState.Get());
+	m_dxManager.GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	auto cbvsrvIncSize = m_dxManager.GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV) * 5;
 
-	m_model->Draw(gameObject.lock().get());
+	for (int i = 0; i < models.size(); ++i) {
+		auto& m = models[i];
+
+		m_dxManager.GetCommandList()->IASetVertexBuffers(0, 1, &m->m_vbView);
+		m_dxManager.GetCommandList()->IASetIndexBuffer(&m->m_ibView);
+
+		ComPtr<ID3D12DescriptorHeap> transformHeaps[] = { m->m_transformDescHeap.Get() };
+		m_dxManager.GetCommandList()->SetDescriptorHeaps(_countof(transformHeaps), transformHeaps->GetAddressOf());
+		m_dxManager.GetCommandList()->SetGraphicsRootDescriptorTable(0,
+			m->m_transformDescHeap->GetGPUDescriptorHandleForHeapStart());
+
+		ComPtr<ID3D12DescriptorHeap> materialHeaps[] = { m->m_materialDescHeap.Get() };
+		m_dxManager.GetCommandList()->SetDescriptorHeaps(_countof(materialHeaps), materialHeaps->GetAddressOf());
+
+		for (auto& s : m->m_subsets) {
+			auto materialHeapHandle = m->m_materialDescHeap->GetGPUDescriptorHandleForHeapStart();
+			materialHeapHandle.ptr += (UINT64)cbvsrvIncSize * s.materialIndex;
+			m_dxManager.GetCommandList()->SetGraphicsRootDescriptorTable(1, materialHeapHandle);
+			m_dxManager.GetCommandList()->DrawIndexedInstanced(s.faceCount, 1, s.faceStart, 0, 0);
+		}
+	}
+
+	models.clear();
 }
 
-void ObjRenderer::CreateRootSignature() {
+void Renderer::Shutdown() {
+}
+
+void Renderer::AddModel(std::shared_ptr<ModelData> model) {
+	models.push_back(model);
+}
+
+void Renderer::CreateRootSignature() {
 	CD3DX12_DESCRIPTOR_RANGE descTblRanges[3]{};
 	descTblRanges[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);
 	descTblRanges[1].Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 1);
@@ -49,18 +87,18 @@ void ObjRenderer::CreateRootSignature() {
 
 	ComPtr<ID3DBlob> rootSignatureBlob;
 	ComPtr<ID3DBlob> errorBlob;
-	auto result = D3D12SerializeRootSignature(&rootSignatureDesc, 
+	auto result = D3D12SerializeRootSignature(&rootSignatureDesc,
 		D3D_ROOT_SIGNATURE_VERSION_1_0, &rootSignatureBlob, &errorBlob);
 	_ASSERT_EXPR(SUCCEEDED(result), L"ルートシグネチャのシリアル化に失敗しました");
 
-	result = m_dxManager.GetDevice()->CreateRootSignature(0, rootSignatureBlob->GetBufferPointer(), 
+	result = m_dxManager.GetDevice()->CreateRootSignature(0, rootSignatureBlob->GetBufferPointer(),
 		rootSignatureBlob->GetBufferSize(), IID_PPV_ARGS(m_rootSignature.ReleaseAndGetAddressOf()));
 	_ASSERT_EXPR(SUCCEEDED(result), L"ルートシグネチャの生成に失敗しました");
 }
 
-void ObjRenderer::CreatePipeline() {
-	ComPtr<ID3DBlob> vsBlob = m_graphicsManager.GetShader("ObjVS");
-	ComPtr<ID3DBlob> psBlob = m_graphicsManager.GetShader("ObjPS");
+void Renderer::CreatePipeline() {
+	ComPtr<ID3DBlob> vsBlob = m_graphicsManager.GetShader("KadaiVS");
+	ComPtr<ID3DBlob> psBlob = m_graphicsManager.GetShader("KadaiPS");
 
 	D3D12_INPUT_ELEMENT_DESC inputLayout[] =
 	{
@@ -102,7 +140,7 @@ void ObjRenderer::CreatePipeline() {
 	gpipeline.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
 	gpipeline.SampleDesc.Count = 1;
 
-	auto result = m_dxManager.GetDevice()->CreateGraphicsPipelineState(&gpipeline, 
+	auto result = m_dxManager.GetDevice()->CreateGraphicsPipelineState(&gpipeline,
 		IID_PPV_ARGS(m_pipelineState.ReleaseAndGetAddressOf()));
 	_ASSERT_EXPR(SUCCEEDED(result), L"パイプラインの生成に失敗しました");
 }

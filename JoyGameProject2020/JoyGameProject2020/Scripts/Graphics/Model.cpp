@@ -1,26 +1,16 @@
-#include "ObjModel.h"
+#include "Model.h"
 #include <fstream>
 #include "Base/DirectXManager.h"
 #include "Graphics/GraphicsManager.h"
 #include "Utility/FileUtility.h"
 #include "Device/Camera.h"
 #include "GameObject/GameObject.h"
-#include "Graphics/Texture.h"
+#include "Texture.h"
+#include "Light.h"
+#include "Renderer.h"
+#include "Math/MathUtil.h"
 
-ObjModel::ObjModel(const ObjModel& other) :
-	m_dxManager(other.m_dxManager),
-	m_graphicsManager(other.m_graphicsManager),
-	m_vbView(other.m_vbView),
-	m_ibView(other.m_ibView),
-	m_subsets(other.m_subsets),
-	m_textureMap(other.m_textureMap),
-	m_materials(other.m_materials),
-	m_materialDescHeap(other.m_materialDescHeap) {
-
-	CreateTransformBuffer();
-}
-
-ObjModel::ObjModel(const std::string& filePath) :
+ModelData::ModelData(const std::string& filePath, bool smooth) :
 	m_dxManager(DirectXManager::Instance()),
 	m_graphicsManager(GraphicsManager::Instance()),
 	m_vbView(),
@@ -28,64 +18,62 @@ ObjModel::ObjModel(const std::string& filePath) :
 
 	m_directory = FileUtility::GetDirectory(filePath);
 
-	LoadObj(filePath);
+	LoadObj(filePath, smooth);
 	LoadMtl(m_directory + m_matName);
 
 	CreateVertexBuffer();
 	CreateIndexBuffer();
 	CreateTransformBuffer();
-	CreateMaterialBuffer();
 }
 
-ObjModel::~ObjModel() {
+ModelData::ModelData(const ModelData& other) :
+	m_dxManager(other.m_dxManager),
+	m_graphicsManager(other.m_graphicsManager),
+	m_vertices(other.m_vertices),
+	m_indices(other.m_indices),
+	m_vbView(other.m_vbView),
+	m_ibView(other.m_ibView),
+	vertexCount(other.vertexCount),
+	indexCount(other.indexCount),
+	m_subsets(other.m_subsets),
+	m_textureMap(other.m_textureMap),
+	m_materials(other.m_materials),
+	m_materialDescHeap(other.m_materialDescHeap) {
+	CreateTransformBuffer();
 }
 
-void ObjModel::Draw(GameObject* gameObject) {
-	UpdateConstantBuffer(gameObject);
-
-	m_dxManager.GetCommandList()->IASetVertexBuffers(0, 1, &m_vbView);
-	m_dxManager.GetCommandList()->IASetIndexBuffer(&m_ibView);
-	m_dxManager.GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	ComPtr<ID3D12DescriptorHeap> transformHeaps[] = { m_transformDescHeap.Get() };
-	m_dxManager.GetCommandList()->SetDescriptorHeaps(_countof(transformHeaps), transformHeaps->GetAddressOf());
-	m_dxManager.GetCommandList()->SetGraphicsRootDescriptorTable(0,
-		m_transformDescHeap->GetGPUDescriptorHandleForHeapStart());
-
-	ComPtr<ID3D12DescriptorHeap> materialHeaps[] = { m_materialDescHeap.Get() };
-	m_dxManager.GetCommandList()->SetDescriptorHeaps(_countof(materialHeaps), materialHeaps->GetAddressOf());
-
-	auto cbvsrvIncSize = m_dxManager.GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV) * 5;
-
-	for (auto& s : m_subsets) {
-		auto materialHeapHandle = m_materialDescHeap->GetGPUDescriptorHandleForHeapStart();
-		materialHeapHandle.ptr += (UINT64)cbvsrvIncSize * s.materialIndex;
-		m_dxManager.GetCommandList()->SetGraphicsRootDescriptorTable(1, materialHeapHandle);
-		m_dxManager.GetCommandList()->DrawIndexedInstanced(s.faceCount, 1, s.faceStart, 0, 0);
-	}
-}
-
-void ObjModel::UpdateConstantBuffer(GameObject* gameObject) {
-	Transform* transformMap = nullptr;
-	m_transformBuffer->Map(0, nullptr, (void**)&transformMap);
-	transformMap->world =
-		Matrix4::Scale(gameObject->GetScale()) *
-		Matrix4::RotationFromQuaternion(gameObject->transform.rotation) *
-		gameObject->billboard *
-		Matrix4::Translate(gameObject->GetPosition());
-	transformMap->rot = Matrix4::RotationFromQuaternion(gameObject->transform.rotation);
-	transformMap->view = Camera::Instance().GetViewMatrix();
-	transformMap->proj = Camera::Instance().GetProjectionMatrix();
-	transformMap->mvp = transformMap->world * transformMap->view * transformMap->proj;
-	transformMap->lightDir = Vector3(0, -1, 1).Normalize();
+ModelData::~ModelData() {
 	m_transformBuffer->Unmap(0, nullptr);
 }
 
-void ObjModel::LoadObj(const std::string& filePath) {
+void ModelData::UpdateConstantBuffer(GameObject* gameObject) {
+
+	auto world = Matrix4::Scale(gameObject->GetScale()) *
+		Matrix4::RotationFromQuaternion(gameObject->transform.rotation) *
+		gameObject->billboard *
+		Matrix4::Translate(gameObject->GetPosition());
+	auto view = Camera::Instance().GetViewMatrix();
+	auto proj = Camera::Instance().GetProjectionMatrix();
+	auto mvp = world * view * proj;
+
+	transformMap->world = world;
+
+	transformMap->rot = Matrix4::RotationFromQuaternion(gameObject->transform.rotation);
+	transformMap->view = view;
+	transformMap->proj = proj;
+	transformMap->mvp = mvp;
+	transformMap->cameraPos = Camera::Instance().GetPosition();
+	transformMap->cameraDir = Vector3(0, 1, 0) * Camera::Instance().GetRotationMatrix();
+	transformMap->lightDir = Light::Instance().GetLightVec().Normalize();
+	transformMap->lightColor = Light::Instance().lightColor;
+}
+
+void ModelData::LoadObj(const std::string& filePath, bool smooth) {
 	std::vector<Vector3> tmpVertices;
 	std::vector<Vector3> tmpNormals;
 	std::vector<Vector2> tmpUVs;
 	std::map<std::string, UINT> tmpMatIndexMap;
+	std::map<USHORT, std::vector<USHORT>> smoothData;
 	int subsetIndex = -1;
 	int matIndex = -1;
 
@@ -154,6 +142,9 @@ void ObjModel::LoadObj(const std::string& filePath) {
 				vertex.normal = tmpNormals[normalIndex - 1];
 				vertex.uv = tmpUVs[uvIndex - 1];
 				m_vertices.push_back(vertex);
+				if (smooth) {
+					smoothData[positionIndex - 1].push_back(m_vertices.size() - 1);
+				}
 
 				if (' ' == fin.peek()) {
 					fin.get();
@@ -174,9 +165,25 @@ void ObjModel::LoadObj(const std::string& filePath) {
 			}
 		}
 	}
+
+	for (int i = 0; i < tmpVertices.size(); ++i) {
+		auto vertexIndices = smoothData[i];
+
+		Vector3 average;
+		for (int j = 0; j < vertexIndices.size(); ++j) {
+			average += m_vertices[vertexIndices[j]].normal;
+		}
+		average /= vertexIndices.size();
+		for (int j = 0; j < vertexIndices.size(); ++j) {
+			m_vertices[vertexIndices[j]].normal = average;
+		}
+	}
+
+	vertexCount = m_vertices.size();
+	indexCount = m_indices.size();
 }
 
-void ObjModel::LoadMtl(const std::string& filePath) {
+void ModelData::LoadMtl(const std::string& filePath) {
 	std::fstream fin;
 	char buffer[128]{};
 	int matCount = -1;
@@ -252,7 +259,7 @@ void ObjModel::LoadMtl(const std::string& filePath) {
 	}
 }
 
-void ObjModel::CreateVertexBuffer() {
+void ModelData::CreateVertexBuffer() {
 	auto heapprop = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
 	auto resdesc = CD3DX12_RESOURCE_DESC::Buffer(m_vertices.size() * sizeof(m_vertices[0]));
 	auto result = DirectXManager::Instance().GetDevice()->CreateCommittedResource(
@@ -277,7 +284,7 @@ void ObjModel::CreateVertexBuffer() {
 	m_vbView.StrideInBytes = sizeof(m_vertices[0]);
 }
 
-void ObjModel::CreateIndexBuffer() {
+void ModelData::CreateIndexBuffer() {
 	auto heapprop = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
 	auto resdesc = CD3DX12_RESOURCE_DESC::Buffer(m_indices.size() * sizeof(m_indices[0]));
 	auto result = DirectXManager::Instance().GetDevice()->CreateCommittedResource(
@@ -302,7 +309,7 @@ void ObjModel::CreateIndexBuffer() {
 	m_ibView.SizeInBytes = (UINT)m_indices.size() * sizeof(m_indices[0]);
 }
 
-void ObjModel::CreateTransformBuffer() {
+void ModelData::CreateTransformBuffer() {
 	UINT transformBufferSize = (sizeof(Transform) + 0xff) & ~0xff;
 
 	auto heapprop = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
@@ -316,6 +323,9 @@ void ObjModel::CreateTransformBuffer() {
 		IID_PPV_ARGS(m_transformBuffer.ReleaseAndGetAddressOf())
 	);
 	_ASSERT_EXPR(SUCCEEDED(result), L"バッファの生成に失敗しました。");
+
+	/* 割り当てだけしておく */
+	m_transformBuffer->Map(0, nullptr, (void**)&transformMap);
 
 	/* NumDescriptorsの個数分のヒープを確保 */
 	D3D12_DESCRIPTOR_HEAP_DESC descHeapDesc{};
@@ -337,7 +347,7 @@ void ObjModel::CreateTransformBuffer() {
 		m_transformDescHeap->GetCPUDescriptorHandleForHeapStart());
 }
 
-void ObjModel::CreateMaterialBuffer() {
+void ModelData::CreateMaterialBuffer() {
 
 	UINT materialBufferSize = (sizeof(SurfaceMaterial) + 0xff) & ~0xff;
 
@@ -417,4 +427,34 @@ void ObjModel::CreateMaterialBuffer() {
 			textureBuffer, &srvDesc, descHandle);
 		descHandle.ptr += incSize;
 	}
+}
+
+Model::Model(const std::string& modelname) :
+	renderer(Renderer::Instance()) {
+	modeldata = GraphicsManager::Instance().GetModelData(modelname);
+	modeldata->CreateMaterialBuffer();
+}
+
+Model::~Model() {
+}
+
+void Model::Update() {
+	modeldata->UpdateConstantBuffer(gameObject.lock().get());
+	renderer.AddModel(modeldata);
+}
+
+void Model::SetTexture(int matNum, const std::string& texName) {
+	auto textureBuffer = GraphicsManager::Instance().GetTexture(texName).get()->GetBuffer();
+
+	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
+	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MipLevels = 1;
+
+	auto descHandle = modeldata.get()->m_materialDescHeap->GetCPUDescriptorHandleForHeapStart();
+	auto incSize = modeldata.get()->m_dxManager.GetDevice()->GetDescriptorHandleIncrementSize(
+		D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	descHandle.ptr += (matNum * 5 + 2) * incSize;
+	modeldata.get()->m_dxManager.GetDevice()->CreateShaderResourceView(
+		textureBuffer, &srvDesc, descHandle);
 }

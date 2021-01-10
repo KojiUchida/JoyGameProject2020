@@ -1,5 +1,5 @@
 #include "GameObject.h"
-#include "Component/Component.h"
+#include "GameObject/Component.h"
 
 GameObject::GameObject() :
 	m_isDestroy(false),

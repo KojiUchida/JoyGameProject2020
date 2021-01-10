@@ -1,7 +1,7 @@
 #include "Particle.h"
 #include "GameObject/GameObject.h"
 #include "GameObject/GameObjectManager.h"
-#include "Component/Draw/ObjRenderer.h"
+#include "Graphics/Model.h"
 
 Particle::Particle()
 {
@@ -17,7 +17,7 @@ void Particle::Init()
 	m_objManager = std::make_shared<GameObjectManager>();
 
 	obj = std::make_shared<GameObject>();
-	obj->AddComponent(std::make_shared<ObjRenderer>("plane"));
+	obj->AddComponent(std::make_shared<Model>("plane"));
 	obj->SetRotation(Vector3(-90, 0, 0));
 	obj->SetScale(Vector3(scale));
 

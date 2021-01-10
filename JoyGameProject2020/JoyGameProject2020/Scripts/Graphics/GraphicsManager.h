@@ -14,6 +14,7 @@ using namespace Microsoft::WRL;
 class DirectXManager;
 class Texture;
 class ObjModel;
+class ModelData;
 class GraphicsManager {
 private:
 	GraphicsManager();
@@ -33,12 +34,13 @@ public:
 	ComPtr<ID3DBlob> GetShader(const std::string& shaderName);
 	void CheckShaderCompileResult(HRESULT result, ID3DBlob* error);
 
-	void LoadModel(const std::string& filePath, const std::string& modelName);
-	ObjModel* GetObjModel(const std::string& modelName);
+	void LoadModelData(const std::string& filePath, const std::string& modelName, bool smooth = false);
+	std::shared_ptr<ModelData> GetModelData(const std::string& modelName);
 
 private:
 	std::map<std::string, std::shared_ptr<Texture>> m_textureMap;
-	std::map<std::string, std::unique_ptr<ObjModel>> m_objModelMap;
+	std::map<std::string, std::shared_ptr<ObjModel>> m_objModelMap;
+	std::map<std::string, std::shared_ptr<ModelData>> m_modelDataMap;
 	std::map<std::string, ComPtr<ID3DBlob>> m_shaderMap;
 };
 

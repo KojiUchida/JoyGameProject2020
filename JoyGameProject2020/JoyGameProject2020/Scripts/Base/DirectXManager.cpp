@@ -43,14 +43,6 @@ void DirectXManager::InitDXGI() {
 		D3D_FEATURE_LEVEL_11_0,
 	};
 
-	for (int i = 0; i < _countof(levels); ++i) {
-		result = D3D12CreateDevice(nullptr, levels[i],
-			IID_PPV_ARGS(m_device.ReleaseAndGetAddressOf()));
-		if (SUCCEEDED(result)) {
-			break;
-		}
-	}
-
 	result = CreateDXGIFactory1(IID_PPV_ARGS(m_factory.ReleaseAndGetAddressOf()));
 	_ASSERT_EXPR(SUCCEEDED(result), L"DXGIFactory1‚Ì¶¬‚ÉŽ¸”s‚µ‚Ü‚µ‚½");
 
@@ -68,6 +60,14 @@ void DirectXManager::InitDXGI() {
 		if (strDesc.find(L"Microsoft") == std::wstring::npos &&
 			strDesc.find(L"Intel") == std::wstring::npos) {
 			tmpAdapters = adapters[i];
+			break;
+		}
+	}
+
+	for (int i = 0; i < _countof(levels); ++i) {
+		result = D3D12CreateDevice(tmpAdapters.Get(), levels[i],
+			IID_PPV_ARGS(m_device.ReleaseAndGetAddressOf()));
+		if (SUCCEEDED(result)) {
 			break;
 		}
 	}
@@ -213,7 +213,7 @@ void DirectXManager::EndScene() {
 	WaitForCommandQueue();
 	m_cmdAllocator->Reset();
 	m_cmdList->Reset(m_cmdAllocator.Get(), nullptr);
-	m_swapchain->Present(0, 0);
+	m_swapchain->Present(1, 0);
 }
 
 void DirectXManager::WaitForCommandQueue() {

@@ -6,7 +6,7 @@
 #include <vector>
 #include <d3dcompiler.h>
 #include <memory>
-#include "Component/Component.h"
+#include "GameObject/Component.h"
 #include "Math/Vector2.h"
 #include "Math/Vector3.h"
 #include "Math/Matrix4.h"
@@ -16,9 +16,11 @@ using namespace Microsoft::WRL;
 
 class DirectXManager;
 class GraphicsManager;
-class Sprite;
+class SpriteRenderer;
 class Texture;
 class Sprite : public Component {
+	friend SpriteRenderer;
+
 	struct Vertex {
 		Vector3 pos;
 		Vector2 uv;

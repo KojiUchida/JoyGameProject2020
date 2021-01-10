@@ -25,14 +25,11 @@ static HWND m_hwnd;
 static const float stickDeadZone = ANALOG_STICK_VALUE / 100.0f * STICK_DEAD_ZONE_PARCENT;
 
 HANDLE ds4Handle;
-HANDLE joyconHandle;
 BYTE* buf;
 OVERLAPPED overlapped;
 HIDP_CAPS caps;
 DWORD bytesRead;
 static DS4STATE ds4state;
-static DS4STATE previousDS4state;
-static JOYCONSTATE joystate;
 
 Input& Input::Instance() {
 	static Input instance;
@@ -113,7 +110,6 @@ bool Input::InitController(HWND hwnd) {
 
 	HDEVINFO deviceInfo;
 	deviceInfo = SetupDiGetClassDevs(&guid, NULL, hwnd, (DIGCF_PRESENT | DIGCF_DEVICEINTERFACE));
-	//_ASSERT_EXPR(deviceInfo != INVALID_HANDLE_VALUE)
 
 	SP_DEVICE_INTERFACE_DATA deviceInfoData;
 	deviceInfoData.cbSize = sizeof(SP_DEVICE_INTERFACE_DATA);
@@ -122,20 +118,20 @@ bool Input::InitController(HWND hwnd) {
 		SetupDiEnumDeviceInterfaces(deviceInfo, 0, &guid, index, &deviceInfoData);
 		++index) {
 		DWORD requiredLength;
-		// デバイスパスを含む構造体のサイズを取得
+		/* デバイスパスを含む構造体のサイズを取得 */
 		SetupDiGetDeviceInterfaceDetail(deviceInfo, &deviceInfoData, NULL, 0, &requiredLength, NULL);
-		// 取得したサイズを元にバッファを確保
+		/* 取得したサイズを元にバッファを確保 */
 		LPBYTE deviceDetailDataBuffer = new BYTE[requiredLength];
 		PSP_DEVICE_INTERFACE_DETAIL_DATA deviceDetailData = (PSP_DEVICE_INTERFACE_DETAIL_DATA)deviceDetailDataBuffer;
 		deviceDetailData->cbSize = sizeof(SP_DEVICE_INTERFACE_DETAIL_DATA);
-		// デバイスパスを取得
+		/* デバイスパスを取得 */
 		SetupDiGetDeviceInterfaceDetail(deviceInfo, &deviceInfoData, deviceDetailData, requiredLength, &requiredLength, NULL);
-		// デバイスパスをコピー
+		/* デバイスパスをコピー*/
 		paths.push_back(deviceDetailData->DevicePath);
-		// バッファ削除
+		/* バッファ削除 */
 		delete[] deviceDetailDataBuffer;
 	}
-	// 使用したデバイス情報の破棄
+	/* 使用したデバイス情報の破棄 */
 	SetupDiDestroyDeviceInfoList(deviceInfo);
 
 	for (auto i = 0; i < paths.size(); ++i) {
@@ -160,23 +156,10 @@ bool Input::InitController(HWND hwnd) {
 
 				buf = new BYTE[caps.InputReportByteLength];
 				ZeroMemory(buf, caps.InputReportByteLength);
+
 				overlapped = {};
 				overlapped.hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
 
-				HidD_FreePreparsedData(preparsedData);
-				break;
-			}
-			if (deviceNameString.find(L"Gamepad") != std::wstring::npos) {
-				joyconHandle = handle;
-
-				HidP_GetCaps(preparsedData, &caps);
-
-				buf = new BYTE[caps.InputReportByteLength];
-				ZeroMemory(buf, caps.InputReportByteLength);
-				overlapped = {};
-				overlapped.hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
-
-				HidD_FreePreparsedData(preparsedData);
 				break;
 			}
 
@@ -220,9 +203,7 @@ void Input::Update() {
 		result = devjoystick->GetDeviceState(sizeof(DIJOYSTATE), &currentJoyState);
 	}
 
-	if (ds4Handle) {
-		previousDS4state = ds4state;
-
+	if (buf) {
 		auto a = ReadFile(ds4Handle, buf, caps.InputReportByteLength, &bytesRead, &overlapped);
 
 		/* スティック */
@@ -262,33 +243,16 @@ void Input::Update() {
 		ds4state.accelX = ((buf[20] << 8) | buf[19]);
 		ds4state.accelY = ((buf[22] << 8) | buf[21]);
 		ds4state.accelZ = ((buf[24] << 8) | buf[23]);
-	}
 
-	if (joyconHandle) {
-		auto a = ReadFile(joyconHandle, buf, caps.InputReportByteLength, &bytesRead, &overlapped);
-		auto b =  HRESULT_FROM_WIN32(GetLastError());
-
-		/* ジャイロ */
-		joystate.gyroX = ((buf[32] << 8) | buf[31]);
-		joystate.gyroY = ((buf[34] << 8) | buf[33]);
-		joystate.gyroZ = ((buf[36] << 8) | buf[35]);
-
-		/* 加速 */
-		joystate.accelX = ((buf[20] << 8) | buf[19]);
-		joystate.accelY = ((buf[22] << 8) | buf[21]);
-		joystate.accelZ = ((buf[24] << 8) | buf[23]);
+		//std::cout << a << std::endl;
+		std::cout << "ジャイロ : X = " << -ds4state.gyroX + 2 << " ジャイロ : Y = " << -ds4state.gyroY << " ジャイロ : Z = " << ds4state.gyroZ + 18 << std::endl;
+		//std::cout << "ジャイロ : X = " << Gyro().x << " ジャイロ : Y = " << Gyro().y << " ジャイロ : Z = " << Gyro().z << std::endl;
 	}
 }
 
 void Input::Shutdown() {
 	delete buf;
 	buf = nullptr;
-	if(ds4Handle){
-		CloseHandle(ds4Handle);
-	}
-	if (joyconHandle) {
-		CloseHandle(joyconHandle);
-	}
 }
 
 bool Input::IsKeyDown(BYTE key) {
@@ -395,10 +359,13 @@ Vector2 Input::RightStickValue() {
 }
 
 Vector3 Input::Gyro() {
+	/*auto gyro = Vector3(-ds4state.gyroX, -ds4state.gyroY, ds4state.gyroZ) / 0xffff * 360.0f;
+	return Vector3((int)gyro.x, (int)gyro.y, (int)gyro.z);*/
+
 	/* コントローラーを固定しても数値がぶれるため、0に近い値になるように調整している */
 	auto gyro = Vector3(-ds4state.gyroX + 1.5f, -ds4state.gyroY + 0.5f, ds4state.gyroZ + 19) / 0xffff * 360.0f;
 
-	gyro.x = abs(gyro.x) < 0.1f ? 0 : gyro.x;
+	gyro.x = abs(gyro.x) < 0.1f ? 0  : gyro.x;
 	gyro.y = abs(gyro.y) < 0.1f ? 0 : gyro.y;
 	gyro.z = abs(gyro.z) < 0.1f ? 0 : gyro.z;
 
@@ -406,18 +373,7 @@ Vector3 Input::Gyro() {
 }
 
 Vector3 Input::Accel() {
-	//return Vector3(ds4state.accelX, ds4state.accelY, ds4state.accelZ) / 0xffff * 360.0f;
-	auto accel = Vector3(
-		previousDS4state.accelX - ds4state.accelX,
-		previousDS4state.accelY - ds4state.accelY, 
-		previousDS4state.accelZ - ds4state.accelZ
-	) / 0xffff * 1000.0f;
-
-	accel.x = abs(accel.x) < 1 ? 0 : accel.x;
-	accel.y = abs(accel.y) < 1 ? 0 : accel.y;
-	accel.z = abs(accel.z) < 1 ? 0 : accel.z;
-
-	return accel;
+	return Vector3(ds4state.accelX, ds4state.accelY, ds4state.accelZ) / 0xffff * 360.0f;
 }
 
 BOOL Input::EnumJoystickCallBack(const DIDEVICEINSTANCE* pdidInstance, VOID* pContext) {

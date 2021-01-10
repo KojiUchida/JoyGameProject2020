@@ -11,9 +11,13 @@ cbuffer sceneBuffer : register(b0) {
 	matrix view;
 	matrix proj;
 	matrix mvp;
+	float3 cameraPos;
+	float alignment;
+	float3 cameraDir;
+	float alignmen2t;
 	float3 lightDir;
-	float3 texturepos;
-	float2 textureWH;
+	float alignment3;
+	float3 lightColor;
 };
 
 cbuffer materialBuffer : register(b1) {
@@ -26,6 +30,7 @@ cbuffer materialBuffer : register(b1) {
 
 struct VSOutput {
 	float4 svpos : SV_POSITION;
-	float4 normal : NORMAL;
+	float4 worldpos : POSITION;
+	float3 normal : NORMAL;
 	float2 uv : TEXCOORD;
 };

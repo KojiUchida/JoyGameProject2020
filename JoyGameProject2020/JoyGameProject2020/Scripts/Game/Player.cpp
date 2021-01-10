@@ -1,5 +1,5 @@
 #include "Player.h"
-#include "Component/Draw/ObjRenderer.h"
+#include "Graphics/Model.h"
 #include "Math/Matrix4.h"
 #include "Math/MathUtil.h"
 #include "Device/GameTime.h"
@@ -25,7 +25,7 @@ Player::~Player() {
 }
 
 void Player::Init() {
-	AddComponent(std::make_shared<ObjRenderer>("dosei"));
+	AddComponent(std::make_shared<Model>("dosei"));
 	SetScale(Vector3(0.05f));
 
 	attackTimer = std::make_unique<Timer>(1.0f);

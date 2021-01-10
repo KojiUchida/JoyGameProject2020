@@ -1,6 +1,6 @@
 #include "GameObjectManager.h"
 #include "GameObject.h"
-#include "Component/Component.h"
+#include "GameObject/Component.h"
 
 GameObjectManager::GameObjectManager() {
 }
@@ -9,18 +9,6 @@ GameObjectManager::~GameObjectManager() {
 }
 
 void GameObjectManager::Update() {
-	for (const auto& o : m_gameObjects) {
-		o->Update();
-
-		for (const auto& c : o->m_components) {
-			c->Update();
-		}
-
-		for (const auto& c : o->m_children) {
-			c->Update();
-		}
-	}
-
 	for (unsigned int i = 0; i < m_gameObjects.size();) {
 		if (m_gameObjects[i]->m_isDestroy) {
 
@@ -40,6 +28,18 @@ void GameObjectManager::Update() {
 			continue;
 		}
 		++i;
+	}
+
+	for (const auto& o : m_gameObjects) {
+		o->Update();
+
+		for (const auto& c : o->m_components) {
+			c->Update();
+		}
+
+		for (const auto& c : o->m_children) {
+			c->Update();
+		}
 	}
 }
 

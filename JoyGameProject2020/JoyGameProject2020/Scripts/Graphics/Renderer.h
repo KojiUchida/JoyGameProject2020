@@ -1,25 +1,30 @@
 #pragma once
+#include <vector>
 #include <d3d12.h>
 #include <d3dx12.h>
 #include <wrl.h>
-#include <string>
 #include <memory>
-
-#include "Component/Component.h"
 
 using namespace Microsoft::WRL;
 
 class DirectXManager;
 class GraphicsManager;
-class ObjModel;
-class ObjRenderer : public Component {
+class ModelData;
+class Renderer {
+private:
+	Renderer();
+	~Renderer();
+	Renderer(const Renderer&) = delete;
+	void operator=(const Renderer&) = delete;
 
 public:
-	ObjRenderer(const std::string& modelName);
-	~ObjRenderer();
-
-	virtual void Update() override;
+	static Renderer& Instance();
+	void Init();
+	void Update();
 	void Draw();
+	void Shutdown();
+
+	void AddModel(std::shared_ptr<ModelData> model);
 
 	void CreateRootSignature();
 	void CreatePipeline();
@@ -27,12 +32,8 @@ public:
 private:
 	DirectXManager& m_dxManager;
 	GraphicsManager& m_graphicsManager;
-
-	/* パイプライン */
 	ComPtr<ID3D12RootSignature> m_rootSignature;
 	ComPtr<ID3D12PipelineState> m_pipelineState;
-
-	std::shared_ptr<ObjModel> m_model;
-
+	std::vector<std::shared_ptr<ModelData>> models;
 };
 

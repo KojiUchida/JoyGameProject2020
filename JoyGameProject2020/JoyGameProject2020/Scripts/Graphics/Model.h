@@ -12,6 +12,7 @@
 #include "Math/Vector2.h"
 #include "Math/Vector3.h"
 #include "Math/Matrix4.h"
+#include "GameObject/Component.h"
 
 using namespace Microsoft::WRL;
 
@@ -19,8 +20,8 @@ class DirectXManager;
 class GraphicsManager;
 class GameObject;
 class Texture;
-class ObjModel {
-private:
+class ModelData {
+public:
 	struct Vertex {
 		Vector3 position;
 		Vector3 normal;
@@ -39,7 +40,13 @@ private:
 		Matrix4 view;
 		Matrix4 proj;
 		Matrix4 mvp;
+		Vector3 cameraPos;
+		float alignment;
+		Vector3 cameraDir;
+		float alignment2;
 		Vector3 lightDir;
+		float alignment3;
+		Vector3 lightColor;
 	};
 
 	struct SurfaceMaterial {
@@ -64,22 +71,18 @@ private:
 	};
 
 public:
-	ObjModel(const ObjModel& other);
-	ObjModel(const std::string& filePath);
-	~ObjModel();
+	ModelData(const std::string& filePath, bool smooth = false);
+	ModelData(const ModelData& other);
+	~ModelData();
 
-	void Draw(GameObject* gameObject);
-
-private:
 	void UpdateConstantBuffer(GameObject* gameObject);
-	void LoadObj(const std::string& filePath);
+	void LoadObj(const std::string& filePath, bool smooth);
 	void LoadMtl(const std::string& filePath);
 	void CreateVertexBuffer();
 	void CreateIndexBuffer();
 	void CreateTransformBuffer();
 	void CreateMaterialBuffer();
 
-private:
 	DirectXManager& m_dxManager;
 	GraphicsManager& m_graphicsManager;
 
@@ -90,6 +93,8 @@ private:
 	ComPtr<ID3D12Resource> m_indexBuffer;
 	D3D12_VERTEX_BUFFER_VIEW m_vbView;
 	D3D12_INDEX_BUFFER_VIEW m_ibView;
+	unsigned int vertexCount;
+	unsigned int indexCount;
 
 	std::vector<Subset> m_subsets;
 
@@ -104,7 +109,18 @@ private:
 	ComPtr<ID3D12DescriptorHeap> m_materialDescHeap;
 
 	std::map<std::string, Texture> m_textureMap;
-
-	std::string texturename;
+	Transform* transformMap = nullptr;
 };
 
+class Renderer;
+class Model : public Component {
+public:
+	Model(const std::string& modelname);
+	~Model();
+
+	virtual void Update() override;
+	void SetTexture(int matNum, const std::string& texName);
+
+	std::shared_ptr<ModelData> modeldata;
+	Renderer& renderer;
+};

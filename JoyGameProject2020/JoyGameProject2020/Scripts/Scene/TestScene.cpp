@@ -6,8 +6,9 @@
 #include "GameObject/GameObjectManager.h"
 #include "Math/Vector2.h"
 #include "Math/Vector3.h"
-#include "Component/Draw/ObjRenderer.h"
-#include "Component/Draw/Sprite.h"
+#include "Graphics/Model.h"
+#include "Graphics/Sprite.h"
+#include "Graphics/Light.h"
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_impl_win32.h"
 #include "ImGui/imgui_impl_dx12.h"
@@ -18,7 +19,8 @@
 
 TestScene::TestScene() :
 	m_camera(Camera::Instance()),
-	m_isFreeCam(false) {
+	m_isFreeCam(false),
+	m_light(Light::Instance()) {
 }
 
 TestScene::~TestScene() {
@@ -26,6 +28,7 @@ TestScene::~TestScene() {
 
 void TestScene::Init() {
 	m_camera.SetPosition(Vector3(0, 0, -10));
+	m_light.SetRotate(Vector3(-90, 0, 0));
 
 	m_objManager = std::make_shared<GameObjectManager>();
 
@@ -33,19 +36,19 @@ void TestScene::Init() {
 	m_objManager->Add(player);
 
 	auto ground = std::make_shared<GameObject>();
-	ground->AddComponent(std::make_shared<ObjRenderer>("cube"));
+	ground->AddComponent(std::make_shared<Model>("cube"));
 	ground->SetPosition(Vector3(0, -30, 0));
 	ground->SetScale(Vector3(100, 25, 1));
 	m_objManager->Add(ground);
 
 	auto wall1 = std::make_shared<GameObject>();
-	wall1->AddComponent(std::make_shared<ObjRenderer>("cube"));
+	wall1->AddComponent(std::make_shared<Model>("cube"));
 	wall1->SetPosition(Vector3(-120, 25, 0));
 	wall1->SetScale(Vector3(50, 1000, 1));
 	m_objManager->Add(wall1);
 
 	auto wall2 = std::make_shared<GameObject>();
-	wall2->AddComponent(std::make_shared<ObjRenderer>("cube"));
+	wall2->AddComponent(std::make_shared<Model>("cube"));
 	wall2->SetPosition(Vector3(120, 25, 0));
 	wall2->SetScale(Vector3(50, 1000, 1));
 	m_objManager->Add(wall2);
@@ -62,13 +65,13 @@ void TestScene::Init() {
 		height += heightInterval + ydif * y;
 
 		auto obj1 = std::make_shared<GameObject>();
-		obj1->AddComponent(std::make_shared<ObjRenderer>("cube"));
+		obj1->AddComponent(std::make_shared<Model>("cube"));
 		obj1->SetPosition(Vector3(-60 + wdif * w, height, 0));
 		obj1->SetScale(Vector3(50, 1, 1));
 		m_objManager->Add(obj1);
 
 		auto obj2 = std::make_shared<GameObject>();
-		obj2->AddComponent(std::make_shared<ObjRenderer>("cube"));
+		obj2->AddComponent(std::make_shared<Model>("cube"));
 		obj2->SetPosition(Vector3(60 + wdif * w, height, 0));
 		obj2->SetScale(Vector3(50, 1, 1));
 		m_objManager->Add(obj2);

@@ -1,6 +1,6 @@
 #pragma once
 #include <memory>
-#include "Component/Component.h"
+#include "GameObject/Component.h"
 #include "Math/Vector3.h"
 #include "Math/Matrix4.h"
 #include "GameObject/GameObject.h"

@@ -8,6 +8,7 @@ class GameObject;
 class GameObjectManager;
 class Camera;
 class Player;
+class Light;
 class TestScene : public IScene {
 
 public:
@@ -28,6 +29,7 @@ private:
 	std::shared_ptr<Player> player;
 
 	Camera& m_camera;
+	Light& m_light;
 	bool m_isFreeCam;
 	bool m_showDebugMenu;
 };
