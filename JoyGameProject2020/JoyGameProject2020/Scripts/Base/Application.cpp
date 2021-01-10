@@ -5,7 +5,10 @@
 #include "Device/GameTime.h"
 #include "Scene/SceneManager.h"
 #include "Scene/TestScene.h"
-#include "Scene/TestScene2.h"
+#include "Scene/Title.h"
+#include "Scene/GamePlay.h"
+#include "Scene/GameOver.h"
+#include "Scene/Clear.h"
 #include "Graphics/GraphicsManager.h"
 #include "Component/Update/CollisionManager.h"
 #include "ImGui/imgui.h"
@@ -81,9 +84,13 @@ bool Application::Init() {
 	m_graphicsManager.LoadShader("Resources/Shaders/ObjPixelShader.hlsl", "PSmain", "ps_5_0", "ObjPS");
 
 	m_sceneManager = std::make_unique<SceneManager>();
-	m_sceneManager->AddScene(std::make_shared<TestScene>(), "Test");
-	m_sceneManager->AddScene(std::make_shared<TestScene2>(), "Test2");
-	m_sceneManager->ChangeScene("Test");
+	//m_sceneManager->AddScene(std::make_shared<TestScene>(), "Test");
+	//m_sceneManager->AddScene(std::make_shared<TestScene2>(), "Test2");
+	m_sceneManager->AddScene(std::make_shared<Title>(), "Title");
+	m_sceneManager->AddScene(std::make_shared<GamePlay>(), "GamePlay");
+	m_sceneManager->AddScene(std::make_shared<GameOver>(), "GameOver");
+	m_sceneManager->AddScene(std::make_shared<Clear>(), "Clear");
+	m_sceneManager->ChangeScene("Title");
 
 	/* ‚±‚±‚Ü‚Å‰Šú‰»ˆ— */
 

@@ -63,9 +63,6 @@ bool Title::IsEnd()
 void Title::GUIUpdate()
 {
 	auto& cam = Camera::Instance();
-	ImGui_ImplDX12_NewFrame();
-	ImGui_ImplWin32_NewFrame();
-	ImGui::NewFrame();
 
 	ImGui::StyleColorsDark();
 	ImGui::GetStyle().WindowRounding = 0;

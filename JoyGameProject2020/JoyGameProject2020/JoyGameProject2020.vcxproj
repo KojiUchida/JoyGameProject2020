@@ -144,6 +144,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Scripts\Component\Draw\Sprite.cpp" />
+    <ClCompile Include="Scripts\Game\Moe_Sprite.cpp" />
     <ClCompile Include="Scripts\Game\Player.cpp" />
     <ClCompile Include="Scripts\Base\Application.cpp" />
     <ClCompile Include="Scripts\Base\DirectXManager.cpp" />
@@ -180,9 +181,13 @@
     <ClCompile Include="Scripts\Math\Rect.cpp" />
     <ClCompile Include="Scripts\Math\Vector2.cpp" />
     <ClCompile Include="Scripts\Math\Vector3.cpp" />
+    <ClCompile Include="Scripts\Scene\Clear.cpp" />
+    <ClCompile Include="Scripts\Scene\GameOver.cpp" />
+    <ClCompile Include="Scripts\Scene\GamePlay.cpp" />
     <ClCompile Include="Scripts\Scene\SceneManager.cpp" />
     <ClCompile Include="Scripts\Scene\TestScene.cpp" />
     <ClCompile Include="Scripts\Scene\TestScene2.cpp" />
+    <ClCompile Include="Scripts\Scene\Title.cpp" />
     <ClCompile Include="Scripts\Utility\Color4.cpp" />
     <ClCompile Include="Scripts\Utility\FileUtility.cpp" />
     <ClCompile Include="Scripts\Utility\Random.cpp" />
@@ -190,6 +195,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scripts\Component\Draw\Sprite.h" />
+    <ClInclude Include="Scripts\Game\Moe_Sprite.h" />
     <ClInclude Include="Scripts\Game\Player.h" />
     <ClInclude Include="Scripts\Base\Application.h" />
     <ClInclude Include="Scripts\Base\DirectXManager.h" />
@@ -233,10 +239,14 @@
     <ClInclude Include="Scripts\Math\Transform.h" />
     <ClInclude Include="Scripts\Math\Vector2.h" />
     <ClInclude Include="Scripts\Math\Vector3.h" />
+    <ClInclude Include="Scripts\Scene\Clear.h" />
+    <ClInclude Include="Scripts\Scene\GameOver.h" />
+    <ClInclude Include="Scripts\Scene\GamePlay.h" />
     <ClInclude Include="Scripts\Scene\IScene.h" />
     <ClInclude Include="Scripts\Scene\SceneManager.h" />
     <ClInclude Include="Scripts\Scene\TestScene.h" />
     <ClInclude Include="Scripts\Scene\TestScene2.h" />
+    <ClInclude Include="Scripts\Scene\Title.h" />
     <ClInclude Include="Scripts\Utility\Color4.h" />
     <ClInclude Include="Scripts\Utility\FileUtility.h" />
     <ClInclude Include="Scripts\Utility\Random.h" />
