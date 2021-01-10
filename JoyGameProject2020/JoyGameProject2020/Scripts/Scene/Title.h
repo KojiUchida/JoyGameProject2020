@@ -1,14 +1,16 @@
 #pragma once
 #include "IScene.h"
 #include "GameObject/Event/EventManager.h"
-#include "GameObject/Particle/WaterSprash.h"
 
 class GameObject;
 class GameObjectManager;
-class TestScene2:public IScene
+class Title :public IScene 
 {
 public:
+	Title() {};
+	~Title() {};
 
+	// IScene ÇâÓÇµÇƒåpè≥Ç≥ÇÍÇ‹ÇµÇΩ
 	virtual void Init() override;
 
 	virtual void Update() override;
@@ -19,13 +21,8 @@ public:
 
 	virtual bool IsEnd() override;
 
+	virtual void GUIUpdate() override;
+
 private:
 	std::shared_ptr<GameObjectManager>m_objManager;
-	std::shared_ptr<GameObject>m_obj1;
-	std::shared_ptr<GameObject>m_obj2;
-	std::shared_ptr<GameObject>m_obj3;
-	std::shared_ptr<GameObject>m_obj4;
-	std::shared_ptr<GameObject>m_obj5;
-
-	WaterSprash*w;
 };

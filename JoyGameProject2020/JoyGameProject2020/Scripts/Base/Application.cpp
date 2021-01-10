@@ -6,6 +6,10 @@
 #include "Scene/SceneManager.h"
 #include "Scene/TestScene.h"
 #include "Scene/TestScene2.h"
+#include "Scene/Title.h"
+#include "Scene/GamePlay.h"
+#include "Scene/Clear.h"
+#include "Scene/GameOver.h"
 #include "Graphics/GraphicsManager.h"
 #include "Component/Update/CollisionManager.h"
 #include "ImGui/imgui.h"
@@ -65,6 +69,7 @@ bool Application::Init() {
 
 	m_graphicsManager.LoadTexture("Resources/Textures/ultnontan.jpg", "nontan");
 	m_graphicsManager.LoadTexture("Resources/Textures/ready.png", "ready");
+	m_graphicsManager.LoadTexture("Resources/Textures/number.png", "number");
 
 	m_graphicsManager.LoadModel("Resources/Models/cube/cube.obj", "cube");
 	m_graphicsManager.LoadModel("Resources/Models/dosei/dosei_quad.obj", "dosei");
@@ -76,11 +81,20 @@ bool Application::Init() {
 
 	m_graphicsManager.LoadShader("Resources/Shaders/ObjVertexShader.hlsl", "VSmain", "vs_5_0", "ObjVS");
 	m_graphicsManager.LoadShader("Resources/Shaders/ObjPixelShader.hlsl", "PSmain", "ps_5_0", "ObjPS");
+	m_graphicsManager.LoadShader("Resources/Shaders/NumberShader.hlsl", "VSmain", "vs_5_0", "NumberVS");
+	m_graphicsManager.LoadShader("Resources/Shaders/NumberShader.hlsl", "PSmain", "ps_5_0", "NumberPS");
+	m_graphicsManager.LoadShader("Resources/Shaders/SpriteShader.hlsl", "VSmain", "vs_5_0", "SpriteVS");
+	m_graphicsManager.LoadShader("Resources/Shaders/SpriteShader.hlsl", "GSmain", "gs_5_0", "SpriteGS");
+	m_graphicsManager.LoadShader("Resources/Shaders/SpriteShader.hlsl", "PSmain", "ps_5_0", "SpritePS");
 
 	m_sceneManager = std::make_unique<SceneManager>();
-	m_sceneManager->AddScene(std::make_shared<TestScene>(), "Test");
-	m_sceneManager->AddScene(std::make_shared<TestScene2>(), "Test2");
-	m_sceneManager->ChangeScene("Test2");
+	//m_sceneManager->AddScene(std::make_shared<TestScene>(), "Test");
+	//m_sceneManager->AddScene(std::make_shared<TestScene2>(), "Test2");
+	m_sceneManager->AddScene(std::make_shared<Title>(), "Title");
+	m_sceneManager->AddScene(std::make_shared<GamePlay>(), "GamePlay");
+	m_sceneManager->AddScene(std::make_shared<Clear>(), "Clear");
+	m_sceneManager->AddScene(std::make_shared<GameOver>(), "GameOver");
+	m_sceneManager->ChangeScene("Title");
 
 	/* ‚±‚±‚Ü‚Å‰Šú‰»ˆ— */
 
@@ -124,7 +138,7 @@ void Application::Shutdown() {
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
 
-	m_sceneManager->Shutdown();
+//	m_sceneManager->Shutdown();
 	m_input.Shutdown();
 	UnregisterClass(m_windowClass.lpszClassName, m_windowClass.hInstance);
 	ShowCursor(true);

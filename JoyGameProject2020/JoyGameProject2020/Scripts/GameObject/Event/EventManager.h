@@ -8,7 +8,7 @@ class EventManager
 public:
 	EventManager() {};
 	EventManager(const EventManager&) {};
-	EventManager&operator=(const EventManager&) {};
+	//EventManager&operator=(const EventManager&) {};
 	static EventManager&Instance();
 	~EventManager();
 
