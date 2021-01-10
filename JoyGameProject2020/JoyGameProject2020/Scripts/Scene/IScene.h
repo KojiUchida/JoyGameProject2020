@@ -14,5 +14,7 @@ public:
 	virtual std::string NextScene() = 0;
 	/* I—¹ğŒ */
 	virtual bool IsEnd() = 0;
+
+	virtual void GUIUpdate() = 0;
 };
 

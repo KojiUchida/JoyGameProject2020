@@ -12,6 +12,8 @@ cbuffer sceneBuffer : register(b0) {
 	matrix proj;
 	matrix mvp;
 	float3 lightDir;
+	float3 texturepos;
+	float2 textureWH;
 };
 
 cbuffer materialBuffer : register(b1) {

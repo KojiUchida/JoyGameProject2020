@@ -23,6 +23,9 @@ public:
 	/* 回転の取得 */
 	Vector3 GetRotation();
 
+	/* MOE ビルボード行列取得 */
+	Matrix4 GetBillboard();
+
 	/* zoom値の設定 */
 	void SetZoom(const float zoom);
 	/* zoom値の取得 */
