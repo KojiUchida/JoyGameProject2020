@@ -317,7 +317,7 @@ void Sprite::UpdateConstantBuffer() {
 		Matrix4::Translate(Vector3(0.5f - m_pivot.x, m_pivot.y - 0.5f, 0)) *
 		Matrix4::Scale(Vector3(m_flipX ? -obj->GetScale().x : obj->GetScale().x, m_flipY ? obj->GetScale().y : -obj->GetScale().y, 0)) *
 		Matrix4::RotateZ(-obj->GetRotation().z) *
-		Matrix4::Translate(Vector3(obj->GetPosition().x, obj->GetPosition().y, 0));
+		Matrix4::Translate(Vector3(obj->GetPosition().x, obj->GetPosition().y, obj->GetPosition().z));
 
 	auto mat = world * Camera::Instance().GetOrthoMatrix();
 

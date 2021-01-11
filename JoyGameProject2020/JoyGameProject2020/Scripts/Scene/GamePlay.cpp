@@ -6,6 +6,9 @@
 #include "Device/GameTime.h"
 #include "GameObject/GameObject.h"
 #include "GameObject/GameObjectManager.h"
+#include "GameObject/Event/EventManager.h"
+#include "GameObject/Event/StartCall.h"
+#include "Graphics/Sprite.h"
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_impl_win32.h"
 #include "ImGui/imgui_impl_dx12.h"
@@ -17,6 +20,8 @@ void GamePlay::Init()
 	cam.SetPosition(Vector3(0, 0, -10));
 
 	m_objManager = std::make_shared<GameObjectManager>();
+
+	EventManager::Instance().SetEvent(new HeightGage());
 }
 
 void GamePlay::Update()
@@ -36,11 +41,12 @@ void GamePlay::Update()
 	cam.SetRotation(cam.GetRotation() + rot);
 	cam.SetPosition(cam.GetPosition() + forward);
 
-	if (Input::IsKeyDown(DIK_Z))
+	if (Input::IsKeyDown(DIK_S))
 	{
-		//eventManager->SetEvent(new StartCall());
+		EventManager::Instance().SetEvent(new StartCall());
 	}
 
+	m_objManager->Update();
 	EventManager::Instance().update();
 	GUIUpdate();
 }
