@@ -16,10 +16,17 @@ public:
 
 private:
 	std::shared_ptr<GameObjectManager>m_objManager;
-	std::shared_ptr<GameObject>obj;
-	std::shared_ptr<GameObject>background;
+	std::shared_ptr<GameObject>ready;
+	std::shared_ptr<GameObject>go;
+	std::shared_ptr<GameObject>ready_back;
 
 	Timer*timer;
+
+	enum DIRECTION
+	{
+		FIRST,SECOND
+	};
+	DIRECTION direction;
 
 	Vector3 firstpos;
 	Vector3 endpos;

@@ -6,42 +6,30 @@
 #include "Device/GameTime.h"
 #include "GameObject/GameObject.h"
 #include "GameObject/GameObjectManager.h"
+#include "Graphics/Sprite.h"
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_impl_win32.h"
 #include "ImGui/imgui_impl_dx12.h"
-
+#include "Def/Screen.h"
 void Title::Init()
 {
-	auto& cam = Camera::Instance();
-
-	cam.SetPosition(Vector3(0, 0, -10));
-
 	m_objManager = std::make_shared<GameObjectManager>();
+
+	auto obj = std::make_shared<GameObject>();
+	obj->AddComponent(std::make_shared<Sprite>("title"));
+	obj->SetScale(500);
+	obj->SetPosition(Vector3(Screen::WIDTH / 2 - 256, 1,0));
+	m_objManager->Add(obj);
 }
 
 void Title::Update()
 {
-	auto& cam = Camera::Instance();
-	auto rotx = -Input::RightStickValue().y;
-	auto roty = Input::RightStickValue().x;
-	auto rot = Vector3(rotx, roty, 0) * 180.0f * GameTime::DeltaTime();
-
-	float movex = Input::LeftStickValue().x;
-	float movez = Input::LeftStickValue().y;
-	float movey = Input::IsButton(PadButton::R1) ? 0.1f : Input::IsButton(PadButton::L1) ? -0.1f : 0.0f;
-
-	auto forward = Vector3(movex, movey, movez) * cam.GetRotationMatrix();
-	auto move = forward * 10.0f * GameTime::DeltaTime();
-
-	cam.SetRotation(cam.GetRotation() + rot);
-	cam.SetPosition(cam.GetPosition() + forward);
-
 	if (Input::IsKeyDown(DIK_Z))
 	{
 		//eventManager->SetEvent(new StartCall());
 	}
-
-	EventManager::Instance().update();
+	m_objManager->Update();
+	//EventManager::Instance().update();
 	GUIUpdate();
 }
 

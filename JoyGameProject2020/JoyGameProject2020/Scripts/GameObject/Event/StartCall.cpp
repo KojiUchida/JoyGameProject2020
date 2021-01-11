@@ -2,9 +2,10 @@
 #include "GameObject/GameObject.h"
 #include "GameObject/GameObjectManager.h"
 #include "Math/Vector3.h"
-#include "Graphics/Model.h"
+#include "Graphics/Sprite.h"
 #include "Math/Easing.h"
 #include "Math/MathUtil.h"
+#include "Def/Screen.h"
 #include <iostream>
 
 StartCall::StartCall()
@@ -18,25 +19,23 @@ StartCall::~StartCall()
 
 void StartCall::initialize()
 {
+	direction = FIRST;
 	m_objManager = std::make_shared<GameObjectManager>();
 	posMoverate = 1;
-	firstpos = Vector3(8, 0, 0);
-	endpos = Vector3(-4, 0, 0);
+	firstpos = Vector3(Screen::WIDTH, Screen::HEIGHT / 2 - 64, 0);
+	endpos = Vector3(Screen::WIDTH / 2 - 320, Screen::HEIGHT / 2 - 64, 0);
 
-	obj = std::make_shared<GameObject>();
-	obj->AddComponent(std::make_shared<Model>("plane"));
-	obj->SetRotation(Vector3(-90, 0, 0));
-	obj->SetScale(Vector3(0.6f * 5, 1, 0.6f));
-	obj->SetPosition(firstpos);
-	m_objManager->Add(obj);
-
-	background = std::make_shared<GameObject>();
-	background->AddComponent(std::make_shared<Model>("plane"));
-	background->SetRotation(Vector3(-90, 0, 0));
-	background->SetScale(Vector3(30, 1, 0));
-	background->SetPosition(Vector3(0, 0, 1));
-	m_objManager->Add(background);
-
+	ready = std::make_shared<GameObject>();
+	ready->AddComponent(std::make_shared<Sprite>("ready"));
+	ready->SetScale(Vector3(640, 128, 1));
+	ready->SetPosition(firstpos);
+	m_objManager->Add(ready);
+	/*ready_back = std::make_shared<GameObject>();
+	ready_back->AddComponent(std::make_shared<Sprite>("ready_back"));
+	ready_back->SetScale(Vector3(1280, 1, 1));
+	ready_back->SetPosition(Vector3(0, Screen::HEIGHT / 2 - 64, 1));
+	m_objManager->Add(ready_back);
+*/
 	timer = new Timer(2, false);
 	timer->Start();
 }
@@ -49,19 +48,34 @@ void StartCall::update()
 	Vector3 obj1pos(0);
 	obj1pos.x = MathUtil::Lerp((double)firstpos.x, (double)endpos.x, posMoverate);
 	obj1pos.x = MathUtil::Clamp(obj1pos.x, endpos.x, firstpos.x);
+	obj1pos.y = firstpos.y;
 
-	obj->SetPosition(obj1pos);
+	ready->SetPosition(obj1pos);
 
-	float maxheight = 1.5f;
-	float background_scaleZ = MathUtil::Lerp(0.0, (double)maxheight, Easing::EaseOutQuint(nowtime) * 2);
-	background_scaleZ = MathUtil::Clamp(background_scaleZ, 0.0f, maxheight);
+	if (timer->IsTime()&&direction==FIRST) {
+		ready->Destroy();
 
-//	background->SetScale(Vector3(30, 1, background_scaleZ));
+		go = std::make_shared<GameObject>();
+		go->AddComponent(std::make_shared<Sprite>("go"));
+		go->SetScale(Vector3(520, 130, 1));
+		go->SetPosition(Vector3(Screen::WIDTH / 2 - 256, Screen::HEIGHT / 2 - 64, 0));
+		m_objManager->Add(go);
+
+		timer->Reset();
+		timer->SetLimit(1);
+		direction = SECOND;
+	}
+
+	float maxheight = 128;
+	float scaleY = MathUtil::Lerp(0.0, (double)maxheight, Easing::EaseOutQuint(nowtime) * 2);
+	scaleY = MathUtil::Clamp(scaleY, 0.0f, maxheight);
+
+//	ready_back->SetScale(Vector3(1280,scaleY,1));
 
 	m_objManager->Update();
 }
 
 bool StartCall::IsEnd()
 {
-	return timer->IsTime();
+	return timer->IsTime()&&direction==SECOND;
 }

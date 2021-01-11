@@ -74,6 +74,7 @@ void TestScene::Init() {
 		obj2->AddComponent(std::make_shared<Model>("cube"));
 		obj2->SetPosition(Vector3(60 + wdif * w, height, 0));
 		obj2->SetScale(Vector3(50, 1, 1));
+
 		m_objManager->Add(obj2);
 	}
 

@@ -70,6 +70,11 @@ bool Application::Init() {
 
 	m_graphicsManager.LoadTexture("Resources/Textures/ultnontan.jpg", "nontan");
 	m_graphicsManager.LoadTexture("Resources/Textures/ready.png", "ready");
+	m_graphicsManager.LoadTexture("Resources/Textures/ready_back.png", "ready_back");
+	m_graphicsManager.LoadTexture("Resources/Textures/go.png", "go");
+	m_graphicsManager.LoadTexture("Resources/Textures/title.png", "title");
+	m_graphicsManager.LoadTexture("Resources/Textures/heightgage.png", "heightgage");
+	m_graphicsManager.LoadTexture("Resources/Textures/heightgagepointer.png", "heightgagepointer");
 
 	m_graphicsManager.LoadModelData("Resources/Models/cube/cube.obj", "cube");
 	m_graphicsManager.LoadModelData("Resources/Models/dosei/dosei_quad.obj", "dosei");
@@ -94,7 +99,7 @@ bool Application::Init() {
 	m_sceneManager->AddScene(std::make_shared<GamePlay>(), "GamePlay");
 	m_sceneManager->AddScene(std::make_shared<GameOver>(), "GameOver");
 	m_sceneManager->AddScene(std::make_shared<Clear>(), "Clear");
-	m_sceneManager->ChangeScene("Test");
+	m_sceneManager->ChangeScene("GamePlay");
 
 	/* ‚±‚±‚Ü‚Å‰Šú‰»ˆ— */
 

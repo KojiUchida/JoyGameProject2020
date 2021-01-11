@@ -3,6 +3,8 @@
 #pragma once
 #include "IScene.h"
 #include "GameObject/Event/EventManager.h"
+#include "GameObject/Event/HeightGage.h"
+
 
 class GameObject;
 class GameObjectManager;
@@ -27,5 +29,4 @@ public:
 
 private:
 	std::shared_ptr<GameObjectManager>m_objManager;
-
 };
