@@ -9,6 +9,7 @@ class GameObjectManager;
 class Camera;
 class Player;
 class Light;
+class Sprite;
 class TestScene : public IScene {
 
 public:
@@ -27,6 +28,7 @@ private:
 private:
 	std::shared_ptr<GameObjectManager> m_objManager;
 	std::shared_ptr<Player> player;
+	std::shared_ptr<Sprite> sprite;
 
 	Camera& m_camera;
 	Light& m_light;

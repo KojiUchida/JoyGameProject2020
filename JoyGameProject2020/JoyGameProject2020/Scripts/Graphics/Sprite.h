@@ -53,6 +53,7 @@ public:
 	void SetFlipX(bool isFlip);
 	//è„â∫îΩì]
 	void SetFlipY(bool isFlip);
+	void SetTexture(const std::string& name);
 
 private:
 	void InitRootSignature();

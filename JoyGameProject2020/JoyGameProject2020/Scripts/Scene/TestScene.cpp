@@ -78,7 +78,9 @@ void TestScene::Init() {
 	}
 
 	auto obj = std::make_shared<GameObject>();
-	obj->AddComponent(std::make_shared<Sprite>("nontan"));
+	sprite = std::make_shared<Sprite>("nontan");
+	sprite->SetTexture("ready");
+	obj->AddComponent(sprite);
 	obj->SetScale(200);
 	m_objManager->Add(obj);
 }

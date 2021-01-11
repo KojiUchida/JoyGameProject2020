@@ -22,17 +22,17 @@ Sprite::Sprite(const std::string& name) :
 	m_isVisible(true),
 	m_flipX(false),
 	m_flipY(false) {
+	InitRootSignature();
+	InitPipeline();
+	InitVertexBuffer();
+	InitIndexBuffer();
+	CreateConstantBuffer();
 }
 
 Sprite::~Sprite() {
 }
 
 void Sprite::Init() {
-	InitRootSignature();
-	InitPipeline();
-	InitVertexBuffer();
-	InitIndexBuffer();
-	CreateConstantBuffer();
 }
 
 void Sprite::Update() {
@@ -89,6 +89,21 @@ void Sprite::SetFlipX(bool isFlip) {
 
 void Sprite::SetFlipY(bool isFlip) {
 	m_flipY = isFlip;
+}
+
+void Sprite::SetTexture(const std::string& name) {
+	D3D12_CPU_DESCRIPTOR_HANDLE basicDescHandle = m_basicDescHeap->GetCPUDescriptorHandleForHeapStart();
+	basicDescHandle.ptr += m_dxManager.GetDevice()->GetDescriptorHandleIncrementSize(
+		D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+
+	auto texture = m_graphicsManager.GetTexture(name);
+
+	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
+	srvDesc.Format = texture->GetBuffer()->GetDesc().Format;
+	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MipLevels = 1;
+	m_dxManager.GetDevice()->CreateShaderResourceView(texture->GetBuffer(), &srvDesc, basicDescHandle);
 }
 
 void Sprite::InitRootSignature() {
@@ -150,7 +165,6 @@ void Sprite::InitPipeline() {
 	gpipeline.PS = CD3DX12_SHADER_BYTECODE(psBlob.Get());
 
 	gpipeline.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
-	gpipeline.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_ALWAYS;
 	gpipeline.DSVFormat = DXGI_FORMAT_D32_FLOAT;
 
 	gpipeline.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
@@ -286,14 +300,14 @@ void Sprite::CreateConstantBuffer() {
 	basicDescHandle.ptr += m_dxManager.GetDevice()->GetDescriptorHandleIncrementSize(
 		D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
-	m_texture = m_graphicsManager.GetTexture(m_textureName);
+	auto texture = m_graphicsManager.GetTexture(m_textureName);
 
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
-	srvDesc.Format = m_texture->GetBuffer()->GetDesc().Format;
+	srvDesc.Format = texture->GetBuffer()->GetDesc().Format;
 	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
 	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 	srvDesc.Texture2D.MipLevels = 1;
-	m_dxManager.GetDevice()->CreateShaderResourceView(m_texture->GetBuffer(), &srvDesc, basicDescHandle);
+	m_dxManager.GetDevice()->CreateShaderResourceView(texture->GetBuffer(), &srvDesc, basicDescHandle);
 }
 
 void Sprite::UpdateConstantBuffer() {
