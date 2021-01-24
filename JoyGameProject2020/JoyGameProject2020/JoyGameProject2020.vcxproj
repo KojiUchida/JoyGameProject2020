@@ -143,6 +143,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Scripts\Game\GameManager.cpp" />
+    <ClCompile Include="Scripts\Game\Goal.cpp" />
     <ClCompile Include="Scripts\GameObject\Event\GameTimer.cpp" />
     <ClCompile Include="Scripts\Game\Moe_Sprite.cpp" />
     <ClCompile Include="Scripts\Game\Player.cpp" />
@@ -198,6 +200,8 @@
     <ClCompile Include="Scripts\Utility\Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Scripts\Game\GameManager.h" />
+    <ClInclude Include="Scripts\Game\Goal.h" />
     <ClInclude Include="Scripts\GameObject\Component.h" />
     <ClInclude Include="Scripts\GameObject\Event\GameTimer.h" />
     <ClInclude Include="Scripts\Game\Moe_Sprite.h" />

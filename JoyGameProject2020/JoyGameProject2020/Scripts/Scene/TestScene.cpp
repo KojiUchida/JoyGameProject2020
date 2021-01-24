@@ -15,6 +15,7 @@
 #include "Base/DirectXManager.h"
 #include "Math/MathUtil.h"
 #include "Game/Player.h"
+#include "Physics/BoxCollider3D.h"
 #include <iostream>
 
 TestScene::TestScene() :
@@ -66,12 +67,16 @@ void TestScene::Init() {
 
 		auto obj1 = std::make_shared<GameObject>();
 		obj1->AddComponent(std::make_shared<Model>("cube"));
+		obj1->AddComponent(std::make_shared<BoxCollider3D>());
+		obj1->SetTag("Obstacle");
 		obj1->SetPosition(Vector3(-60 + wdif * w, height, 0));
 		obj1->SetScale(Vector3(50, 1, 1));
 		m_objManager->Add(obj1);
 
 		auto obj2 = std::make_shared<GameObject>();
 		obj2->AddComponent(std::make_shared<Model>("cube"));
+		obj2->AddComponent(std::make_shared<BoxCollider3D>());
+		obj2->SetTag("Obstacle");
 		obj2->SetPosition(Vector3(60 + wdif * w, height, 0));
 		obj2->SetScale(Vector3(50, 1, 1));
 		m_objManager->Add(obj2);

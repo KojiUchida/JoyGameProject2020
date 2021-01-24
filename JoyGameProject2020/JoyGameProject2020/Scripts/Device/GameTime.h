@@ -16,4 +16,5 @@ public:
 	static double CurrentTime();
 	static double ElapsedTime();
 	static double DeltaTime();
+	static double UnscaledDeltaTime();
 };

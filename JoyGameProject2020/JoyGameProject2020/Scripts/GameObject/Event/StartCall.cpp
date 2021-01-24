@@ -47,14 +47,14 @@ void StartCall::update()
 	float nowtime = timer->GetRatioElapsed();
 	posMoverate = Easing::EaseOutQuint(nowtime);
 	Vector3 obj1pos(0);
-	obj1pos.x = MathUtil::Lerp((double)firstpos.x, (double)endpos.x, posMoverate);
-	obj1pos.x = MathUtil::Clamp(obj1pos.x, endpos.x, firstpos.x);
+	obj1pos.x = Math::Lerp((double)firstpos.x, (double)endpos.x, posMoverate);
+	obj1pos.x = Math::Clamp(obj1pos.x, endpos.x, firstpos.x);
 
 	obj->SetPosition(obj1pos);
 
 	float maxheight = 1.5f;
-	float background_scaleZ = MathUtil::Lerp(0.0, (double)maxheight, Easing::EaseOutQuint(nowtime) * 2);
-	background_scaleZ = MathUtil::Clamp(background_scaleZ, 0.0f, maxheight);
+	float background_scaleZ = Math::Lerp(0.0, (double)maxheight, Easing::EaseOutQuint(nowtime) * 2);
+	background_scaleZ = Math::Clamp(background_scaleZ, 0.0f, maxheight);
 
 //	background->SetScale(Vector3(30, 1, background_scaleZ));
 

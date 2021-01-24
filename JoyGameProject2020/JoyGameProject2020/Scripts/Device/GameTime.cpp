@@ -4,6 +4,7 @@
 static double startTime;
 static double previousTime;
 static double deltaTime;
+static float timeScale;
 
 GameTime::GameTime() {
 }
@@ -18,6 +19,7 @@ GameTime& GameTime::Instance() {
 
 void GameTime::Init() {
 	startTime = CurrentTime();
+	timeScale = 1.0f;
 }
 
 void GameTime::Update() {
@@ -35,6 +37,10 @@ double GameTime::ElapsedTime() {
 }
 
 double GameTime::DeltaTime() {
+	return deltaTime * timeScale;
+}
+
+double GameTime::UnscaledDeltaTime() {
 	return deltaTime;
 }
 

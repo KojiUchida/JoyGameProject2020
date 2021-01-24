@@ -54,11 +54,11 @@ float Timer::GetElapsed() {
 }
 
 float Timer::GetRatioElapsed() {
-	return MathUtil::Clamp(m_elapsedTime, 0.0f, m_maxTime) / m_maxTime;
+	return Math::Clamp(m_elapsedTime, 0.0f, m_maxTime) / m_maxTime;
 }
 
 float Timer::GetRemaining() {
-	return m_maxTime - MathUtil::Clamp(m_elapsedTime, 0.0f, m_maxTime);
+	return m_maxTime - Math::Clamp(m_elapsedTime, 0.0f, m_maxTime);
 }
 
 float Timer::GetRatioRemaining() {

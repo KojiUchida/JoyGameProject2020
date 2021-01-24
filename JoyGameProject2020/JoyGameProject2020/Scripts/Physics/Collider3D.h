@@ -24,6 +24,11 @@ public:
 	};
 	~Collider3D() {};
 
+	virtual void Update() override {
+		auto& colMane = CollisionManager::Instance();
+		colMane.Add(this);
+	};
+
 	virtual bool CheckCollision(Collider3D* other) = 0;
 
 	//à íuê›íË

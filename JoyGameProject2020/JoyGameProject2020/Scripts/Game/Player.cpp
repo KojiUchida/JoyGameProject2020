@@ -5,27 +5,21 @@
 #include "Device/GameTime.h"
 #include "Device/Input.h"
 #include "Utility/Timer.h"
+#include "Physics/CircleCollider3D.h"
 #include <iostream>
 
 Player::Player() :
-	rotSpeed(30.0f),
 	gauge(0.0f),
-	gaugeMax(100.0f),
-	gaugeIncRatio(0.002f),
-	gaugeDecRatio(0.05f),
-	attackGauge(10.0f),
-	currentSpeed(0.0f),
-	flySpeed(100.0f),
-	attackSpeed(300.0f),
-	grav(0.1f),
-	airResist(0.01f) {
+	currentSpeed(0.0f) {
 }
 
 Player::~Player() {
 }
 
 void Player::Init() {
+	SetTag("Player");
 	AddComponent(std::make_shared<Model>("dosei"));
+	AddComponent(std::make_shared<CircleCollider3D>());
 	SetScale(Vector3(0.05f));
 
 	attackTimer = std::make_unique<Timer>(1.0f);
@@ -38,7 +32,7 @@ void Player::Init() {
 void Player::Update() {
 	Rotation();
 	Manipulation();
-	gauge = MathUtil::Clamp(gauge, 0.0f, 100.0f);
+	gauge = Math::Clamp(gauge, 0.0f, 100.0f);
 	Move();
 	attackTimer->Update();
 	stunTimer->Update();
@@ -47,6 +41,12 @@ void Player::Update() {
 }
 
 void Player::Shutdown() {
+}
+
+void Player::OnCollisionEnter(std::shared_ptr<GameObject> other) {
+	if (other->CompareTag("Obstacle")) {
+		gauge -= 10;
+	}
 }
 
 void Player::Manipulation() {
@@ -65,7 +65,7 @@ void Player::Manipulation() {
 
 void Player::Rotation() {
 	auto rot = GetRotation();
-	rot.z += Input::Gyro().z * rotSpeed * GameTime::DeltaTime();
+	rot.z += Input::Gyro().z * ROT_SPEED;
 	SetRotation(rot);
 
 	up = Vector3(0, 1, 0);
@@ -73,47 +73,47 @@ void Player::Rotation() {
 }
 
 void Player::Charge() {
-	gauge += Input::Accel().Length() * gaugeIncRatio;
+	gauge += Input::Accel().Length() * GAUGE_INC_RATIO * 300.0f;
 }
 
 void Player::Attack() {
 	if (!CanAttack()) return;
 	attackTimer->Reset();
-	currentSpeed = GaugeRatio() * attackSpeed * GameTime::DeltaTime();
+	currentSpeed = GaugeRatio() * ATTACK_SPEED * GameTime::DeltaTime();
 	velocity = up * currentSpeed;
-	gauge -= attackGauge;
+	gauge -= ATTACK_GAUGE;
 }
 
 void Player::Fly() {
-	gauge -= gaugeDecRatio;
+	gauge -= GAUGE_DEC_RATIO;
 	if (!CanAttack()) return;
-	float speed = GaugeRatio() * flySpeed * GameTime::DeltaTime();
-	speed = MathUtil::Clamp(speed, 0.0f, currentSpeed);
+	float speed = GaugeRatio() * MOVE_SPEED * GameTime::DeltaTime();
+	speed = Math::Clamp(speed, 0.0f, currentSpeed);
 	velocity = up * speed;
 }
 
 void Player::Move() {
 	accel = 0;
 	accel = accel * up;
-	accel.y -= grav;
+	accel.y -= GRAVITY;
 	velocity += accel * GameTime::DeltaTime();
-	auto resist = velocity.x / abs(velocity.x) * airResist * GameTime::DeltaTime();
+	auto resist = velocity.x / abs(velocity.x) * AIR_RESIST * GameTime::DeltaTime();
 	resist = velocity.x < 0.001f ? 0 : resist;
 	velocity.x -= resist;
 
 	auto pos = GetPosition();
 	pos += velocity;
-	pos.x = MathUtil::Clamp(pos.x, -65.0f, 65.0f);
-	pos.y = MathUtil::Clamp(pos.y, 0.0f, 1000.0f);
+	pos.x = Math::Clamp(pos.x, -65.0f, 65.0f);
+	pos.y = Math::Clamp(pos.y, 0.0f, 1000.0f);
 	SetPosition(pos);
 }
 
 float Player::GaugeRatio() {
-	return (gauge / gaugeMax);
+	return (gauge / GAUGE_MAX);
 }
 
 bool Player::CanAttack() {
-	return gauge > attackGauge;
+	return gauge > ATTACK_GAUGE;
 }
 
 float Player::Gauge() {
