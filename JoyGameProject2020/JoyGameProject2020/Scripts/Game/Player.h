@@ -6,14 +6,14 @@
 class Timer;
 
 namespace {
-	const float ROT_SPEED = 30.0f;
-	const float GAUGE_INC_RATIO = 0.002f;
+	const float ROT_SPEED = 300.0f;
+	const float GAUGE_INC_RATIO = 0.01f;
 	const float GAUGE_DEC_RATIO = 0.05f;
 	const float GAUGE_MAX = 100.0f;
 	const float ATTACK_GAUGE = 10.0f;
 	const float MOVE_SPEED = 100.0f;
 	const float ATTACK_SPEED = 100.0f;
-	const float GRAVITY = 0.1f;
+	const float GRAVITY = 0.5f;
 	const float AIR_RESIST = 0.1f;
 }
 

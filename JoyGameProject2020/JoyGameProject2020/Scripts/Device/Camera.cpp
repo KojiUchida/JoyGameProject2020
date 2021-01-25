@@ -137,7 +137,7 @@ void Camera::CalcViewMatrix() {
 }
 
 void Camera::CalcProjectionMatrix() {
-	m_projectionMatrix = Matrix4::Perspective(45, Screen::ASPECT, 0.1f, 1000.0f);
+	m_projectionMatrix = Matrix4::Perspective(60, Screen::ASPECT, 0.1f, 1000.0f);
 }
 
 void Camera::CalcOrthoMatrix() {

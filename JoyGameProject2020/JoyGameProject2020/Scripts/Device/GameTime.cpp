@@ -5,6 +5,9 @@ static double startTime;
 static double previousTime;
 static double deltaTime;
 static float timeScale;
+static double baseTime;
+static double fps;
+static int count;
 
 GameTime::GameTime() {
 }
@@ -20,11 +23,21 @@ GameTime& GameTime::Instance() {
 void GameTime::Init() {
 	startTime = CurrentTime();
 	timeScale = 1.0f;
+	fps = 0;
+	count = 0;
 }
 
 void GameTime::Update() {
 	deltaTime = CurrentTime() - previousTime;
 	previousTime = CurrentTime();
+
+	++count;
+	double timeDiff = CurrentTime() - baseTime;
+	if (timeDiff > 1) {
+		fps = (double)count / timeDiff;
+		count = 0;
+		baseTime = CurrentTime();
+	}
 }
 
 double GameTime::CurrentTime() {
@@ -38,6 +51,10 @@ double GameTime::ElapsedTime() {
 
 double GameTime::DeltaTime() {
 	return deltaTime * timeScale;
+}
+
+double GameTime::FPS() {
+	return fps;
 }
 
 double GameTime::UnscaledDeltaTime() {

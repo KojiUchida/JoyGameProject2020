@@ -40,6 +40,18 @@ Vector3 GameObject::GetRotation() {
 	return transform.rotation.EulerAngles();
 }
 
+Vector3 GameObject::Up() {
+	 return Vector3(0, 1, 0) * Matrix4::RotateRollPitchYaw(GetRotation()); 
+}
+
+Vector3 GameObject::Front() {
+	 return Vector3(0, 0, 1) * Matrix4::RotateRollPitchYaw(GetRotation()); 
+}
+
+Vector3 GameObject::Right() {
+	 return Vector3(1, 0, 0) * Matrix4::RotateRollPitchYaw(GetRotation()); 
+}
+
 void GameObject::SetTag(const std::string& tag) {
 	m_tag = tag;
 }

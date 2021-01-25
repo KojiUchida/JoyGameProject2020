@@ -18,9 +18,9 @@ Player::~Player() {
 
 void Player::Init() {
 	SetTag("Player");
-	AddComponent(std::make_shared<Model>("dosei"));
+	AddComponent(std::make_shared<Model>("sphere"));
 	AddComponent(std::make_shared<CircleCollider3D>());
-	SetScale(Vector3(0.05f));
+	SetScale(Vector3(2,4,2));
 
 	attackTimer = std::make_unique<Timer>(1.0f);
 	attackTimer->Start();
@@ -37,7 +37,7 @@ void Player::Update() {
 	attackTimer->Update();
 	stunTimer->Update();
 
-	std::cout << gauge << std::endl;
+	//std::cout << gauge << std::endl;
 }
 
 void Player::Shutdown() {

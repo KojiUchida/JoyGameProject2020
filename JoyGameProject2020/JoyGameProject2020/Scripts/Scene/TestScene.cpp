@@ -115,15 +115,10 @@ void TestScene::GUIUpdate() {
 	ImGui::StyleColorsDark();
 	ImGui::GetStyle().WindowRounding = 0;
 	ImGui::GetStyle().FrameRounding = 0;
-	ImGui::GetStyle().Colors[ImGuiCol_::ImGuiCol_Border] = ImVec4(0, 1, 1, 1);
-	ImGui::GetStyle().Colors[ImGuiCol_::ImGuiCol_TitleBg] = ImVec4(0, 0, 0, 0.5f);
-	ImGui::GetStyle().Colors[ImGuiCol_::ImGuiCol_TitleBgActive] = ImVec4(0, 1, 1, 0.5f);
-	ImGui::GetStyle().Colors[ImGuiCol_::ImGuiCol_WindowBg] = ImVec4(0, 1, 1, 0.2f);
-	ImGui::GetStyle().Colors[ImGuiCol_::ImGuiCol_Text] = ImVec4(0.5f, 1, 1, 1);
 
 	ImGui::Begin("Camera Menu");
-	ImGui::SetWindowSize(ImVec2(512, 96), ImGuiCond_::ImGuiCond_FirstUseEver);
-	ImGui::SetWindowPos(ImVec2(32, 64), ImGuiCond_::ImGuiCond_FirstUseEver);
+	ImGui::SetWindowSize(ImVec2(512, 128), ImGuiCond_::ImGuiCond_Always);
+	ImGui::SetWindowPos(ImVec2(32, 64), ImGuiCond_::ImGuiCond_Always);
 
 	float campos[3] = { m_camera.GetPosition().x, m_camera.GetPosition().y, m_camera.GetPosition().z };
 	ImGui::DragFloat3("Camera Position", campos);
@@ -138,10 +133,19 @@ void TestScene::GUIUpdate() {
 	ImGui::End();
 
 	ImGui::Begin("Player State");
-	ImGui::SetWindowSize(ImVec2(512, 96), ImGuiCond_::ImGuiCond_FirstUseEver);
-	ImGui::SetWindowPos(ImVec2(32, 256), ImGuiCond_::ImGuiCond_FirstUseEver);
+	ImGui::SetWindowSize(ImVec2(512, 128), ImGuiCond_::ImGuiCond_Always);
+	ImGui::SetWindowPos(ImVec2(32, 256), ImGuiCond_::ImGuiCond_Always);
 
 	ImGui::Text("Gauge : %f", player->Gauge());
+
+	ImGui::End();
+
+	ImGui::Begin("Debug");
+	ImGui::SetWindowSize(ImVec2(512, 128), ImGuiCond_::ImGuiCond_Always);
+	ImGui::SetWindowPos(ImVec2(32, 448), ImGuiCond_::ImGuiCond_Always);
+
+	ImGui::Text("FPS");
+	ImGui::Text("%d", (int)GameTime::FPS());
 
 	ImGui::End();
 }
