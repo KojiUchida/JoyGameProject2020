@@ -9,19 +9,22 @@
 #include "Graphics/Model.h"
 #include "Graphics/Sprite.h"
 #include "Graphics/Light.h"
+#include <iostream>
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_impl_win32.h"
 #include "ImGui/imgui_impl_dx12.h"
 #include "Base/DirectXManager.h"
 #include "Math/MathUtil.h"
 #include "Game/Player.h"
+#include "Game/Goal.h"
+#include "Game/GameManager.h"
 #include "Physics/BoxCollider3D.h"
-#include <iostream>
 
 TestScene::TestScene() :
 	m_camera(Camera::Instance()),
 	m_isFreeCam(false),
-	m_light(Light::Instance()) {
+	m_light(Light::Instance()),
+	m_gameManager(GameManager::Instance()) {
 }
 
 TestScene::~TestScene() {
@@ -82,15 +85,16 @@ void TestScene::Init() {
 		m_objManager->Add(obj2);
 	}
 
-	auto obj = std::make_shared<GameObject>();
-	sprite = std::make_shared<Sprite>("nontan");
-	sprite->SetTexture("ready");
-	obj->AddComponent(sprite);
-	obj->SetScale(200);
-	m_objManager->Add(obj);
+	auto goal = std::make_shared<Goal>();
+	goal->SetPosition(Vector3(0, 500, 0));
+	goal->SetScale(Vector3(1000, 1, 1));
+	m_objManager->Add(goal);
+
+	m_gameManager.ChangeState(GameState::PLAY);
 }
 
 void TestScene::Update() {
+	m_gameManager.Update();
 	m_objManager->Update();
 	if (!m_isFreeCam) {
 		m_camera.SetPosition(player->GetPosition() + Vector3(0, 0, -100));
@@ -108,7 +112,7 @@ std::string TestScene::NextScene() {
 }
 
 bool TestScene::IsEnd() {
-	return Input::IsKeyDown(DIK_SPACE);
+	return m_gameManager.CompareState(GameState::GOAL);
 }
 
 void TestScene::GUIUpdate() {

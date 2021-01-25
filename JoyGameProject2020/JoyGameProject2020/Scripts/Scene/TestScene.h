@@ -10,6 +10,7 @@ class Camera;
 class Player;
 class Light;
 class Sprite;
+class GameManager;
 class TestScene : public IScene {
 
 public:
@@ -32,6 +33,7 @@ private:
 
 	Camera& m_camera;
 	Light& m_light;
+	GameManager& m_gameManager;
 	bool m_isFreeCam;
 	bool m_showDebugMenu;
 };

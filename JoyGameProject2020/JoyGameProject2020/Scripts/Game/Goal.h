@@ -7,6 +7,7 @@ public:
 	Goal() {};
 	~Goal() {};
 
+	virtual void Init() override;
 	virtual void OnCollisionEnter(std::shared_ptr<GameObject> other) override;
 
 };

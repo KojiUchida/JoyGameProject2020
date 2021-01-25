@@ -36,8 +36,6 @@ void Player::Update() {
 	Move();
 	attackTimer->Update();
 	stunTimer->Update();
-
-	//std::cout << gauge << std::endl;
 }
 
 void Player::Shutdown() {
