@@ -54,11 +54,12 @@ float Timer::GetElapsed() {
 }
 
 float Timer::GetRatioElapsed() {
-	return MathUtil::Clamp(m_elapsedTime, 0.0f, m_maxTime) / m_maxTime;
+	if (m_maxTime == 0.0f) return 0.0f;
+	return Math::Clamp(m_elapsedTime, 0.0f, m_maxTime) / m_maxTime;
 }
 
 float Timer::GetRemaining() {
-	return m_maxTime - MathUtil::Clamp(m_elapsedTime, 0.0f, m_maxTime);
+	return m_maxTime - Math::Clamp(m_elapsedTime, 0.0f, m_maxTime);
 }
 
 float Timer::GetRatioRemaining() {
@@ -66,8 +67,8 @@ float Timer::GetRatioRemaining() {
 }
 
 void Timer::CheckLoop() {
-	if (!m_isLoop)return;
-	if (!IsTime())return;
+	if (!m_isLoop) return;
+	if (!IsTime()) return;
 	Reset();
 }
 

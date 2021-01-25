@@ -1,4 +1,4 @@
-#include "KadaiShaderHeader.hlsli"
+#include "BasicShaderHeader.hlsli"
 
 float4 PSmain(VSOutput input) : SV_TARGET {
 	float4 texcolor = diffuseTex.Sample(smp, input.uv);

@@ -9,18 +9,22 @@
 #include "Graphics/Model.h"
 #include "Graphics/Sprite.h"
 #include "Graphics/Light.h"
+#include <iostream>
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_impl_win32.h"
 #include "ImGui/imgui_impl_dx12.h"
 #include "Base/DirectXManager.h"
 #include "Math/MathUtil.h"
 #include "Game/Player.h"
-#include <iostream>
+#include "Game/Goal.h"
+#include "Game/GameManager.h"
+#include "Physics/BoxCollider3D.h"
 
 TestScene::TestScene() :
 	m_camera(Camera::Instance()),
 	m_isFreeCam(false),
-	m_light(Light::Instance()) {
+	m_light(Light::Instance()),
+	m_gameManager(GameManager::Instance()) {
 }
 
 TestScene::~TestScene() {
@@ -66,27 +70,36 @@ void TestScene::Init() {
 
 		auto obj1 = std::make_shared<GameObject>();
 		obj1->AddComponent(std::make_shared<Model>("cube"));
+		auto c1 = std::make_shared<BoxCollider3D>();
+		c1->SetLayer(Layer::Obstacle);
+		obj1->AddComponent(c1);
+		obj1->SetTag("Obstacle");
 		obj1->SetPosition(Vector3(-60 + wdif * w, height, 0));
 		obj1->SetScale(Vector3(50, 1, 1));
 		m_objManager->Add(obj1);
 
 		auto obj2 = std::make_shared<GameObject>();
 		obj2->AddComponent(std::make_shared<Model>("cube"));
+		auto c2 = std::make_shared<BoxCollider3D>();
+		c2->SetLayer(Layer::Obstacle);
+		obj2->AddComponent(c2);
+		obj2->SetTag("Obstacle");
 		obj2->SetPosition(Vector3(60 + wdif * w, height, 0));
 		obj2->SetScale(Vector3(50, 1, 1));
 
 		m_objManager->Add(obj2);
 	}
 
-	auto obj = std::make_shared<GameObject>();
-	sprite = std::make_shared<Sprite>("nontan");
-	sprite->SetTexture("ready");
-	obj->AddComponent(sprite);
-	obj->SetScale(200);
-	m_objManager->Add(obj);
+	auto goal = std::make_shared<Goal>();
+	goal->SetPosition(Vector3(0, 500, 0));
+	goal->SetScale(Vector3(1000, 1, 1));
+	m_objManager->Add(goal);
+
+	m_gameManager.ChangeState(GameState::PLAY);
 }
 
 void TestScene::Update() {
+	m_gameManager.Update();
 	m_objManager->Update();
 	if (!m_isFreeCam) {
 		m_camera.SetPosition(player->GetPosition() + Vector3(0, 0, -100));
@@ -104,22 +117,17 @@ std::string TestScene::NextScene() {
 }
 
 bool TestScene::IsEnd() {
-	return Input::IsKeyDown(DIK_SPACE);
+	return m_gameManager.CompareState(GameState::GOAL);
 }
 
 void TestScene::GUIUpdate() {
 	ImGui::StyleColorsDark();
 	ImGui::GetStyle().WindowRounding = 0;
 	ImGui::GetStyle().FrameRounding = 0;
-	ImGui::GetStyle().Colors[ImGuiCol_::ImGuiCol_Border] = ImVec4(0, 1, 1, 1);
-	ImGui::GetStyle().Colors[ImGuiCol_::ImGuiCol_TitleBg] = ImVec4(0, 0, 0, 0.5f);
-	ImGui::GetStyle().Colors[ImGuiCol_::ImGuiCol_TitleBgActive] = ImVec4(0, 1, 1, 0.5f);
-	ImGui::GetStyle().Colors[ImGuiCol_::ImGuiCol_WindowBg] = ImVec4(0, 1, 1, 0.2f);
-	ImGui::GetStyle().Colors[ImGuiCol_::ImGuiCol_Text] = ImVec4(0.5f, 1, 1, 1);
 
 	ImGui::Begin("Camera Menu");
-	ImGui::SetWindowSize(ImVec2(512, 96), ImGuiCond_::ImGuiCond_FirstUseEver);
-	ImGui::SetWindowPos(ImVec2(32, 64), ImGuiCond_::ImGuiCond_FirstUseEver);
+	ImGui::SetWindowSize(ImVec2(512, 128), ImGuiCond_::ImGuiCond_Always);
+	ImGui::SetWindowPos(ImVec2(32, 64), ImGuiCond_::ImGuiCond_Always);
 
 	float campos[3] = { m_camera.GetPosition().x, m_camera.GetPosition().y, m_camera.GetPosition().z };
 	ImGui::DragFloat3("Camera Position", campos);
@@ -134,10 +142,19 @@ void TestScene::GUIUpdate() {
 	ImGui::End();
 
 	ImGui::Begin("Player State");
-	ImGui::SetWindowSize(ImVec2(512, 96), ImGuiCond_::ImGuiCond_FirstUseEver);
-	ImGui::SetWindowPos(ImVec2(32, 256), ImGuiCond_::ImGuiCond_FirstUseEver);
+	ImGui::SetWindowSize(ImVec2(512, 128), ImGuiCond_::ImGuiCond_Always);
+	ImGui::SetWindowPos(ImVec2(32, 256), ImGuiCond_::ImGuiCond_Always);
 
 	ImGui::Text("Gauge : %f", player->Gauge());
+
+	ImGui::End();
+
+	ImGui::Begin("Debug");
+	ImGui::SetWindowSize(ImVec2(512, 128), ImGuiCond_::ImGuiCond_Always);
+	ImGui::SetWindowPos(ImVec2(32, 448), ImGuiCond_::ImGuiCond_Always);
+
+	ImGui::Text("FPS");
+	ImGui::Text("%d", (int)GameTime::FPS());
 
 	ImGui::End();
 }

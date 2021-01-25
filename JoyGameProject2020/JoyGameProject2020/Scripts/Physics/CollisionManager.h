@@ -15,9 +15,9 @@ public:
 	static CollisionManager& Instance();
 
 	void Update();
-	void Add(std::shared_ptr<Collider3D> collider);
+	void Add(Collider3D* collider);
 
 private:
-	std::vector<std::shared_ptr<Collider3D>> m_colliders;
+	std::vector<Collider3D*> m_colliders;
 };
 

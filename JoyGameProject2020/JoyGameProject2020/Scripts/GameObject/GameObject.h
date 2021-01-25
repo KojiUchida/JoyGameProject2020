@@ -46,6 +46,10 @@ public:
 	/* 回転取得 */
 	Vector3 GetRotation();
 
+	Vector3 Right();
+	Vector3 Up();
+	Vector3 Front();
+
 	/* タグ設定 */
 	void SetTag(const std::string& tag);
 	/* タグ取得 */

@@ -120,6 +120,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -143,6 +144,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Scripts\Game\GameManager.cpp" />
+    <ClCompile Include="Scripts\Game\Goal.cpp" />
     <ClCompile Include="Scripts\GameObject\Event\GameTimer.cpp" />
     <ClCompile Include="Scripts\GameObject\Event\HeightGage.cpp" />
     <ClCompile Include="Scripts\GameObject\Event\TimerUI.cpp" />
@@ -199,6 +202,8 @@
     <ClCompile Include="Scripts\Utility\Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Scripts\Game\GameManager.h" />
+    <ClInclude Include="Scripts\Game\Goal.h" />
     <ClInclude Include="Scripts\GameObject\Component.h" />
     <ClInclude Include="Scripts\GameObject\Event\GameTimer.h" />
     <ClInclude Include="Scripts\GameObject\Event\HeightGage.h" />
@@ -249,6 +254,7 @@
     <ClInclude Include="Scripts\Physics\CircleCollider3D.h" />
     <ClInclude Include="Scripts\Physics\Collider3D.h" />
     <ClInclude Include="Scripts\Physics\CollisionManager.h" />
+    <ClInclude Include="Scripts\Physics\PhysicsLayer.h" />
     <ClInclude Include="Scripts\Scene\Clear.h" />
     <ClInclude Include="Scripts\Scene\GameOver.h" />
     <ClInclude Include="Scripts\Scene\GamePlay.h" />

@@ -85,9 +85,9 @@ const Quaternion Quaternion::Identity() {
 }
 
 const Quaternion Quaternion::Euler(const Vector3& angle) {
-	float radX = MathUtil::ToRadian(angle.x);
-	float radY = MathUtil::ToRadian(angle.y);
-	float radZ = MathUtil::ToRadian(angle.z);
+	float radX = Math::ToRadian(angle.x);
+	float radY = Math::ToRadian(angle.y);
+	float radZ = Math::ToRadian(angle.z);
 
 	double cosRoll = cos(radX / 2.0);
 	double sinRoll = sin(radX / 2.0);
@@ -108,10 +108,10 @@ const Quaternion Quaternion::Euler(const Vector3& angle) {
 
 const Quaternion Quaternion::Lerp(const Quaternion& q1, const Quaternion& q2, float t) {
 	auto result = Quaternion(
-		MathUtil::Lerp(q1.w, q2.w, t),
-		MathUtil::Lerp(q1.x, q2.x, t),
-		MathUtil::Lerp(q1.y, q2.y, t),
-		MathUtil::Lerp(q1.z, q2.z, t)
+		Math::Lerp(q1.w, q2.w, t),
+		Math::Lerp(q1.x, q2.x, t),
+		Math::Lerp(q1.y, q2.y, t),
+		Math::Lerp(q1.z, q2.z, t)
 	);
 	return result.Normalize();
 }
@@ -167,7 +167,7 @@ Vector3 Quaternion::EulerAngles() const {
 	auto q = *this;
 	float sp = -2.0f * (q.y * q.z - q.w * q.x);
 	if (abs(sp) >= 1.0f) {
-		euler.x = (float)(MathUtil::PI / 2.0f) * sp;
+		euler.x = (float)(Math::PI / 2.0f) * sp;
 		euler.y = atan2f(-q.x * q.z + q.w * q.y, 0.5f - q.y * q.y - q.z * q.z);
 		euler.z = 0.0f;
 	} else {
@@ -175,7 +175,7 @@ Vector3 Quaternion::EulerAngles() const {
 		euler.y = atan2f(q.x * q.z + q.w * q.y, 0.5f - q.x * q.x - q.y * q.y);
 		euler.z = atan2f(q.x * q.y + q.w * q.z, 0.5f - q.x * q.x - q.z * q.z);
 	}
-	euler *= MathUtil::ToDegree(1.0f);
+	euler *= Math::ToDegree(1.0f);
 
 	return euler;
 }

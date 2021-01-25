@@ -1,7 +1,7 @@
 #pragma once
 #include <cmath>
 
-namespace MathUtil {
+namespace Math {
 
 	const double PI = 3.14159265358979323846;
 	const double PIDIV2 = 1.57079632679489661923;

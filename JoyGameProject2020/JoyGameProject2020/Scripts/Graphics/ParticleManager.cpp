@@ -31,12 +31,12 @@ void ParticleManager::Update() {
 		p.velocity -= p.velocity * 0.01f;
 		p.position += p.velocity;
 		float t = (float)p.currentFrame / (float)p.maxFrame;
-		p.currentScale = MathUtil::Lerp(p.startScale, p.endScale, t);
+		p.currentScale = Math::Lerp(p.startScale, p.endScale, t);
 		Color4 color;
-		color.r = MathUtil::Lerp(p.startColor.r, p.endColor.r, t);
-		color.g = MathUtil::Lerp(p.startColor.g, p.endColor.g, t);
-		color.b = MathUtil::Lerp(p.startColor.b, p.endColor.b, t);
-		color.a = MathUtil::Lerp(p.startColor.a, p.endColor.a, t);
+		color.r = Math::Lerp(p.startColor.r, p.endColor.r, t);
+		color.g = Math::Lerp(p.startColor.g, p.endColor.g, t);
+		color.b = Math::Lerp(p.startColor.b, p.endColor.b, t);
+		color.a = Math::Lerp(p.startColor.a, p.endColor.a, t);
 		p.currentColor = color;
 	}
 
@@ -57,7 +57,7 @@ void ParticleManager::Update() {
 	Transform* transformMap = nullptr;
 	m_transformBuffer->Map(0, nullptr, (void**)&transformMap);
 	transformMap->mat = m_camera.GetViewMatrix() * m_camera.GetProjectionMatrix();
-	transformMap->billboard = Matrix4::RotateRollPitchYaw(m_camera.GetRotation() * MathUtil::ToRadian(1.0f));
+	transformMap->billboard = Matrix4::RotateRollPitchYaw(m_camera.GetRotation() * Math::ToRadian(1.0f));
 	m_transformBuffer->Unmap(0, nullptr);
 
 	Draw();

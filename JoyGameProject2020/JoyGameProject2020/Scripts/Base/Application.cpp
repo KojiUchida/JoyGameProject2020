@@ -87,8 +87,8 @@ bool Application::Init() {
 	m_graphicsManager.LoadShader("Resources/Shaders/SpriteVertexShader.hlsl", "VSmain", "vs_5_0", "SpriteVS");
 	m_graphicsManager.LoadShader("Resources/Shaders/SpritePixelShader.hlsl", "PSmain", "ps_5_0", "SpritePS");
 
-	m_graphicsManager.LoadShader("Resources/Shaders/KadaiVertexShader.hlsl", "VSmain", "vs_5_0", "KadaiVS");
-	m_graphicsManager.LoadShader("Resources/Shaders/KadaiPixelShader.hlsl", "PSmain", "ps_5_0", "KadaiPS");
+	m_graphicsManager.LoadShader("Resources/Shaders/BasicVertexShader.hlsl", "VSmain", "vs_5_0", "BasicVS");
+	m_graphicsManager.LoadShader("Resources/Shaders/BasicPixelShader.hlsl", "PSmain", "ps_5_0", "BasicPS");
 
 	m_renderer.Init();
 

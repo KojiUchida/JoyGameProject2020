@@ -363,17 +363,23 @@ Vector3 Input::Gyro() {
 	return Vector3((int)gyro.x, (int)gyro.y, (int)gyro.z);*/
 
 	/* コントローラーを固定しても数値がぶれるため、0に近い値になるように調整している */
-	auto gyro = Vector3(-ds4state.gyroX + 1.5f, -ds4state.gyroY + 0.5f, ds4state.gyroZ + 19) / 0xffff * 360.0f;
+	auto gyro = Vector3(-ds4state.gyroX + 1.5f, -ds4state.gyroY + 0.5f, ds4state.gyroZ + 19) / 0xffff;
 
-	gyro.x = abs(gyro.x) < 0.1f ? 0  : gyro.x;
-	gyro.y = abs(gyro.y) < 0.1f ? 0 : gyro.y;
-	gyro.z = abs(gyro.z) < 0.1f ? 0 : gyro.z;
+	gyro.x = fabsf(gyro.x) < 0.001f ? 0 : gyro.x;
+	gyro.y = fabsf(gyro.y) < 0.001f ? 0 : gyro.y;
+	gyro.z = fabsf(gyro.z) < 0.001f ? 0 : gyro.z;
 
 	return gyro;
 }
 
 Vector3 Input::Accel() {
-	return Vector3(ds4state.accelX, ds4state.accelY, ds4state.accelZ) / 0xffff * 360.0f;
+	auto accel = Vector3(ds4state.accelX, ds4state.accelY, ds4state.accelZ) / 0xffff;
+
+	accel.x = fabsf(accel.x) < 0.2f ? 0 : accel.x;
+	accel.y = fabsf(accel.y) < 0.2f ? 0 : accel.y;
+	accel.z = fabsf(accel.z) < 0.2f ? 0 : accel.z;
+
+	return accel;
 }
 
 BOOL Input::EnumJoystickCallBack(const DIDEVICEINSTANCE* pdidInstance, VOID* pContext) {

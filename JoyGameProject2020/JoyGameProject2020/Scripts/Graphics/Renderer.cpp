@@ -97,8 +97,8 @@ void Renderer::CreateRootSignature() {
 }
 
 void Renderer::CreatePipeline() {
-	ComPtr<ID3DBlob> vsBlob = m_graphicsManager.GetShader("KadaiVS");
-	ComPtr<ID3DBlob> psBlob = m_graphicsManager.GetShader("KadaiPS");
+	ComPtr<ID3DBlob> vsBlob = m_graphicsManager.GetShader("BasicVS");
+	ComPtr<ID3DBlob> psBlob = m_graphicsManager.GetShader("BasicPS");
 
 	D3D12_INPUT_ELEMENT_DESC inputLayout[] =
 	{
