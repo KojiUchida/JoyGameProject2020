@@ -252,6 +252,7 @@
     <ClInclude Include="Scripts\Physics\CircleCollider3D.h" />
     <ClInclude Include="Scripts\Physics\Collider3D.h" />
     <ClInclude Include="Scripts\Physics\CollisionManager.h" />
+    <ClInclude Include="Scripts\Physics\PhysicsLayer.h" />
     <ClInclude Include="Scripts\Scene\Clear.h" />
     <ClInclude Include="Scripts\Scene\GameOver.h" />
     <ClInclude Include="Scripts\Scene\GamePlay.h" />

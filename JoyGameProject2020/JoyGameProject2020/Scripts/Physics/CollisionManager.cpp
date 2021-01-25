@@ -18,13 +18,14 @@ CollisionManager& CollisionManager::Instance() {
 void CollisionManager::Update() {
 	auto size = m_colliders.size();
 
-#pragma omp parallel for
+//#pragma omp parallel for
 	for (int i = 0; i < size;++i) {
 		for (int j = 0; j < size;++j) {
 			auto c1 = m_colliders[i];
 			auto c2 = m_colliders[j];
 
-			if (c1 == c2)continue;
+			if (c1 == c2) continue;
+			if (!c1->ShouldJudgeCollide(c2->m_layer)) continue;
 
 			/* すっげースマートじゃない気がする */
 			if (c1->CheckCollision(c2)) {

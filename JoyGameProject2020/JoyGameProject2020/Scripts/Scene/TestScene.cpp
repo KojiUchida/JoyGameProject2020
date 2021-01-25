@@ -70,7 +70,9 @@ void TestScene::Init() {
 
 		auto obj1 = std::make_shared<GameObject>();
 		obj1->AddComponent(std::make_shared<Model>("cube"));
-		obj1->AddComponent(std::make_shared<BoxCollider3D>());
+		auto c1 = std::make_shared<BoxCollider3D>();
+		c1->SetLayer(Layer::Obstacle);
+		obj1->AddComponent(c1);
 		obj1->SetTag("Obstacle");
 		obj1->SetPosition(Vector3(-60 + wdif * w, height, 0));
 		obj1->SetScale(Vector3(50, 1, 1));
@@ -78,7 +80,9 @@ void TestScene::Init() {
 
 		auto obj2 = std::make_shared<GameObject>();
 		obj2->AddComponent(std::make_shared<Model>("cube"));
-		obj2->AddComponent(std::make_shared<BoxCollider3D>());
+		auto c2 = std::make_shared<BoxCollider3D>();
+		c2->SetLayer(Layer::Obstacle);
+		obj2->AddComponent(c2);
 		obj2->SetTag("Obstacle");
 		obj2->SetPosition(Vector3(60 + wdif * w, height, 0));
 		obj2->SetScale(Vector3(50, 1, 1));
