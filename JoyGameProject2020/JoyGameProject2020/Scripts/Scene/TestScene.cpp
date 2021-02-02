@@ -24,7 +24,8 @@ TestScene::TestScene() :
 	m_camera(Camera::Instance()),
 	m_isFreeCam(false),
 	m_light(Light::Instance()),
-	m_gameManager(GameManager::Instance()) {
+	m_gameManager(GameManager::Instance()),
+	m_objManager(GameObjectManager::Instance()) {
 }
 
 TestScene::~TestScene() {
@@ -34,28 +35,26 @@ void TestScene::Init() {
 	m_camera.SetPosition(Vector3(0, 0, -10));
 	m_light.SetRotate(Vector3(-90, 0, 0));
 
-	m_objManager = std::make_shared<GameObjectManager>();
-
 	player = std::make_shared<Player>();
-	m_objManager->Add(player);
+	m_objManager.Add(player);
 
 	auto ground = std::make_shared<GameObject>();
 	ground->AddComponent(std::make_shared<Model>("cube"));
 	ground->SetPosition(Vector3(0, -30, 0));
 	ground->SetScale(Vector3(100, 25, 1));
-	m_objManager->Add(ground);
+	m_objManager.Add(ground);
 
 	auto wall1 = std::make_shared<GameObject>();
 	wall1->AddComponent(std::make_shared<Model>("cube"));
 	wall1->SetPosition(Vector3(-120, 25, 0));
 	wall1->SetScale(Vector3(50, 1000, 1));
-	m_objManager->Add(wall1);
+	m_objManager.Add(wall1);
 
 	auto wall2 = std::make_shared<GameObject>();
 	wall2->AddComponent(std::make_shared<Model>("cube"));
 	wall2->SetPosition(Vector3(120, 25, 0));
 	wall2->SetScale(Vector3(50, 1000, 1));
-	m_objManager->Add(wall2);
+	m_objManager.Add(wall2);
 
 	Random rnd{};
 	float height = 0.0f;
@@ -76,7 +75,7 @@ void TestScene::Init() {
 		obj1->SetTag("Obstacle");
 		obj1->SetPosition(Vector3(-60 + wdif * w, height, 0));
 		obj1->SetScale(Vector3(50, 1, 1));
-		m_objManager->Add(obj1);
+		m_objManager.Add(obj1);
 
 		auto obj2 = std::make_shared<GameObject>();
 		obj2->AddComponent(std::make_shared<Model>("cube"));
@@ -87,29 +86,31 @@ void TestScene::Init() {
 		obj2->SetPosition(Vector3(60 + wdif * w, height, 0));
 		obj2->SetScale(Vector3(50, 1, 1));
 
-		m_objManager->Add(obj2);
+		m_objManager.Add(obj2);
 	}
 
 	auto goal = std::make_shared<Goal>();
 	goal->SetPosition(Vector3(0, 500, 0));
 	goal->SetScale(Vector3(1000, 1, 1));
-	m_objManager->Add(goal);
+	m_objManager.Add(goal);
 
 	m_gameManager.ChangeState(GameState::PLAY);
 }
 
 void TestScene::Update() {
 	m_gameManager.Update();
-	m_objManager->Update();
 	if (!m_isFreeCam) {
-		m_camera.SetPosition(player->GetPosition() + Vector3(0, 0, -100));
+		auto campos = player->GetPosition() + Vector3(0, 0, -70);
+		campos = Vector3::Lerp(Vector3(m_camera.GetPosition()), campos, 0.12f);
+		m_camera.SetPosition(campos);
 	}
 
 	GUIUpdate();
 }
 
 void TestScene::Shutdown() {
-	m_objManager->Shutdown();
+	m_objManager.Shutdown();
+	m_objManager.Clear();
 }
 
 std::string TestScene::NextScene() {

@@ -11,6 +11,7 @@ class Player;
 class Light;
 class Sprite;
 class GameManager;
+class GameObjectManager;
 class TestScene : public IScene {
 
 public:
@@ -27,13 +28,13 @@ private:
 	void GUIUpdate();
 
 private:
-	std::shared_ptr<GameObjectManager> m_objManager;
 	std::shared_ptr<Player> player;
 	std::shared_ptr<Sprite> sprite;
 
 	Camera& m_camera;
 	Light& m_light;
 	GameManager& m_gameManager;
+	GameObjectManager& m_objManager;
 	bool m_isFreeCam;
 	bool m_showDebugMenu;
 };

@@ -8,8 +8,14 @@ GameObjectManager::GameObjectManager() {
 GameObjectManager::~GameObjectManager() {
 }
 
+GameObjectManager& GameObjectManager::Instance() {
+	static GameObjectManager instance;
+	return instance;
+}
+
 void GameObjectManager::Update() {
-	for (unsigned int i = 0; i < m_gameObjects.size();) {
+	int objCounut = m_gameObjects.size();
+	for (unsigned int i = 0; i < objCounut;) {
 		if (m_gameObjects[i]->m_isDestroy) {
 
 			m_gameObjects[i]->Shutdown();
@@ -25,19 +31,21 @@ void GameObjectManager::Update() {
 			/* eraseÇÊÇËÇ‡ëÅÇ¢ÇÃÇ≈çÃóp */
 			m_gameObjects[i] = m_gameObjects.back();
 			m_gameObjects.pop_back();
+			objCounut--;
 			continue;
 		}
 		++i;
 	}
 
-	for (const auto& o : m_gameObjects) {
+	for (unsigned int i = 0; i < objCounut; ++i) {
+		auto o = m_gameObjects[i];
 		o->Update();
 
-		for (const auto& c : o->m_components) {
+		for (auto c : o->m_components) {
 			c->Update();
 		}
 
-		for (const auto& c : o->m_children) {
+		for (auto c : o->m_children) {
 			c->Update();
 		}
 	}

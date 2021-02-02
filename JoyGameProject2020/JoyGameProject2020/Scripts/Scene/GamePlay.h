@@ -8,11 +8,11 @@
 
 class GameObject;
 class GameObjectManager;
-class GamePlay :public IScene
+class GamePlay : public IScene
 {
 public:
-	GamePlay() {};
-	~GamePlay() {};
+	GamePlay();
+	~GamePlay();
 
 	// IScene ‚ğ‰î‚µ‚ÄŒp³‚³‚ê‚Ü‚µ‚½
 	virtual void Init() override;
@@ -28,5 +28,5 @@ public:
 	virtual void GUIUpdate() override;
 
 private:
-	std::shared_ptr<GameObjectManager>m_objManager;
+	GameObjectManager& m_objManager;
 };

@@ -7,7 +7,9 @@
 
 Renderer::Renderer() :
 	m_dxManager(DirectXManager::Instance()),
-	m_graphicsManager(GraphicsManager::Instance()) {
+	m_graphicsManager(GraphicsManager::Instance()),
+	m_vbView(),
+	m_ibView() {
 }
 
 Renderer::~Renderer() {
@@ -19,6 +21,8 @@ Renderer& Renderer::Instance() {
 }
 
 void Renderer::Init() {
+	CreateVertex();
+	CreateIndex();
 	CreateRootSignature();
 	CreatePipeline();
 }
@@ -31,13 +35,14 @@ void Renderer::Draw() {
 	m_dxManager.GetCommandList()->SetGraphicsRootSignature(m_rootSignature.Get());
 	m_dxManager.GetCommandList()->SetPipelineState(m_pipelineState.Get());
 	m_dxManager.GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	m_dxManager.GetCommandList()->IASetVertexBuffers(0, 1, &m_vbView);
+	m_dxManager.GetCommandList()->IASetIndexBuffer(&m_ibView);
+
 	auto cbvsrvIncSize = m_dxManager.GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV) * 5;
 
-	for (int i = 0; i < models.size(); ++i) {
-		auto& m = models[i];
-
-		m_dxManager.GetCommandList()->IASetVertexBuffers(0, 1, &m->m_vbView);
-		m_dxManager.GetCommandList()->IASetIndexBuffer(&m->m_ibView);
+	int modelCount = m_models.size();
+	for (int i = 0; i < modelCount; ++i) {
+		auto m = m_models[i];
 
 		ComPtr<ID3D12DescriptorHeap> transformHeaps[] = { m->m_transformDescHeap.Get() };
 		m_dxManager.GetCommandList()->SetDescriptorHeaps(_countof(transformHeaps), transformHeaps->GetAddressOf());
@@ -51,18 +56,72 @@ void Renderer::Draw() {
 			auto materialHeapHandle = m->m_materialDescHeap->GetGPUDescriptorHandleForHeapStart();
 			materialHeapHandle.ptr += (UINT64)cbvsrvIncSize * s.materialIndex;
 			m_dxManager.GetCommandList()->SetGraphicsRootDescriptorTable(1, materialHeapHandle);
-			m_dxManager.GetCommandList()->DrawIndexedInstanced(s.faceCount, 1, s.faceStart, 0, 0);
+			m_dxManager.GetCommandList()->DrawIndexedInstanced(s.faceCount, 1, m->indexoffset + s.faceStart, m->vertexoffset, 0);
 		}
 	}
 
-	models.clear();
+	m_models.clear();
 }
 
 void Renderer::Shutdown() {
 }
 
 void Renderer::AddModel(std::shared_ptr<ModelData> model) {
-	models.push_back(model);
+	m_models.push_back(model);
+}
+
+void Renderer::CreateVertex() {
+	auto vertices = m_graphicsManager.vertices;
+
+	auto heapprop = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
+	auto resdesc = CD3DX12_RESOURCE_DESC::Buffer(vertices.size() * sizeof(vertices[0]));
+	auto result = m_dxManager.GetDevice()->CreateCommittedResource(
+		&heapprop,
+		D3D12_HEAP_FLAG_NONE,
+		&resdesc,
+		D3D12_RESOURCE_STATE_GENERIC_READ,
+		nullptr,
+		IID_PPV_ARGS(m_vertexBuffer.ReleaseAndGetAddressOf())
+	);
+	_ASSERT_EXPR(SUCCEEDED(result), L"頂点バッファの生成に失敗しました");
+
+	ModelData::Vertex* vertexMap = nullptr;
+	m_vertexBuffer->Map(0, nullptr, (void**)&vertexMap);
+	for (int i = 0; i < vertices.size(); ++i) {
+		vertexMap[i] = vertices[i];
+	}
+	m_vertexBuffer->Unmap(0, nullptr);
+
+	m_vbView.BufferLocation = m_vertexBuffer->GetGPUVirtualAddress();
+	m_vbView.SizeInBytes = (UINT)vertices.size() * sizeof(vertices[0]);
+	m_vbView.StrideInBytes = sizeof(vertices[0]);
+}
+
+void Renderer::CreateIndex() {
+	auto indices = m_graphicsManager.indices;
+
+	auto heapprop = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
+	auto resdesc = CD3DX12_RESOURCE_DESC::Buffer(indices.size() * sizeof(indices[0]));
+	auto result = m_dxManager.GetDevice()->CreateCommittedResource(
+		&heapprop,
+		D3D12_HEAP_FLAG_NONE,
+		&resdesc,
+		D3D12_RESOURCE_STATE_GENERIC_READ,
+		nullptr,
+		IID_PPV_ARGS(m_indexBuffer.ReleaseAndGetAddressOf())
+	);
+	_ASSERT_EXPR(SUCCEEDED(result), L"インデックスバッファの生成に失敗しました");
+
+	unsigned short* indexMap = nullptr;
+	m_indexBuffer->Map(0, nullptr, (void**)&indexMap);
+	for (int i = 0; i < indices.size(); ++i) {
+		indexMap[i] = indices[i];
+	}
+	m_indexBuffer->Unmap(0, nullptr);
+
+	m_ibView.BufferLocation = m_indexBuffer->GetGPUVirtualAddress();
+	m_ibView.Format = DXGI_FORMAT_R16_UINT;
+	m_ibView.SizeInBytes = (UINT)indices.size() * sizeof(indices[0]);
 }
 
 void Renderer::CreateRootSignature() {

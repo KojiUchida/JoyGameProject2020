@@ -1,6 +1,7 @@
 #include "Vector3.h"
 #include <cmath>
 #include "Vector2.h"
+#include "MathUtil.h"
 
 Vector3::Vector3() :
 	x(0),
@@ -106,6 +107,14 @@ const Vector3 Vector3::Max(const Vector3& v1, const Vector3& v2) {
 const Vector3 Vector3::Min(const Vector3& v1, const Vector3& v2) {
 	if (v1.Length() < v2.Length()) return v1;
 	return v2;
+}
+
+const Vector3 Vector3::Lerp(const Vector3& start, const Vector3& end, const float t) {
+	return Vector3(
+		Math::Lerp(start.x, end.x, t),
+		Math::Lerp(start.y, end.y, t),
+		Math::Lerp(start.z, end.z, t)
+	);
 }
 
 const Vector3 Vector3::Zero() {

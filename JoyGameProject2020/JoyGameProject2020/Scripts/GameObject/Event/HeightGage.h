@@ -7,7 +7,7 @@ class GameObjectManager;
 class HeightGage :public iEvent
 {
 public:
-	HeightGage() {};
+	HeightGage();
 	~HeightGage();
 
 	virtual void initialize() override;
@@ -15,7 +15,7 @@ public:
 	virtual bool IsEnd() override;
 
 private:
-	std::shared_ptr<GameObjectManager> m_objManager;
+	GameObjectManager& m_objManager;
 	std::shared_ptr<GameObject> heightgagepointer;
 	
 };

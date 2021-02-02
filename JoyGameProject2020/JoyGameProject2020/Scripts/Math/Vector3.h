@@ -40,6 +40,8 @@ struct Vector3 {
 	static const Vector3 Max(const Vector3& v1, const Vector3& v2);
 	/* 最小値 */
 	static const Vector3 Min(const Vector3& v1, const Vector3& v2);
+	/* 線形補間 */
+	static const Vector3 Lerp(const Vector3& start, const Vector3& end, const float t);
 	/* ゼロベクトル */
 	static const Vector3 Zero();
 	/* Vector2へ変換 */

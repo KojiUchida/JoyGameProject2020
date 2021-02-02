@@ -9,6 +9,7 @@
 #include "Scene/GamePlay.h"
 #include "Scene/GameOver.h"
 #include "Scene/Clear.h"
+#include "GameObject/GameObjectManager.h"
 #include "Graphics/GraphicsManager.h"
 #include "Graphics/Renderer.h"
 #include "Physics/CollisionManager.h"
@@ -37,8 +38,9 @@ Application::Application() :
 	m_gameTime(GameTime::Instance()),
 	m_input(Input::Instance()),
 	m_graphicsManager(GraphicsManager::Instance()),
-	m_collisionManager(CollisionManager::Instance()) ,
-	m_renderer(Renderer::Instance()){
+	m_collisionManager(CollisionManager::Instance()),
+	m_objManager(GameObjectManager::Instance()),
+	m_renderer(Renderer::Instance()) {
 }
 
 Application::~Application() {
@@ -76,13 +78,13 @@ bool Application::Init() {
 	m_graphicsManager.LoadTexture("Resources/Textures/heightgage.png", "heightgage");
 	m_graphicsManager.LoadTexture("Resources/Textures/heightgagepointer.png", "heightgagepointer");
 
-	m_graphicsManager.LoadModelData("Resources/Models/cube/cube.obj", "cube");
-	m_graphicsManager.LoadModelData("Resources/Models/dosei/dosei_quad.obj", "dosei");
-	m_graphicsManager.LoadModelData("Resources/Models/grass/grass.obj", "grass");
-	m_graphicsManager.LoadModelData("Resources/Models/ground/ground.obj", "ground");
-	m_graphicsManager.LoadModelData("Resources/Models/plane/plane.obj", "plane");
-	m_graphicsManager.LoadModelData("Resources/Models/skydome/skydome.obj", "skydome");
-	m_graphicsManager.LoadModelData("Resources/Models/sphere/sphere.obj", "sphere", true);
+	m_graphicsManager.LoadModel("Resources/Models/cube/cube.obj", "cube");
+	m_graphicsManager.LoadModel("Resources/Models/dosei/dosei_quad.obj", "dosei");
+	m_graphicsManager.LoadModel("Resources/Models/grass/grass.obj", "grass");
+	m_graphicsManager.LoadModel("Resources/Models/ground/ground.obj", "ground");
+	m_graphicsManager.LoadModel("Resources/Models/plane/plane.obj", "plane");
+	m_graphicsManager.LoadModel("Resources/Models/skydome/skydome.obj", "skydome");
+	m_graphicsManager.LoadModel("Resources/Models/sphere/sphere.obj", "sphere", true);
 
 	m_graphicsManager.LoadShader("Resources/Shaders/SpriteVertexShader.hlsl", "VSmain", "vs_5_0", "SpriteVS");
 	m_graphicsManager.LoadShader("Resources/Shaders/SpritePixelShader.hlsl", "PSmain", "ps_5_0", "SpritePS");
@@ -99,7 +101,7 @@ bool Application::Init() {
 	m_sceneManager->AddScene(std::make_shared<GamePlay>(), "GamePlay");
 	m_sceneManager->AddScene(std::make_shared<GameOver>(), "GameOver");
 	m_sceneManager->AddScene(std::make_shared<Clear>(), "Clear");
-	m_sceneManager->ChangeScene("GamePlay");
+	m_sceneManager->ChangeScene("Test");
 
 	/* ‚±‚±‚Ü‚Å‰Šú‰»ˆ— */
 
@@ -130,9 +132,10 @@ void Application::Run() {
 		ImGui::NewFrame();
 
 		m_sceneManager->Update();
+		m_objManager.Update();
+		m_collisionManager.Update();
 		m_renderer.Update();
 		m_renderer.Draw();
-		m_collisionManager.Update();
 
 		ImGui::Render();
 		m_dxManager.GetCommandList()->SetDescriptorHeaps(1, m_dxManager.GetDescHeapForImGui().GetAddressOf());

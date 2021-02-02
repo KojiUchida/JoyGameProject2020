@@ -15,7 +15,7 @@ public:
 	virtual bool IsEnd() override;
 
 private:
-	std::shared_ptr<GameObjectManager>m_objManager;
+	GameObjectManager& m_objManager;
 	std::shared_ptr<GameObject>ready;
 	std::shared_ptr<GameObject>go;
 	std::shared_ptr<GameObject>ready_back;

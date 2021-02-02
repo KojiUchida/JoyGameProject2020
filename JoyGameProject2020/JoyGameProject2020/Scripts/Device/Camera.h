@@ -1,6 +1,7 @@
 #pragma once
 #include "Math/Vector3.h"
 #include "Math/Matrix4.h"
+#include "Math/Quaternion.h"
 
 class Camera {
 
@@ -37,8 +38,6 @@ public:
 	Matrix4 GetProjectionMatrix();
 	/* 平行投影行列の取得 */
 	Matrix4 GetOrthoMatrix();
-	/* 回転行列の取得 */
-	Matrix4 GetRotationMatrix();
 
 private:
 	/* ビュー行列の計算 */
@@ -48,13 +47,14 @@ private:
 	/* 平行投影行列の計算 */
 	void CalcOrthoMatrix();
 
+public:
+	Quaternion rotation;
+
 private:
 	Vector3 m_position;
-	Vector3 m_rotation;
 	Matrix4 m_viewMatrix;
 	Matrix4 m_projectionMatrix;
 	Matrix4 m_orthoMatrix;
-	Matrix4 m_rotationMatrix;
 	float m_zoom;
 };
 

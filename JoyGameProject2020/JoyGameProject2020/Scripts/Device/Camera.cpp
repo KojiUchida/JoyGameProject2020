@@ -22,25 +22,24 @@ Vector3 Camera::GetPosition() {
 	return m_position;
 }
 
-void Camera::SetRotation(const Vector3& rotation) {
-	m_rotation = rotation;
+void Camera::SetRotation(const Vector3& eular) {
+	rotation = Quaternion::Euler(eular);
 }
 
 Vector3 Camera::GetRotation() {
-	return m_rotation;
+	return rotation.EulerAngles();
 }
 
-Matrix4 Camera::GetBillboard()
-{
+Matrix4 Camera::GetBillboard() {
 	//視点座標
 	Vector3 eyePosition = m_position;
 
 	Vector3 target(0, 0, 1);
 
-	target = target * m_rotationMatrix;
+	target = target * Matrix4::RotationFromQuaternion(rotation);
 	target = m_position + target;
 	//注視点座標
-	Vector3 targetPosition =target;
+	Vector3 targetPosition = target;
 	//上方向
 	Vector3 upVector = Vector3(0, 1, 0);
 
@@ -118,19 +117,15 @@ Matrix4 Camera::GetOrthoMatrix() {
 	return m_orthoMatrix;
 }
 
-Matrix4 Camera::GetRotationMatrix() {
-	return m_rotationMatrix;
-}
-
 void Camera::CalcViewMatrix() {
 	Vector3 up(0, 1, 0);
 	Vector3 eye(m_position);
 	Vector3 target(0, 0, 1);
 
-	m_rotationMatrix = Matrix4::RotateRollPitchYaw(m_rotation);
+	auto rotationMatrix = Matrix4::RotationFromQuaternion(rotation);
 
-	target = target * m_rotationMatrix;
-	up = up * m_rotationMatrix;
+	target = target * rotationMatrix;
+	up = up * rotationMatrix;
 	target = eye + target;
 
 	m_viewMatrix = Matrix4::LookAt(eye, target, up);
@@ -143,7 +138,7 @@ void Camera::CalcProjectionMatrix() {
 void Camera::CalcOrthoMatrix() {
 	auto  trans = Matrix4::Translate(Vector3::Zero());
 	auto  rot = Matrix4::Translate(Vector3(-Screen::WIDTH / 2, -Screen::HEIGHT / 2, 0)) *
-		Matrix4::RotateZ(m_rotation.z) *
+		Matrix4::RotateZ(rotation.EulerAngles().z) *
 		Matrix4::Translate(Vector3(Screen::WIDTH / 2, Screen::HEIGHT / 2, 0));
 	auto scale = Matrix4::Translate(Vector3(-Screen::WIDTH / 2, -Screen::HEIGHT / 2, 0)) *
 		Matrix4::Scale(m_zoom) *

@@ -4,7 +4,6 @@
 #include <vector>
 #include "Math/Transform.h"
 #include "Math/Matrix4.h"
-#include "Utility/Color4.h"
 
 class Component;
 class GameObjectManager;

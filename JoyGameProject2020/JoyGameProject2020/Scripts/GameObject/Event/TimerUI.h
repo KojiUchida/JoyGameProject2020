@@ -8,7 +8,7 @@ class Sprite;
 class TimerUI :public iEvent
 {
 public:
-	TimerUI() {};
+	TimerUI();
 	~TimerUI();
 
 	virtual void initialize() override;
@@ -16,7 +16,7 @@ public:
 	virtual bool IsEnd() override;
 
 private:
-	std::shared_ptr<GameObjectManager> m_objManager;
+	GameObjectManager& m_objManager;
 	std::shared_ptr<GameObject> number;
 	std::shared_ptr<Sprite> n;
 	Timer*timer;

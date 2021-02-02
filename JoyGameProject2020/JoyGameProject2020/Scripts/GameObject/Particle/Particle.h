@@ -17,7 +17,7 @@ public:
 
 	bool IsEnd();
 
-	std::shared_ptr<GameObjectManager>m_objManager;
+	GameObjectManager& m_objManager;
 	std::shared_ptr <GameObject> obj;
 
 	

@@ -9,6 +9,7 @@ class GameTime;
 class Input;
 class GraphicsManager;
 class CollisionManager;
+class GameObjectManager;
 class Renderer;
 class Application {
 
@@ -43,6 +44,7 @@ private:
 	Input& m_input;
 	GraphicsManager& m_graphicsManager;
 	CollisionManager& m_collisionManager;
+	GameObjectManager& m_objManager;
 	Renderer& m_renderer;
 };
 

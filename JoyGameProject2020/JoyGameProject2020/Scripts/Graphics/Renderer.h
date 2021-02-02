@@ -26,6 +26,8 @@ public:
 
 	void AddModel(std::shared_ptr<ModelData> model);
 
+	void CreateVertex();
+	void CreateIndex();
 	void CreateRootSignature();
 	void CreatePipeline();
 
@@ -34,6 +36,12 @@ private:
 	GraphicsManager& m_graphicsManager;
 	ComPtr<ID3D12RootSignature> m_rootSignature;
 	ComPtr<ID3D12PipelineState> m_pipelineState;
-	std::vector<std::shared_ptr<ModelData>> models;
+	std::vector<std::shared_ptr<ModelData>> m_models;
+
+	ComPtr<ID3D12Resource> m_vertexBuffer;
+	ComPtr<ID3D12Resource> m_indexBuffer;
+
+	D3D12_VERTEX_BUFFER_VIEW m_vbView;
+	D3D12_INDEX_BUFFER_VIEW m_ibView;
 };
 

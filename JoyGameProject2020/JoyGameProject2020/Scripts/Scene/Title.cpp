@@ -11,15 +11,23 @@
 #include "ImGui/imgui_impl_win32.h"
 #include "ImGui/imgui_impl_dx12.h"
 #include "Def/Screen.h"
+
+Title::Title() :
+	m_objManager(GameObjectManager::Instance()) 
+{
+}
+
+Title::~Title() 
+{
+}
+
 void Title::Init()
 {
-	m_objManager = std::make_shared<GameObjectManager>();
-
 	auto obj = std::make_shared<GameObject>();
 	obj->AddComponent(std::make_shared<Sprite>("title"));
 	obj->SetScale(500);
 	obj->SetPosition(Vector3(Screen::WIDTH / 2 - 256, 1,0));
-	m_objManager->Add(obj);
+	m_objManager.Add(obj);
 }
 
 void Title::Update()
@@ -28,14 +36,14 @@ void Title::Update()
 	{
 		//eventManager->SetEvent(new StartCall());
 	}
-	m_objManager->Update();
 	//EventManager::Instance().update();
 	GUIUpdate();
 }
 
 void Title::Shutdown()
 {
-	m_objManager->Shutdown();
+	m_objManager.Shutdown();
+	m_objManager.Clear();
 }
 
 std::string Title::NextScene()

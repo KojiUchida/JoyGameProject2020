@@ -3,7 +3,8 @@
 #include "GameObject/GameObjectManager.h"
 #include "Graphics/Model.h"
 
-Particle::Particle()
+Particle::Particle() :
+	m_objManager(GameObjectManager::Instance())
 {
 }
 
@@ -14,7 +15,6 @@ Particle::~Particle()
 void Particle::Init()
 {
 	position = Vector3(0);
-	m_objManager = std::make_shared<GameObjectManager>();
 
 	obj = std::make_shared<GameObject>();
 	obj->AddComponent(std::make_shared<Model>("plane"));
@@ -22,7 +22,7 @@ void Particle::Init()
 	obj->SetScale(Vector3(scale));
 
 	obj->SetPosition(position);
-	m_objManager->Add(obj);
+	m_objManager.Add(obj);
 
 }
 
@@ -32,7 +32,6 @@ void Particle::Update()
 	obj->SetPosition(position);
 	obj->SetScale(Vector3(scale));
 	--lifetime;
-	m_objManager->Update();
 }
 
 bool Particle::IsEnd()

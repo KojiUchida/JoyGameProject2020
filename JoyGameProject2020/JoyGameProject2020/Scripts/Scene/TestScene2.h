@@ -8,6 +8,8 @@ class GameObjectManager;
 class TestScene2:public IScene
 {
 public:
+	TestScene2();
+	~TestScene2();
 
 	virtual void Init() override;
 
@@ -20,7 +22,7 @@ public:
 	virtual bool IsEnd() override;
 
 private:
-	std::shared_ptr<GameObjectManager>m_objManager;
+	GameObjectManager& m_objManager;
 	std::shared_ptr<GameObject>m_obj1;
 	std::shared_ptr<GameObject>m_obj2;
 	std::shared_ptr<GameObject>m_obj3;

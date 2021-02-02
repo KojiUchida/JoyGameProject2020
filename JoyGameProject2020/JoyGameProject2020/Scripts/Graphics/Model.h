@@ -12,6 +12,7 @@
 #include "Math/Vector2.h"
 #include "Math/Vector3.h"
 #include "Math/Matrix4.h"
+#include "Utility/Color4.h"
 #include "GameObject/Component.h"
 
 using namespace Microsoft::WRL;
@@ -20,6 +21,7 @@ class DirectXManager;
 class GraphicsManager;
 class GameObject;
 class Texture;
+class Camera;
 class ModelData {
 public:
 	struct Vertex {
@@ -40,6 +42,7 @@ public:
 		Matrix4 view;
 		Matrix4 proj;
 		Matrix4 mvp;
+		Color4 color;
 		Vector3 cameraPos;
 		float alignment;
 		Vector3 cameraDir;
@@ -78,35 +81,34 @@ public:
 	void UpdateConstantBuffer(GameObject* gameObject);
 	void LoadObj(const std::string& filePath, bool smooth);
 	void LoadMtl(const std::string& filePath);
-	void CreateVertexBuffer();
-	void CreateIndexBuffer();
 	void CreateTransformBuffer();
 	void CreateMaterialBuffer();
-
-	DirectXManager& m_dxManager;
-	GraphicsManager& m_graphicsManager;
 
 	/* 頂点 */
 	std::vector<Vertex> m_vertices;
 	std::vector<unsigned int> m_indices;
-	ComPtr<ID3D12Resource> m_vertexBuffer;
-	ComPtr<ID3D12Resource> m_indexBuffer;
-	D3D12_VERTEX_BUFFER_VIEW m_vbView;
-	D3D12_INDEX_BUFFER_VIEW m_ibView;
 	unsigned int vertexCount;
 	unsigned int indexCount;
 
 	std::vector<Subset> m_subsets;
+	ComPtr<ID3D12DescriptorHeap> m_transformDescHeap;
+	ComPtr<ID3D12DescriptorHeap> m_materialDescHeap;
+	Color4 m_color;
+	UINT64 vertexoffset;
+	UINT64 indexoffset;
+
+private:
+	Camera& m_camera;
+	DirectXManager& m_dxManager;
+	GraphicsManager& m_graphicsManager;
 
 	/* 定数バッファ */
 	ComPtr<ID3D12Resource> m_transformBuffer;
-	ComPtr<ID3D12DescriptorHeap> m_transformDescHeap;
 
 	std::string m_directory;
 	std::string m_matName;
 	std::vector<Material> m_materials;
 	ComPtr<ID3D12Resource> m_materialBuffer;
-	ComPtr<ID3D12DescriptorHeap> m_materialDescHeap;
 
 	std::map<std::string, Texture> m_textureMap;
 	Transform* transformMap = nullptr;
@@ -120,7 +122,12 @@ public:
 
 	virtual void Update() override;
 	void SetTexture(int matNum, const std::string& texName);
+	void SetColor(const Color4& color);
 
 	std::shared_ptr<ModelData> modeldata;
+
+private:
 	Renderer& renderer;
+	DirectXManager& m_dxManager;
+	GraphicsManager& m_graphicsManager;
 };

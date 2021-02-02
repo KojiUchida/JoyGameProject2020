@@ -15,12 +15,18 @@
 #include "Game/Ranking.h"
 #include <iostream>
 
+TestScene2::TestScene2() : 
+	m_objManager(GameObjectManager::Instance())
+{
+}
+
+TestScene2::~TestScene2() {
+}
+
 void TestScene2::Init()
 {
 	auto& cam = Camera::Instance();
 	cam.SetPosition(Vector3(0, 0, -10));
-
-	m_objManager = std::make_shared<GameObjectManager>();
 
 	Ranking::Instance().ResetRanking();
 }
@@ -36,7 +42,7 @@ void TestScene2::Update()
 	float movez = Input::LeftStickValue().y;
 	float movey = Input::IsButton(PadButton::R1) ? 0.1f : Input::IsButton(PadButton::L1) ? -0.1f : 0.0f;
 
-	auto forward = Vector3(movex, movey, movez) * cam.GetRotationMatrix();
+	auto forward = Vector3(movex, movey, movez) * Matrix4::RotationFromQuaternion(cam.rotation);
 	auto move = forward * 10.0f * GameTime::DeltaTime();
 
 	cam.SetRotation(cam.GetRotation() + rot);
@@ -87,7 +93,8 @@ void TestScene2::Update()
 
 void TestScene2::Shutdown()
 {
-	m_objManager->Shutdown();
+	m_objManager.Shutdown();
+	m_objManager.Clear();
 }
 
 std::string TestScene2::NextScene()

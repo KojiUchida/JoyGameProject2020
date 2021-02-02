@@ -5,10 +5,14 @@
 class GameObject;
 class GameObjectManager {
 
-public:
+private:
 	GameObjectManager();
 	~GameObjectManager();
+	GameObjectManager(const GameObjectManager&) = delete;
+	void operator= (const GameObjectManager&) = delete;
 
+public:
+	static GameObjectManager& Instance();
 	void Update();
 	void Shutdown();
 	void Add(const std::shared_ptr<GameObject> gameObject);

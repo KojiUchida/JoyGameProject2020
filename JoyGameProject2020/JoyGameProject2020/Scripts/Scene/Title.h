@@ -7,8 +7,8 @@ class GameObjectManager;
 class Title :public IScene 
 {
 public:
-	Title() {};
-	~Title() {};
+	Title();
+	~Title();
 
 	// IScene ‚ğ‰î‚µ‚ÄŒp³‚³‚ê‚Ü‚µ‚½
 	virtual void Init() override;
@@ -24,5 +24,5 @@ public:
 	virtual void GUIUpdate() override;
 
 private:
-	std::shared_ptr<GameObjectManager>m_objManager;
+	GameObjectManager& m_objManager;
 };

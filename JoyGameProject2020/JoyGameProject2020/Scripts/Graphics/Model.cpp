@@ -9,41 +9,38 @@
 #include "Light.h"
 #include "Renderer.h"
 #include "Math/MathUtil.h"
+#include "Device/Camera.h"
 
 ModelData::ModelData(const std::string& filePath, bool smooth) :
 	m_dxManager(DirectXManager::Instance()),
 	m_graphicsManager(GraphicsManager::Instance()),
-	m_vbView(),
-	m_ibView() {
+	m_camera(Camera::Instance()),
+	vertexoffset(0),
+	indexoffset(0){
 
 	m_directory = FileUtility::GetDirectory(filePath);
 
 	LoadObj(filePath, smooth);
 	LoadMtl(m_directory + m_matName);
 
-	CreateVertexBuffer();
-	CreateIndexBuffer();
-	CreateTransformBuffer();
+	CreateMaterialBuffer();
 }
 
 ModelData::ModelData(const ModelData& other) :
 	m_dxManager(other.m_dxManager),
 	m_graphicsManager(other.m_graphicsManager),
-	m_vertices(other.m_vertices),
-	m_indices(other.m_indices),
-	m_vbView(other.m_vbView),
-	m_ibView(other.m_ibView),
-	vertexCount(other.vertexCount),
-	indexCount(other.indexCount),
+	m_camera(other.m_camera),
+	vertexoffset(other.vertexoffset),
+	indexoffset(other.indexoffset),
 	m_subsets(other.m_subsets),
-	m_textureMap(other.m_textureMap),
-	m_materials(other.m_materials),
 	m_materialDescHeap(other.m_materialDescHeap) {
 	CreateTransformBuffer();
 }
 
 ModelData::~ModelData() {
-	m_transformBuffer->Unmap(0, nullptr);
+	if (m_transformBuffer) {
+		m_transformBuffer->Unmap(0, nullptr);
+	}
 }
 
 void ModelData::UpdateConstantBuffer(GameObject* gameObject) {
@@ -52,8 +49,8 @@ void ModelData::UpdateConstantBuffer(GameObject* gameObject) {
 		Matrix4::RotationFromQuaternion(gameObject->transform.rotation) *
 		gameObject->billboard *
 		Matrix4::Translate(gameObject->GetPosition());
-	auto view = Camera::Instance().GetViewMatrix();
-	auto proj = Camera::Instance().GetProjectionMatrix();
+	auto view = m_camera.GetViewMatrix();
+	auto proj = m_camera.GetProjectionMatrix();
 	auto mvp = world * view * proj;
 
 	transformMap->world = world;
@@ -62,8 +59,9 @@ void ModelData::UpdateConstantBuffer(GameObject* gameObject) {
 	transformMap->view = view;
 	transformMap->proj = proj;
 	transformMap->mvp = mvp;
-	transformMap->cameraPos = Camera::Instance().GetPosition();
-	transformMap->cameraDir = Vector3(0, 1, 0) * Camera::Instance().GetRotationMatrix();
+	transformMap->color = m_color;
+	transformMap->cameraPos = m_camera.GetPosition();
+	transformMap->cameraDir = Vector3(0, 1, 0) * Matrix4::RotationFromQuaternion(m_camera.rotation);
 	transformMap->lightDir = Light::Instance().GetLightVec().Normalize();
 	transformMap->lightColor = Light::Instance().lightColor;
 }
@@ -259,61 +257,11 @@ void ModelData::LoadMtl(const std::string& filePath) {
 	}
 }
 
-void ModelData::CreateVertexBuffer() {
-	auto heapprop = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
-	auto resdesc = CD3DX12_RESOURCE_DESC::Buffer(m_vertices.size() * sizeof(m_vertices[0]));
-	auto result = DirectXManager::Instance().GetDevice()->CreateCommittedResource(
-		&heapprop,
-		D3D12_HEAP_FLAG_NONE,
-		&resdesc,
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(&m_vertexBuffer)
-	);
-	_ASSERT_EXPR(SUCCEEDED(result), L"頂点バッファの生成に失敗しました");
-
-	Vertex* vertexMap = nullptr;
-	m_vertexBuffer->Map(0, nullptr, (void**)&vertexMap);
-	for (int i = 0; i < m_vertices.size(); ++i) {
-		vertexMap[i] = m_vertices[i];
-	}
-	m_vertexBuffer->Unmap(0, nullptr);
-
-	m_vbView.BufferLocation = m_vertexBuffer->GetGPUVirtualAddress();
-	m_vbView.SizeInBytes = (UINT)m_vertices.size() * sizeof(m_vertices[0]);
-	m_vbView.StrideInBytes = sizeof(m_vertices[0]);
-}
-
-void ModelData::CreateIndexBuffer() {
-	auto heapprop = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
-	auto resdesc = CD3DX12_RESOURCE_DESC::Buffer(m_indices.size() * sizeof(m_indices[0]));
-	auto result = DirectXManager::Instance().GetDevice()->CreateCommittedResource(
-		&heapprop,
-		D3D12_HEAP_FLAG_NONE,
-		&resdesc,
-		D3D12_RESOURCE_STATE_GENERIC_READ,
-		nullptr,
-		IID_PPV_ARGS(&m_indexBuffer)
-	);
-	_ASSERT_EXPR(SUCCEEDED(result), L"インデックスバッファの生成に失敗しました");
-
-	unsigned short* indexMap = nullptr;
-	m_indexBuffer->Map(0, nullptr, (void**)&indexMap);
-	for (int i = 0; i < m_indices.size(); ++i) {
-		indexMap[i] = m_indices[i];
-	}
-	m_indexBuffer->Unmap(0, nullptr);
-
-	m_ibView.BufferLocation = m_indexBuffer->GetGPUVirtualAddress();
-	m_ibView.Format = DXGI_FORMAT_R16_UINT;
-	m_ibView.SizeInBytes = (UINT)m_indices.size() * sizeof(m_indices[0]);
-}
-
 void ModelData::CreateTransformBuffer() {
 	UINT transformBufferSize = (sizeof(Transform) + 0xff) & ~0xff;
 
 	auto heapprop = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
-	auto resdesc = CD3DX12_RESOURCE_DESC::Buffer(transformBufferSize * m_materials.size());
+	auto resdesc = CD3DX12_RESOURCE_DESC::Buffer(transformBufferSize);
 	auto result = m_dxManager.GetDevice()->CreateCommittedResource(
 		&heapprop,
 		D3D12_HEAP_FLAG_NONE,
@@ -430,9 +378,10 @@ void ModelData::CreateMaterialBuffer() {
 }
 
 Model::Model(const std::string& modelname) :
-	renderer(Renderer::Instance()) {
-	modeldata = GraphicsManager::Instance().GetModelData(modelname);
-	modeldata->CreateMaterialBuffer();
+	renderer(Renderer::Instance()),
+	m_dxManager(DirectXManager::Instance()),
+	m_graphicsManager(GraphicsManager::Instance()) {
+	modeldata = GraphicsManager::Instance().GetModel(modelname);
 }
 
 Model::~Model() {
@@ -451,10 +400,14 @@ void Model::SetTexture(int matNum, const std::string& texName) {
 	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 	srvDesc.Texture2D.MipLevels = 1;
 
-	auto descHandle = modeldata.get()->m_materialDescHeap->GetCPUDescriptorHandleForHeapStart();
-	auto incSize = modeldata.get()->m_dxManager.GetDevice()->GetDescriptorHandleIncrementSize(
+	auto descHandle = modeldata->m_materialDescHeap->GetCPUDescriptorHandleForHeapStart();
+	auto incSize = m_dxManager.GetDevice()->GetDescriptorHandleIncrementSize(
 		D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	descHandle.ptr += (matNum * 5 + 2) * incSize;
-	modeldata.get()->m_dxManager.GetDevice()->CreateShaderResourceView(
+	m_dxManager.GetDevice()->CreateShaderResourceView(
 		textureBuffer, &srvDesc, descHandle);
+}
+
+void Model::SetColor(const Color4& color) {
+	modeldata->m_color = color;
 }

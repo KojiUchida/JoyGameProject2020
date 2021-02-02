@@ -7,7 +7,8 @@
 #include "Math/MathUtil.h"
 #include <iostream>
 
-GameTimer::GameTimer()
+GameTimer::GameTimer() : 
+	m_objManager(GameObjectManager::Instance())
 {
 }
 
@@ -17,7 +18,6 @@ GameTimer::~GameTimer()
 
 void GameTimer::initialize()
 {
-	m_objManager = std::make_shared<GameObjectManager>();
 	position = Vector3(0, 0, 0);
 
 	for (int i = 0; i < _countof(obj);)
@@ -27,7 +27,7 @@ void GameTimer::initialize()
 		obj[i]->SetRotation(Vector3(-90, 0, 0));
 		obj[i]->SetScale(Vector3(0.6f * 5, 1, 0.6f));
 		obj[i]->SetPosition(position*i);
-		m_objManager->Add(obj[i]);
+		m_objManager.Add(obj[i]);
 		++i;
 	}
 
@@ -38,7 +38,6 @@ void GameTimer::initialize()
 
 void GameTimer::update()
 {
-	m_objManager->Update();
 }
 
 bool GameTimer::IsEnd()

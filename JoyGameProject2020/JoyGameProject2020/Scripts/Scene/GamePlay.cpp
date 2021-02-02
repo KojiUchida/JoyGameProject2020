@@ -13,13 +13,20 @@
 #include "ImGui/imgui_impl_win32.h"
 #include "ImGui/imgui_impl_dx12.h"
 
+GamePlay::GamePlay() :
+	m_objManager(GameObjectManager::Instance()) 
+{
+}
+
+GamePlay::~GamePlay() 
+{
+}
+
 void GamePlay::Init()
 {
 	auto& cam = Camera::Instance();
 
 	cam.SetPosition(Vector3(0, 0, -10));
-
-	m_objManager = std::make_shared<GameObjectManager>();
 
 	EventManager::Instance().SetEvent(new HeightGage());
 }
@@ -35,7 +42,7 @@ void GamePlay::Update()
 	float movez = Input::LeftStickValue().y;
 	float movey = Input::IsButton(PadButton::R1) ? 0.1f : Input::IsButton(PadButton::L1) ? -0.1f : 0.0f;
 
-	auto forward = Vector3(movex, movey, movez) * cam.GetRotationMatrix();
+	auto forward = Vector3(movex, movey, movez) * Matrix4::RotationFromQuaternion(cam.rotation);
 	auto move = forward * 10.0f * GameTime::DeltaTime();
 
 	cam.SetRotation(cam.GetRotation() + rot);
@@ -46,14 +53,14 @@ void GamePlay::Update()
 		EventManager::Instance().SetEvent(new StartCall());
 	}
 
-	m_objManager->Update();
 	EventManager::Instance().update();
 	GUIUpdate();
 }
 
 void GamePlay::Shutdown()
 {
-	m_objManager->Shutdown();
+	m_objManager.Shutdown();
+	m_objManager.Clear();
 }
 
 std::string GamePlay::NextScene()

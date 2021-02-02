@@ -8,7 +8,8 @@
 #include "Def/Screen.h"
 #include <iostream>
 
-StartCall::StartCall()
+StartCall::StartCall() :
+	m_objManager(GameObjectManager::Instance())
 {
 }
 
@@ -20,7 +21,6 @@ StartCall::~StartCall()
 void StartCall::initialize()
 {
 	direction = FIRST;
-	m_objManager = std::make_shared<GameObjectManager>();
 	posMoverate = 1;
 	firstpos = Vector3(Screen::WIDTH, Screen::HEIGHT / 2 - 64, 0);
 	endpos = Vector3(Screen::WIDTH / 2 - 320, Screen::HEIGHT / 2 - 64, 0);
@@ -29,7 +29,7 @@ void StartCall::initialize()
 	ready->AddComponent(std::make_shared<Sprite>("ready"));
 	ready->SetScale(Vector3(640, 128, 1));
 	ready->SetPosition(firstpos);
-	m_objManager->Add(ready);
+	m_objManager.Add(ready);
 	/*ready_back = std::make_shared<GameObject>();
 	ready_back->AddComponent(std::make_shared<Sprite>("ready_back"));
 	ready_back->SetScale(Vector3(1280, 1, 1));
@@ -46,8 +46,8 @@ void StartCall::update()
 	float nowtime = timer->GetRatioElapsed();
 	posMoverate = Easing::EaseOutQuint(nowtime);
 	Vector3 obj1pos(0);
-	obj1pos.x = MathUtil::Lerp((double)firstpos.x, (double)endpos.x, posMoverate);
-	obj1pos.x = MathUtil::Clamp(obj1pos.x, endpos.x, firstpos.x);
+	obj1pos.x = Math::Lerp((double)firstpos.x, (double)endpos.x, posMoverate);
+	obj1pos.x = Math::Clamp(obj1pos.x, endpos.x, firstpos.x);
 	obj1pos.y = firstpos.y;
 
 	ready->SetPosition(obj1pos);
@@ -59,7 +59,7 @@ void StartCall::update()
 		go->AddComponent(std::make_shared<Sprite>("go"));
 		go->SetScale(Vector3(520, 130, 1));
 		go->SetPosition(Vector3(Screen::WIDTH / 2 - 256, Screen::HEIGHT / 2 - 64, 0));
-		m_objManager->Add(go);
+		m_objManager.Add(go);
 
 		timer->Reset();
 		timer->SetLimit(1);
@@ -67,12 +67,10 @@ void StartCall::update()
 	}
 
 	float maxheight = 128;
-	float scaleY = MathUtil::Lerp(0.0, (double)maxheight, Easing::EaseOutQuint(nowtime) * 2);
-	scaleY = MathUtil::Clamp(scaleY, 0.0f, maxheight);
+	float scaleY = Math::Lerp(0.0, (double)maxheight, Easing::EaseOutQuint(nowtime) * 2);
+	scaleY = Math::Clamp(scaleY, 0.0f, maxheight);
 
 //	ready_back->SetScale(Vector3(1280,scaleY,1));
-
-	m_objManager->Update();
 }
 
 bool StartCall::IsEnd()

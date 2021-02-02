@@ -7,8 +7,8 @@ class GameObjectManager;
 class GameOver :public IScene
 {
 public:
-	GameOver() {};
-	~GameOver() {};
+	GameOver();
+	~GameOver();
 
 	// IScene ‚ğ‰î‚µ‚ÄŒp³‚³‚ê‚Ü‚µ‚½
 	virtual void Init() override;
@@ -24,7 +24,7 @@ public:
 	virtual void GUIUpdate() override;
 
 private:
-	std::shared_ptr<GameObjectManager>m_objManager;
+	GameObjectManager& m_objManager;
 
 
 };

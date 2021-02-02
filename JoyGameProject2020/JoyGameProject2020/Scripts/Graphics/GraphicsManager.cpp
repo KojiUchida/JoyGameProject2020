@@ -68,12 +68,22 @@ void GraphicsManager::CheckShaderCompileResult(HRESULT result, ID3DBlob* error) 
 	}
 }
 
-void GraphicsManager::LoadModelData(const std::string& filePath, const std::string& modelName, bool smooth) {
-	m_modelDataMap.emplace(modelName, std::make_shared<ModelData>(filePath, smooth));
+void GraphicsManager::LoadModel(const std::string& filePath, const std::string& modelName, bool smooth) {
+	auto model =  std::make_shared<ModelData>(filePath, smooth);
+	m_modelMap.emplace(modelName, model);
+
+	model->vertexoffset = vertices.size();
+	for (int i = 0; i < model->vertexCount; ++i) {
+		vertices.push_back(model->m_vertices[i]);
+	}
+	model->indexoffset = indices.size();
+	for (int i = 0; i < model->indexCount; ++i) {
+		indices.push_back(model->m_indices[i]);
+	}
 }
 
-std::shared_ptr<ModelData> GraphicsManager::GetModelData(const std::string& modelName) {
-	_ASSERT_EXPR(m_modelDataMap.count(modelName) != 0, L"モデル名が間違っているか、読み込まれていません");
-	return std::make_shared<ModelData>(*m_modelDataMap[modelName]);
+std::shared_ptr<ModelData> GraphicsManager::GetModel(const std::string& modelName) {
+	_ASSERT_EXPR(m_modelMap.count(modelName) != 0, L"モデル名が間違っているか、読み込まれていません");
+	return std::make_shared<ModelData>(*m_modelMap[modelName]);
 }
 

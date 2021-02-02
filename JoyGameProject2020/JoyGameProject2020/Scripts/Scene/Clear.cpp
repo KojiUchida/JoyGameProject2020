@@ -10,13 +10,20 @@
 #include "ImGui/imgui_impl_win32.h"
 #include "ImGui/imgui_impl_dx12.h"
 
+Clear::Clear() : 
+	m_objManager(GameObjectManager::Instance())
+{
+}
+
+Clear::~Clear() 
+{
+}
+
 void Clear::Init()
 {
 	auto& cam = Camera::Instance();
 
 	cam.SetPosition(Vector3(0, 0, -10));
-
-	m_objManager = std::make_shared<GameObjectManager>();
 }
 
 void Clear::Update()
@@ -30,7 +37,7 @@ void Clear::Update()
 	float movez = Input::LeftStickValue().y;
 	float movey = Input::IsButton(PadButton::R1) ? 0.1f : Input::IsButton(PadButton::L1) ? -0.1f : 0.0f;
 
-	auto forward = Vector3(movex, movey, movez) * cam.GetRotationMatrix();
+	auto forward = Vector3(movex, movey, movez) * Matrix4::RotationFromQuaternion(cam.rotation);
 	auto move = forward * 10.0f * GameTime::DeltaTime();
 
 	cam.SetRotation(cam.GetRotation() + rot);
@@ -47,7 +54,8 @@ void Clear::Update()
 
 void Clear::Shutdown()
 {
-	m_objManager->Shutdown();
+	m_objManager.Shutdown();
+	m_objManager.Clear();
 }
 
 std::string Clear::NextScene()

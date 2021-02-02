@@ -11,6 +11,7 @@ cbuffer sceneBuffer : register(b0) {
 	matrix view;
 	matrix proj;
 	matrix mvp;
+	float4 color;
 	float3 cameraPos;
 	float alignment;
 	float3 cameraDir;

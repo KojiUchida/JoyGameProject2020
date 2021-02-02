@@ -6,6 +6,7 @@
 #include <map>
 #include <d3dcompiler.h>
 #include <string>
+#include "Model.h"
 
 #pragma comment(lib, "d3dcompiler.lib")
 
@@ -13,8 +14,6 @@ using namespace Microsoft::WRL;
 
 class DirectXManager;
 class Texture;
-class ObjModel;
-class ModelData;
 class GraphicsManager {
 private:
 	GraphicsManager();
@@ -34,13 +33,16 @@ public:
 	ComPtr<ID3DBlob> GetShader(const std::string& shaderName);
 	void CheckShaderCompileResult(HRESULT result, ID3DBlob* error);
 
-	void LoadModelData(const std::string& filePath, const std::string& modelName, bool smooth = false);
-	std::shared_ptr<ModelData> GetModelData(const std::string& modelName);
+	void LoadModel(const std::string& filePath, const std::string& modelName, bool smooth = false);
+	std::shared_ptr<ModelData> GetModel(const std::string& modelName);
+
+public:
+	std::vector<ModelData::Vertex> vertices;
+	std::vector<unsigned short> indices;
 
 private:
 	std::map<std::string, std::shared_ptr<Texture>> m_textureMap;
-	std::map<std::string, std::shared_ptr<ObjModel>> m_objModelMap;
-	std::map<std::string, std::shared_ptr<ModelData>> m_modelDataMap;
+	std::map<std::string, std::shared_ptr<ModelData>> m_modelMap;
 	std::map<std::string, ComPtr<ID3DBlob>> m_shaderMap;
 };
 
