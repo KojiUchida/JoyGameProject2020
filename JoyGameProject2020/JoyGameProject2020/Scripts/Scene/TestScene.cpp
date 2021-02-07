@@ -22,7 +22,6 @@
 
 TestScene::TestScene() :
 	m_camera(Camera::Instance()),
-	m_isFreeCam(false),
 	m_light(Light::Instance()),
 	m_gameManager(GameManager::Instance()),
 	m_objManager(GameObjectManager::Instance()) {
@@ -34,6 +33,8 @@ TestScene::~TestScene() {
 void TestScene::Init() {
 	m_camera.SetPosition(Vector3(0, 0, -10));
 	m_light.SetRotate(Vector3(-90, 0, 0));
+
+	m_gameManager.ChangeState(GameState::READY);
 
 	player = std::make_shared<Player>();
 	m_objManager.Add(player);
@@ -98,18 +99,15 @@ void TestScene::Init() {
 	spriteobj->AddComponent(std::make_shared<Sprite>("ready"));
 	spriteobj->SetScale(100);
 	m_objManager.Add(spriteobj);
-
-	m_gameManager.ChangeState(GameState::PLAY);
 }
 
 void TestScene::Update() {
 	m_gameManager.Update();
-	if (!m_isFreeCam) {
-		auto campos = player->GetPosition() + Vector3(0, 0, -70);
-		campos = Vector3::Lerp(Vector3(m_camera.GetPosition()), campos, 0.12f);
-		m_camera.SetPosition(campos);
+	if (m_gameManager.CompareState(GameState::READY) &&
+		m_gameManager.TimeElapsedOnCurrentState() > 3) {
+		m_gameManager.ChangeState(GameState::PLAY);
 	}
-
+	CamMove();
 	GUIUpdate();
 }
 
@@ -123,7 +121,21 @@ std::string TestScene::NextScene() {
 }
 
 bool TestScene::IsEnd() {
-	return m_gameManager.CompareState(GameState::GOAL);
+	return m_gameManager.CompareState(GameState::GOAL) &&
+		Input::IsButtonDown(PadButton::R1);
+}
+
+void TestScene::CamMove() {
+	if (!CanCamMove()) return;
+	auto campos = player->GetPosition() + Vector3(0, 20, -70);
+	campos = Vector3::Lerp(Vector3(m_camera.GetPosition()), campos, 0.12f);
+	m_camera.SetPosition(campos);
+}
+
+bool TestScene::CanCamMove() {
+	if (m_gameManager.CompareState(GameState::GOAL)) return false;
+	if (!player->IsArrive())return false;
+	return true;
 }
 
 void TestScene::GUIUpdate() {
@@ -143,8 +155,6 @@ void TestScene::GUIUpdate() {
 	ImGui::DragFloat3("Camera Rotation", camrot, 1);
 	m_camera.SetRotation(Vector3(camrot[0], camrot[1], camrot[2]));
 
-	ImGui::Checkbox("Free Camera", &m_isFreeCam);
-
 	ImGui::End();
 
 	ImGui::Begin("Player State");
@@ -159,8 +169,9 @@ void TestScene::GUIUpdate() {
 	ImGui::SetWindowSize(ImVec2(512, 128), ImGuiCond_::ImGuiCond_Always);
 	ImGui::SetWindowPos(ImVec2(32, 448), ImGuiCond_::ImGuiCond_Always);
 
-	ImGui::Text("FPS");
-	ImGui::Text("%d", (int)GameTime::FPS());
+	ImGui::Text("FPS : %d", (int)GameTime::FPS());
+
+	ImGui::Text("TimeElapsed : %f", m_gameManager.TimeElapsedOnCurrentState());
 
 	ImGui::End();
 }

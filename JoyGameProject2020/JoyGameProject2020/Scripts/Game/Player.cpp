@@ -10,11 +10,13 @@
 #include "Utility/Random.h"
 #include "Physics/CircleCollider3D.h"
 #include "Game/PlayerParticle.h"
+#include "GameManager.h"
 
 Player::Player() :
 	m_objManager(GameObjectManager::Instance()),
 	m_gauge(0.0f),
-	m_currentSpeed(0.0f) {
+	m_currentSpeed(0.0f),
+	m_isStart(false) {
 }
 
 Player::~Player() {
@@ -32,6 +34,11 @@ void Player::Init() {
 }
 
 void Player::Update() {
+	if (GameManager::Instance().CompareState(GameState::PLAY) &&
+		Input::IsButtonUp(PadButton::R1)) {
+		m_isStart = true;
+	}
+
 	Rotation();
 	Manipulation();
 	m_gauge = Math::Clamp(m_gauge, 0.0f, GAUGE_MAX);
@@ -45,10 +52,19 @@ void Player::Shutdown() {
 void Player::OnCollisionEnter(std::shared_ptr<GameObject> other) {
 	if (other->CompareTag("Obstacle")) {
 		m_gauge -= 10;
+		m_gauge = Math::Clamp(m_gauge, 0.0f, GAUGE_MAX);
 	}
 }
 
+bool Player::IsArrive() {
+	if (!m_isStart) return true;
+	return Gauge() > 0;
+}
+
 void Player::Manipulation() {
+	if (!IsArrive()) return;
+	if (GameManager::Instance().CompareState(GameState::GOAL)) return;
+
 	if (Input::IsButton(PadButton::R1)) {
 		Charge();
 	} else if (IsAttacking()) {
@@ -65,6 +81,7 @@ void Player::Manipulation() {
 }
 
 void Player::Rotation() {
+	if (GameManager::Instance().CompareState(GameState::GOAL)) return;
 	auto rot = GetRotation();
 	rot.z += Input::Gyro().z * ROT_SPEED;
 	SetRotation(rot);
@@ -141,13 +158,21 @@ void Player::Neutral() {
 }
 
 void Player::Move() {
+	if (!GameManager::Instance().CompareState(GameState::READY) &&
+		!GameManager::Instance().CompareState(GameState::GOAL)) {
+		DefaultMove();
+	}
+	if (!GameManager::Instance().CompareState(GameState::READY) &&
+		GameManager::Instance().CompareState(GameState::GOAL)) {
+		GoalMove();
+	}
+}
+
+void Player::DefaultMove() {
+
 	m_accel = 0;
 	m_accel.y -= GRAVITY;
 	m_velocity += m_accel * GameTime::DeltaTime();
-
-	//auto resist = m_velocity.x / abs(m_velocity.x) * AIR_RESIST * GameTime::DeltaTime();
-	//resist = abs(m_velocity.x) < 0.001f ? 0 : resist;
-	//m_velocity.x -= resist;
 
 	auto pos = GetPosition();
 	pos += m_velocity;
@@ -156,11 +181,17 @@ void Player::Move() {
 	SetPosition(pos);
 }
 
+void Player::GoalMove() {
+	SetRotation(Vector3::Zero());
+	SetPosition(GetPosition() + Vector3(0, m_velocity.Length(), 0));
+}
+
 float Player::GaugeRatio() {
 	return (m_gauge / GAUGE_MAX);
 }
 
 bool Player::CanAttack() {
+	if (GameManager::Instance().CompareState(GameState::READY))return false;
 	return m_gauge > ATTACK_GAUGE;
 }
 

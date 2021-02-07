@@ -40,6 +40,8 @@ void SpriteRenderer::Draw() {
 	for (auto s : m_sprites) {
 		s->Draw();
 	}
+
+	m_sprites.clear();
 }
 
 void SpriteRenderer::Add(std::shared_ptr<SpriteData> sprite) {

@@ -12,6 +12,7 @@ class Light;
 class Sprite;
 class GameManager;
 class GameObjectManager;
+class Timer;
 class TestScene : public IScene {
 
 public:
@@ -24,6 +25,9 @@ public:
 	virtual std::string NextScene() override;
 	virtual bool IsEnd() override;
 
+	void CamMove();
+	bool CanCamMove();
+
 private:
 	void GUIUpdate();
 
@@ -35,7 +39,6 @@ private:
 	Light& m_light;
 	GameManager& m_gameManager;
 	GameObjectManager& m_objManager;
-	bool m_isFreeCam;
 	bool m_showDebugMenu;
 };
 

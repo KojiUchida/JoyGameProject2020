@@ -19,6 +19,10 @@ void GameManager::Update() {
 	m_timer->Update();
 }
 
+GameState GameManager::GetState() {
+	return m_state;
+}
+
 bool GameManager::CompareState(GameState state) {
 	return state == m_state;
 }
@@ -30,4 +34,8 @@ void GameManager::ChangeState(GameState state) {
 
 void GameManager::OnChangeState() {
 	m_timer->Reset();
+}
+
+float GameManager::TimeElapsedOnCurrentState() {
+	return m_timer->GetElapsed();
 }

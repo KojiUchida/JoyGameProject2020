@@ -1,8 +1,8 @@
 #pragma once
 
 namespace Screen {
-	constexpr int WIDTH = 1280;
-	constexpr int HEIGHT = 720;
+	constexpr int WIDTH = 1024;
+	constexpr int HEIGHT = 768;
 	constexpr float ASPECT = (float)WIDTH / (float)HEIGHT;
 }
 

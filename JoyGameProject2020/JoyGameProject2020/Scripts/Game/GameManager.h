@@ -20,8 +20,12 @@ public:
 	static GameManager& Instance();
 
 	void Update();
+	GameState GetState();
 	bool CompareState(GameState state);
 	void ChangeState(GameState state);
+	float TimeElapsedOnCurrentState();
+
+private:
 	void OnChangeState();
 
 private:

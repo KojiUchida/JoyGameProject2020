@@ -33,6 +33,11 @@ public:
 	virtual void Shutdown() override;
 	virtual void OnCollisionEnter(std::shared_ptr<GameObject> other) override;
 
+	bool IsArrive();
+	float Gauge();
+	float GaugeRatio();
+
+private:
 	void Manipulation();
 	void Rotation();
 	void Charge();
@@ -41,16 +46,16 @@ public:
 	void Fly();
 	void Neutral();
 	void Move();
+	void DefaultMove();
+	void GoalMove();
 
 	bool CanAttack();
 	bool IsAttacking();
 	bool CanFly();
 
-	float Gauge();
-	float GaugeRatio();
-
 private:
 	GameObjectManager& m_objManager;
+	bool m_isStart;
 
 	float m_gauge;
 	float m_currentSpeed;
