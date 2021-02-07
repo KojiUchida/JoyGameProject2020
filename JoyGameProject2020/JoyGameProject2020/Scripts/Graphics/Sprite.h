@@ -16,11 +16,9 @@ using namespace Microsoft::WRL;
 
 class DirectXManager;
 class GraphicsManager;
-class SpriteRenderer;
 class Texture;
-class Sprite : public Component {
-	friend SpriteRenderer;
-
+class GameObject;
+class SpriteData {
 	struct Vertex {
 		Vector3 pos;
 		Vector2 uv;
@@ -31,14 +29,47 @@ class Sprite : public Component {
 		Matrix4 mat;
 	};
 
+	struct SpriteOption {
+		Color4 color = Color4(1, 1, 1, 1);
+		Vector2 pivot = Vector2::Zero();
+		bool isVisible = true;
+		bool flipX = false;
+		bool flipY = false;
+	};
+
+public:
+	SpriteData(const std::string& filePath);
+	~SpriteData();
+
+	void Draw();
+
+	void CreateConstantBuffer();
+	void UpdateConstantBuffer(GameObject* gameObject);
+
+	SpriteOption option;
+
+private:
+	DirectXManager& m_dxManager;
+	GraphicsManager& m_graphicsManager;
+
+	//定数バッファ
+	ComPtr<ID3D12Resource> m_constBuffer;
+	ComPtr<ID3D12DescriptorHeap> m_basicDescHeap;
+	ConstBufferData* m_constMap;
+
+	//テクスチャ
+	std::string m_textureName;
+	std::shared_ptr<Texture> m_texture;
+};
+
+class SpriteRenderer;
+class Sprite : public Component {
+
 public:
 	Sprite(const std::string& name = "");
 	~Sprite();
 
-	virtual void Init() override;
 	virtual void Update() override;
-	virtual void Shutdown() override;
-	void Draw();
 
 
 	//色設定
@@ -56,41 +87,7 @@ public:
 	void SetTexture(const std::string& name);
 
 private:
-	void InitRootSignature();
-	void InitPipeline();
-	void InitVertexBuffer();
-	void InitIndexBuffer();
-	void CreateConstantBuffer();
-	void UpdateConstantBuffer();
-
-private:
-	DirectXManager& m_dxManager;
-	GraphicsManager& m_graphicsManager;
-
-	//頂点情報
-	ComPtr<ID3D12Resource> m_vertexBuffer;
-	ComPtr<ID3D12Resource> m_indexBuffer;
-	D3D12_VERTEX_BUFFER_VIEW m_vbView;
-	D3D12_INDEX_BUFFER_VIEW m_ibView;
-	std::vector<Vertex> m_vertices;
-	std::vector<unsigned  short> m_indices;
-	//パイプライン
-	ComPtr<ID3D12RootSignature> m_rootSignature;
-	ComPtr<ID3D12PipelineState> m_pipelineState;
-
-
-	//定数バッファ
-	ComPtr<ID3D12Resource> m_constBuffer;
-	ComPtr<ID3D12DescriptorHeap> m_basicDescHeap;
-	ConstBufferData* m_constMap;
-	//テクスチャ
-	std::string m_textureName;
-	std::shared_ptr<Texture> m_texture;
-
-	Color4 m_color;
-	Vector2 m_pivot;
-	bool m_isVisible;
-	bool m_flipX;
-	bool m_flipY;
+	SpriteRenderer& m_spriteRenderer;
+	std::shared_ptr<SpriteData> m_spriteData;
 };
 

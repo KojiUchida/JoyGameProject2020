@@ -3,7 +3,7 @@
 #include "GraphicsManager.h"
 #include "Sprite.h"
 
-SpriteRenderer::SpriteRenderer(const std::string& name) :
+SpriteRenderer::SpriteRenderer() :
 	m_dxManager(DirectXManager::Instance()),
 	m_renderManager(GraphicsManager::Instance()),
 	m_vertexBuffer(nullptr),
@@ -12,10 +12,14 @@ SpriteRenderer::SpriteRenderer(const std::string& name) :
 	m_ibView(),
 	m_rootSignature(nullptr),
 	m_pipelineState(nullptr) {
-	m_sprite = std::make_shared<Sprite>(name);
 }
 
 SpriteRenderer::~SpriteRenderer() {
+}
+
+SpriteRenderer& SpriteRenderer::Instance() {
+	static SpriteRenderer instance;
+	return instance;
 }
 
 void SpriteRenderer::Init() {
@@ -25,13 +29,7 @@ void SpriteRenderer::Init() {
 	InitPipeline();
 }
 
-void SpriteRenderer::Update() {
-	Draw();
-}
-
 void SpriteRenderer::Draw() {
-	if (!m_sprite->m_isVisible) return;
-
 	m_dxManager.GetCommandList()->SetGraphicsRootSignature(m_rootSignature.Get());
 	m_dxManager.GetCommandList()->SetPipelineState(m_pipelineState.Get());
 
@@ -39,16 +37,13 @@ void SpriteRenderer::Draw() {
 	m_dxManager.GetCommandList()->IASetIndexBuffer(&m_ibView);
 	m_dxManager.GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	ComPtr<ID3D12DescriptorHeap> ppHeaps[] = { m_sprite->m_basicDescHeap };
-	m_dxManager.GetCommandList()->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps->GetAddressOf());
+	for (auto s : m_sprites) {
+		s->Draw();
+	}
+}
 
-	auto handle = m_sprite->m_basicDescHeap->GetGPUDescriptorHandleForHeapStart();
-	m_dxManager.GetCommandList()->SetGraphicsRootDescriptorTable(0, handle);
-	handle.ptr += m_dxManager.GetDevice()->GetDescriptorHandleIncrementSize(
-		D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-	m_dxManager.GetCommandList()->SetGraphicsRootDescriptorTable(1, handle);
-
-	m_dxManager.GetCommandList()->DrawIndexedInstanced(m_indices.size(), 1, 0, 0, 0);
+void SpriteRenderer::Add(std::shared_ptr<SpriteData> sprite) {
+	m_sprites.push_back(sprite);
 }
 
 bool SpriteRenderer::InitRootSignature() {

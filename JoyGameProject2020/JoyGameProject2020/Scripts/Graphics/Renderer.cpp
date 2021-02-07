@@ -41,9 +41,7 @@ void Renderer::Draw() {
 	auto cbvsrvIncSize = m_dxManager.GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV) * 5;
 
 	int modelCount = m_models.size();
-	for (int i = 0; i < modelCount; ++i) {
-		auto m = m_models[i];
-
+	for (auto m : m_models) {
 		ComPtr<ID3D12DescriptorHeap> transformHeaps[] = { m->m_transformDescHeap.Get() };
 		m_dxManager.GetCommandList()->SetDescriptorHeaps(_countof(transformHeaps), transformHeaps->GetAddressOf());
 		m_dxManager.GetCommandList()->SetGraphicsRootDescriptorTable(0,

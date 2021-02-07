@@ -94,6 +94,11 @@ void TestScene::Init() {
 	goal->SetScale(Vector3(1000, 1, 1));
 	m_objManager.Add(goal);
 
+	auto spriteobj = std::make_shared<GameObject>();
+	spriteobj->AddComponent(std::make_shared<Sprite>("ready"));
+	spriteobj->SetScale(100);
+	m_objManager.Add(spriteobj);
+
 	m_gameManager.ChangeState(GameState::PLAY);
 }
 

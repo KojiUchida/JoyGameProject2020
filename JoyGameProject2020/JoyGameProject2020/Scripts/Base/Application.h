@@ -10,6 +10,7 @@ class Input;
 class GraphicsManager;
 class CollisionManager;
 class GameObjectManager;
+class SpriteRenderer;
 class Renderer;
 class Application {
 
@@ -45,6 +46,7 @@ private:
 	GraphicsManager& m_graphicsManager;
 	CollisionManager& m_collisionManager;
 	GameObjectManager& m_objManager;
+	SpriteRenderer& m_spriteRenderer;
 	Renderer& m_renderer;
 };
 

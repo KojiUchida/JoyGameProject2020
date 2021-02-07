@@ -14,20 +14,24 @@ using namespace Microsoft::WRL;
 
 class DirectXManager;
 class GraphicsManager;
-class Sprite;
-class SpriteRenderer : public Component {
+class SpriteData;
+class SpriteRenderer {
 	struct Vertex {
 		Vector3 pos;
 		Vector2 uv;
 	};
 
-public:
-	SpriteRenderer(const std::string& name = "");
+private:
+	SpriteRenderer();
 	~SpriteRenderer();
+	SpriteRenderer(const SpriteRenderer&) = delete;
+	void operator= (const SpriteRenderer&) = delete;
 
-	virtual void Init() override;
-	virtual void Update() override;
+public:
+	static SpriteRenderer& Instance();
+	void Init();
 	void Draw();
+	void Add(std::shared_ptr<SpriteData> sprite);
 
 private:
 	bool InitRootSignature();
@@ -46,10 +50,11 @@ private:
 	D3D12_INDEX_BUFFER_VIEW m_ibView;
 	std::vector<Vertex> m_vertices;
 	std::vector<unsigned  short> m_indices;
+
 	//パイプライン
 	ComPtr<ID3D12RootSignature> m_rootSignature;
 	ComPtr<ID3D12PipelineState> m_pipelineState;
 
-	std::shared_ptr<Sprite> m_sprite;
+	std::vector<std::shared_ptr<SpriteData>> m_sprites;
 };
 

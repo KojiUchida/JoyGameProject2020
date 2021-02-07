@@ -11,6 +11,7 @@
 #include "Scene/Clear.h"
 #include "GameObject/GameObjectManager.h"
 #include "Graphics/GraphicsManager.h"
+#include "Graphics/SpriteRenderer.h"
 #include "Graphics/Renderer.h"
 #include "Physics/CollisionManager.h"
 #include "ImGui/imgui.h"
@@ -40,6 +41,7 @@ Application::Application() :
 	m_graphicsManager(GraphicsManager::Instance()),
 	m_collisionManager(CollisionManager::Instance()),
 	m_objManager(GameObjectManager::Instance()),
+	m_spriteRenderer(SpriteRenderer::Instance()) ,
 	m_renderer(Renderer::Instance()) {
 }
 
@@ -83,6 +85,7 @@ bool Application::Init() {
 	m_graphicsManager.LoadModel("Resources/Models/grass/grass.obj", "grass");
 	m_graphicsManager.LoadModel("Resources/Models/ground/ground.obj", "ground");
 	m_graphicsManager.LoadModel("Resources/Models/plane/plane.obj", "plane");
+	m_graphicsManager.LoadModel("Resources/Models/quad/quad.obj", "quad");
 	m_graphicsManager.LoadModel("Resources/Models/skydome/skydome.obj", "skydome");
 	m_graphicsManager.LoadModel("Resources/Models/sphere/sphere.obj", "sphere", true);
 
@@ -92,6 +95,7 @@ bool Application::Init() {
 	m_graphicsManager.LoadShader("Resources/Shaders/BasicVertexShader.hlsl", "VSmain", "vs_5_0", "BasicVS");
 	m_graphicsManager.LoadShader("Resources/Shaders/BasicPixelShader.hlsl", "PSmain", "ps_5_0", "BasicPS");
 
+	m_spriteRenderer.Init();
 	m_renderer.Init();
 
 	m_sceneManager = std::make_unique<SceneManager>();
@@ -134,8 +138,8 @@ void Application::Run() {
 		m_sceneManager->Update();
 		m_objManager.Update();
 		m_collisionManager.Update();
-		m_renderer.Update();
 		m_renderer.Draw();
+		m_spriteRenderer.Draw();
 
 		ImGui::Render();
 		m_dxManager.GetCommandList()->SetDescriptorHeaps(1, m_dxManager.GetDescHeapForImGui().GetAddressOf());

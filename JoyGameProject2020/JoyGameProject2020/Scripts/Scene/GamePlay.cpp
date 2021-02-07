@@ -4,6 +4,7 @@
 #include "Device/Input.h"
 #include "Device/Camera.h"
 #include "Device/GameTime.h"
+#include "Game/Player.h"
 #include "GameObject/GameObject.h"
 #include "GameObject/GameObjectManager.h"
 #include "GameObject/Event/EventManager.h"
@@ -24,30 +25,15 @@ GamePlay::~GamePlay()
 
 void GamePlay::Init()
 {
-	auto& cam = Camera::Instance();
+	m_objManager.Add(std::make_shared<Player>());
 
-	cam.SetPosition(Vector3(0, 0, -10));
+
 
 	EventManager::Instance().SetEvent(new HeightGage());
 }
 
 void GamePlay::Update()
 {
-	auto& cam = Camera::Instance();
-	auto rotx = -Input::RightStickValue().y;
-	auto roty = Input::RightStickValue().x;
-	auto rot = Vector3(rotx, roty, 0) * 180.0f * GameTime::DeltaTime();
-
-	float movex = Input::LeftStickValue().x;
-	float movez = Input::LeftStickValue().y;
-	float movey = Input::IsButton(PadButton::R1) ? 0.1f : Input::IsButton(PadButton::L1) ? -0.1f : 0.0f;
-
-	auto forward = Vector3(movex, movey, movez) * Matrix4::RotationFromQuaternion(cam.rotation);
-	auto move = forward * 10.0f * GameTime::DeltaTime();
-
-	cam.SetRotation(cam.GetRotation() + rot);
-	cam.SetPosition(cam.GetPosition() + forward);
-
 	if (Input::IsKeyDown(DIK_S))
 	{
 		EventManager::Instance().SetEvent(new StartCall());
