@@ -125,6 +125,12 @@ const Vector2 Vector3::ToVector2() const {
 	return Vector2(x, y);
 }
 
+const Vector3 Vector3::Lerp(const Vector3 & start, const Vector3 & end, double t)
+{
+	auto distance = end - start;
+	return start+distance*t;
+}
+
 const Vector3 operator+(const Vector3& v1, const Vector3& v2) {
 	return Vector3(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z);
 }
