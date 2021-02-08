@@ -6,13 +6,13 @@
 #include "Device/Camera.h"
 #include "SpriteRenderer.h"
 
-SpriteData::SpriteData(const std::string& filePath) :
+SpriteData::SpriteData(const std::string& name) :
 	m_dxManager(DirectXManager::Instance()),
 	m_graphicsManager(GraphicsManager::Instance()),
 	m_constBuffer(nullptr),
 	m_basicDescHeap(nullptr),
 	m_constMap(nullptr),
-	m_textureName(filePath),
+	m_textureName(name),
 	m_texture(nullptr) {
 	CreateConstantBuffer();
 }
@@ -30,6 +30,22 @@ void SpriteData::Draw() {
 		D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	m_dxManager.GetCommandList()->SetGraphicsRootDescriptorTable(1, handle);
 	m_dxManager.GetCommandList()->DrawIndexedInstanced(6, 1, 0, 0, 0);
+}
+
+void SpriteData::SetTexture(const std::string& name) {
+	D3D12_CPU_DESCRIPTOR_HANDLE basicDescHandle = m_basicDescHeap->GetCPUDescriptorHandleForHeapStart();
+	basicDescHandle.ptr += m_dxManager.GetDevice()->GetDescriptorHandleIncrementSize(
+		D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+
+	auto texture = m_graphicsManager.GetTexture(name);
+
+	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
+	srvDesc.Format = texture->GetBuffer()->GetDesc().Format;
+	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MipLevels = 1;
+
+	m_dxManager.GetDevice()->CreateShaderResourceView(texture->GetBuffer(), &srvDesc, basicDescHandle);
 }
 
 void SpriteData::CreateConstantBuffer() {
@@ -132,4 +148,5 @@ void Sprite::SetFlipY(bool isFlip) {
 }
 
 void Sprite::SetTexture(const std::string& name) {
+	m_spriteData->SetTexture(name);
 }
