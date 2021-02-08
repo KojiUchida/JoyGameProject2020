@@ -4,8 +4,10 @@
 #include "Math/Vector3.h"
 #include "Graphics/Sprite.h"
 #include "Def/Screen.h"
+#include "Device/Input.h"
+#include "Math/MathUtil.h"
 
-HeightGage::HeightGage() :
+HeightGage::HeightGage():
 	m_objManager(GameObjectManager::Instance())
 {
 }
@@ -16,21 +18,59 @@ HeightGage::~HeightGage()
 
 void HeightGage::initialize()
 {
+
+	num = 1;
+	maxnum = 500;
+	direction = NONE;
+	speed = 1.0f;
+
+	gagesprite = std::make_shared<GameObject>();
+	gagesprite->AddComponent(std::make_shared<Sprite>("pink"));
+	gagesprite->SetScale(Vector3(58, 0, 1));
+	gagesprite->SetPosition(Vector3(Screen::WIDTH - 95, 215, 0));
+	m_objManager.Add(gagesprite);
+
 	auto heightgage = std::make_shared<GameObject>();
-	heightgage->AddComponent(std::make_shared<Sprite>("heightgage"));
-	heightgage->SetScale(Vector3(50,600,0));
-	heightgage->SetPosition(Vector3(Screen::WIDTH-96, 60, 0));
+	heightgage->AddComponent(std::make_shared<Sprite>("bombe"));
+	heightgage->SetScale(Vector3(128, 512, 0));
+	heightgage->SetPosition(Vector3(Screen::WIDTH - 128, 100, 0));
 	m_objManager.Add(heightgage);
 
-	auto heightgagepointer = std::make_shared<GameObject>();
-	heightgagepointer->AddComponent(std::make_shared<Sprite>("heightgagepointer"));
-	heightgagepointer->SetScale(Vector3(20, 20, 0));
-	heightgagepointer->SetPosition(Vector3(Screen::WIDTH - 80, 640, 0));
-	m_objManager.Add(heightgagepointer);
+
+
 }
 
 void HeightGage::update()
 {
+	if (Input::IsKey(DIK_A))
+	{
+		direction = UP;
+	}
+	else
+	{
+		direction = DOWN;
+	}
+
+	switch (direction)
+	{
+	case HeightGage::NONE:
+		break;
+
+	case HeightGage::UP:
+		num = (num < maxnum) ? num + speed : maxnum;
+		break;
+
+	case HeightGage::DOWN:
+		num = (num > 0) ? num - speed : 0;
+		break;
+	}
+
+	float rate = num / maxnum;
+	gagesprite->SetPosition(Vector3::Lerp(Vector3(Screen::WIDTH - 95, 570, 0), Vector3(Screen::WIDTH - 95, 215, 0), rate));
+	gagesprite->SetScale(Vector3::Lerp(Vector3(58, 0, 1), Vector3(58, 570 - 215, 0), rate));
+	m_objManager.Update();
+
+
 }
 
 bool HeightGage::IsEnd()

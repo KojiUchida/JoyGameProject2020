@@ -143,6 +143,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Scripts\GameObject\Event\ClearCall.cpp" />
     <ClCompile Include="Scripts\Game\PlayerParticle.cpp" />
     <ClCompile Include="Scripts\Game\GameManager.cpp" />
     <ClCompile Include="Scripts\Game\Goal.cpp" />
@@ -193,6 +194,12 @@
     <ClCompile Include="Scripts\Scene\GameOver.cpp" />
     <ClCompile Include="Scripts\Scene\GamePlay.cpp" />
     <ClCompile Include="Scripts\Scene\SceneManager.cpp" />
+    <ClCompile Include="Scripts\Scene\Stage1.cpp" />
+    <ClCompile Include="Scripts\Scene\Stage2.cpp" />
+    <ClCompile Include="Scripts\Scene\Stage3.cpp" />
+    <ClCompile Include="Scripts\Scene\Stage4.cpp" />
+    <ClCompile Include="Scripts\Scene\Stage5.cpp" />
+    <ClCompile Include="Scripts\Scene\StageSerect.cpp" />
     <ClCompile Include="Scripts\Scene\TestScene.cpp" />
     <ClCompile Include="Scripts\Scene\TestScene2.cpp" />
     <ClCompile Include="Scripts\Scene\Title.cpp" />
@@ -202,6 +209,7 @@
     <ClCompile Include="Scripts\Utility\Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Scripts\GameObject\Event\ClearCall.h" />
     <ClInclude Include="Scripts\Game\PlayerParticle.h" />
     <ClInclude Include="Scripts\Game\GameManager.h" />
     <ClInclude Include="Scripts\Game\Goal.h" />
@@ -261,6 +269,12 @@
     <ClInclude Include="Scripts\Scene\GamePlay.h" />
     <ClInclude Include="Scripts\Scene\IScene.h" />
     <ClInclude Include="Scripts\Scene\SceneManager.h" />
+    <ClInclude Include="Scripts\Scene\Stage1.h" />
+    <ClInclude Include="Scripts\Scene\Stage2.h" />
+    <ClInclude Include="Scripts\Scene\Stage3.h" />
+    <ClInclude Include="Scripts\Scene\Stage4.h" />
+    <ClInclude Include="Scripts\Scene\Stage5.h" />
+    <ClInclude Include="Scripts\Scene\StageSerect.h" />
     <ClInclude Include="Scripts\Scene\TestScene.h" />
     <ClInclude Include="Scripts\Scene\TestScene2.h" />
     <ClInclude Include="Scripts\Scene\Title.h" />

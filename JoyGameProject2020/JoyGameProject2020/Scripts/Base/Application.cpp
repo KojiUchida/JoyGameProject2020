@@ -15,8 +15,10 @@
 #include "Scene/Stage3.h"
 #include "Scene/Stage4.h"
 #include "Scene/Stage5.h"
+#include "GameObject/GameObjectManager.h"
 #include "Graphics/GraphicsManager.h"
 #include "Graphics/Renderer.h"
+#include "Graphics/SpriteRenderer.h"
 #include "Physics/CollisionManager.h"
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_impl_win32.h"
@@ -44,6 +46,8 @@ Application::Application() :
 	m_input(Input::Instance()),
 	m_graphicsManager(GraphicsManager::Instance()),
 	m_collisionManager(CollisionManager::Instance()) ,
+	m_objManager(GameObjectManager::Instance()),
+	m_spriteRenderer(SpriteRenderer::Instance()),
 	m_renderer(Renderer::Instance()){
 }
 
@@ -79,7 +83,7 @@ bool Application::Init() {
 	m_graphicsManager.LoadTexture("Resources/Textures/ready_back.png", "ready_back");
 	m_graphicsManager.LoadTexture("Resources/Textures/go.png", "go");
 	m_graphicsManager.LoadTexture("Resources/Textures/title.png", "title");
-	m_graphicsManager.LoadTexture("Resources/Textures/heightgagepointer.png", "heightgagepointer");
+	m_graphicsManager.LoadTexture("Resources/Textures/heightgage.png", "heightgage");
 	m_graphicsManager.LoadTexture("Resources/Textures/0.png", "0");
 	m_graphicsManager.LoadTexture("Resources/Textures/1.png", "1");
 	m_graphicsManager.LoadTexture("Resources/Textures/2.png", "2");
@@ -98,20 +102,21 @@ bool Application::Init() {
 	m_graphicsManager.LoadTexture("Resources/Textures/clear.png", "clear");
 	m_graphicsManager.LoadTexture("Resources/Textures/pink.png", "pink");
 
-	m_graphicsManager.LoadModelData("Resources/Models/cube/cube.obj", "cube");
-	m_graphicsManager.LoadModelData("Resources/Models/dosei/dosei_quad.obj", "dosei");
-	m_graphicsManager.LoadModelData("Resources/Models/grass/grass.obj", "grass");
-	m_graphicsManager.LoadModelData("Resources/Models/ground/ground.obj", "ground");
-	m_graphicsManager.LoadModelData("Resources/Models/plane/plane.obj", "plane");
-	m_graphicsManager.LoadModelData("Resources/Models/skydome/skydome.obj", "skydome");
-	m_graphicsManager.LoadModelData("Resources/Models/sphere/sphere.obj", "sphere", true);
-
+	m_graphicsManager.LoadModel("Resources/Models/grass/grass.obj", "grass");
+	m_graphicsManager.LoadModel("Resources/Models/ground/ground.obj", "ground");
+	m_graphicsManager.LoadModel("Resources/Models/plane/plane.obj", "plane");
+	m_graphicsManager.LoadModel("Resources/Models/quad/quad.obj", "quad");
+	m_graphicsManager.LoadModel("Resources/Models/skydome/skydome.obj", "skydome");
+	m_graphicsManager.LoadModel("Resources/Models/sphere/sphere.obj", "sphere", true);
+	m_graphicsManager.LoadModel("Resources/Models/cube/cube.obj", "cube");
+	
 	m_graphicsManager.LoadShader("Resources/Shaders/SpriteVertexShader.hlsl", "VSmain", "vs_5_0", "SpriteVS");
 	m_graphicsManager.LoadShader("Resources/Shaders/SpritePixelShader.hlsl", "PSmain", "ps_5_0", "SpritePS");
+	m_graphicsManager.LoadShader("Resources/Shaders/BasicVertexShader.hlsl", "VSmain", "vs_5_0", "BasicVS");
+	m_graphicsManager.LoadShader("Resources/Shaders/BasicPixelShader.hlsl", "PSmain", "ps_5_0", "BasicPS");
 
-	m_graphicsManager.LoadShader("Resources/Shaders/KadaiVertexShader.hlsl", "VSmain", "vs_5_0", "KadaiVS");
-	m_graphicsManager.LoadShader("Resources/Shaders/KadaiPixelShader.hlsl", "PSmain", "ps_5_0", "KadaiPS");
 
+	m_spriteRenderer.Init();
 	m_renderer.Init();
 
 	m_sceneManager = std::make_unique<SceneManager>();
@@ -127,7 +132,7 @@ bool Application::Init() {
 	m_sceneManager->AddScene(std::make_shared<Stage3>(), "Stage3");
 	m_sceneManager->AddScene(std::make_shared<Stage4>(), "Stage4");
 	m_sceneManager->AddScene(std::make_shared<Stage5>(), "Stage5");
-	m_sceneManager->ChangeScene("Stage1");
+	m_sceneManager->ChangeScene("Title");
 
 	/* ‚±‚±‚Ü‚Å‰Šú‰»ˆ— */
 
@@ -160,6 +165,7 @@ void Application::Run() {
 		m_sceneManager->Update();
 		m_renderer.Update();
 		m_renderer.Draw();
+		m_spriteRenderer.Draw();
 		m_collisionManager.Update();
 
 		ImGui::Render();

@@ -5,7 +5,7 @@
 class GameObject;
 class GameObjectManager {
 
-private:
+public:
 	GameObjectManager();
 	~GameObjectManager();
 	GameObjectManager(const GameObjectManager&) = delete;

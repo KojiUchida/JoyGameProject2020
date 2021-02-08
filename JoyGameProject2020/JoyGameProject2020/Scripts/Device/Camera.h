@@ -24,6 +24,8 @@ public:
 	/* 回転の取得 */
 	Vector3 GetRotation();
 
+	void SetTarget(const Vector3& target);
+
 	/* MOE ビルボード行列取得 */
 	Matrix4 GetBillboard();
 
@@ -52,6 +54,8 @@ public:
 
 private:
 	Vector3 m_position;
+	Vector3 m_target;
+	bool isTargetLock;
 	Matrix4 m_viewMatrix;
 	Matrix4 m_projectionMatrix;
 	Matrix4 m_orthoMatrix;
