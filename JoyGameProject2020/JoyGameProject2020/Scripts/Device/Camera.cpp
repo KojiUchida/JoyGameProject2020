@@ -3,7 +3,9 @@
 #include "Def/Screen.h"
 
 Camera::Camera() :
-	m_zoom(1.0f) {
+	m_zoom(1.0f),
+	isTargetLock(false)
+{
 }
 
 Camera::~Camera() {
@@ -28,6 +30,12 @@ void Camera::SetRotation(const Vector3& eular) {
 
 Vector3 Camera::GetRotation() {
 	return rotation.EulerAngles();
+}
+
+void Camera::SetTarget(const Vector3 & target)
+{
+	m_target = target;
+	isTargetLock = true;
 }
 
 Matrix4 Camera::GetBillboard() {
@@ -120,15 +128,22 @@ Matrix4 Camera::GetOrthoMatrix() {
 void Camera::CalcViewMatrix() {
 	Vector3 up(0, 1, 0);
 	Vector3 eye(m_position);
-	Vector3 target(0, 0, 1);
 
-	auto rotationMatrix = Matrix4::RotationFromQuaternion(rotation);
+	if (!isTargetLock)
+	{
+		auto rotationMatrix = Matrix4::RotationFromQuaternion(rotation);
 
-	target = target * rotationMatrix;
-	up = up * rotationMatrix;
-	target = eye + target;
+		Vector3 target(0, 0, 1);
+		target = target * rotationMatrix;
+		up = up * rotationMatrix;
+		target = eye + target;
 
-	m_viewMatrix = Matrix4::LookAt(eye, target, up);
+		m_viewMatrix = Matrix4::LookAt(eye, target, up);
+		return;
+	}
+
+	m_viewMatrix = Matrix4::LookAt(eye, m_target, up);
+
 }
 
 void Camera::CalcProjectionMatrix() {

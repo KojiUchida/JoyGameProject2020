@@ -48,7 +48,7 @@ void Title::Shutdown()
 
 std::string Title::NextScene()
 {
-	return "GamePlay";
+	return "StageSerect";
 }
 
 bool Title::IsEnd()

@@ -25,7 +25,7 @@ void Stage4::Init()
 
 void Stage4::Update()
 {
-	auto& cam = Camera::Instance();
+	/*auto& cam = Camera::Instance();
 	auto rotx = -Input::RightStickValue().y;
 	auto roty = Input::RightStickValue().x;
 	auto rot = Vector3(rotx, roty, 0) * 180.0f * GameTime::DeltaTime();
@@ -39,7 +39,7 @@ void Stage4::Update()
 
 	cam.SetRotation(cam.GetRotation() + rot);
 	cam.SetPosition(cam.GetPosition() + forward);
-
+*/
 
 	m_objManager->Update();
 	GUIUpdate();

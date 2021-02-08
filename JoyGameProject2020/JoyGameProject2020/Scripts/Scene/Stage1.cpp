@@ -1,6 +1,4 @@
 #include "Stage1.h"
-#include "Math/Vector2.h"
-#include "Math/Vector3.h"
 #include "Device/Input.h"
 #include "Device/Camera.h"
 #include "Device/GameTime.h"
@@ -8,18 +6,104 @@
 #include "GameObject/GameObjectManager.h"
 #include "GameObject/Event/EventManager.h"
 #include "GameObject/Event/HeightGage.h"
+#include "GameObject/Event/TimerUI.h"
+#include "Math/Vector2.h"
+#include "Math/Vector3.h"
+#include "Graphics/Model.h"
 #include "Graphics/Sprite.h"
+#include "Graphics/Light.h"
+#include <iostream>
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_impl_win32.h"
 #include "ImGui/imgui_impl_dx12.h"
+#include "Base/DirectXManager.h"
+#include "Math/MathUtil.h"
+#include "Game/Player.h"
+#include "Game/Goal.h"
+#include "Game/GameManager.h"
+#include "Physics/BoxCollider3D.h"
+
+Stage1::Stage1():
+	m_camera(Camera::Instance()),
+m_light(Light::Instance()),
+m_gameManager(GameManager::Instance()),
+m_objManager(GameObjectManager::Instance())
+{
+}
+
+Stage1::~Stage1()
+{
+}
 
 void Stage1::Init()
 {
-	auto& cam = Camera::Instance();
+	m_camera.SetPosition(Vector3(0, 0, -10));
+	m_light.SetRotate(Vector3(-90, 0, 0));
 
-	cam.SetPosition(Vector3(0, 0, -10));
+	m_gameManager.ChangeState(GameState::READY);
+	player = std::make_shared<Player>();
+	m_objManager.Add(player);
+	
+	auto ground = std::make_shared<GameObject>();
+	ground->AddComponent(std::make_shared<Model>("cube"));
+	ground->SetPosition(Vector3(0, -30, 0));
+	ground->SetScale(Vector3(100, 25, 1));
+	m_objManager.Add(ground);
 
-	m_objManager = std::make_shared<GameObjectManager>();
+	auto wall1 = std::make_shared<GameObject>();
+	wall1->AddComponent(std::make_shared<Model>("cube"));
+	wall1->SetPosition(Vector3(-120, 25, 0));
+	wall1->SetScale(Vector3(50, 1000, 1));
+	m_objManager.Add(wall1);
+
+	auto wall2 = std::make_shared<GameObject>();
+	wall2->AddComponent(std::make_shared<Model>("cube"));
+	wall2->SetPosition(Vector3(120, 25, 0));
+	wall2->SetScale(Vector3(50, 1000, 1));
+	m_objManager.Add(wall2);
+
+	Random rnd{};
+	float height = 0.0f;
+	for (int i = 0; i < 30; ++i) {
+		const float wdif = 20;
+		const float ydif = 10;
+		const float heightInterval = 30;
+		auto w = rnd.GetRand(-1.0f, 1.0f);
+		auto y = rnd.GetRand(0.0f, 1.0f);
+
+		height += heightInterval + ydif * y;
+
+		auto obj1 = std::make_shared<GameObject>();
+		obj1->AddComponent(std::make_shared<Model>("cube"));
+		auto c1 = std::make_shared<BoxCollider3D>();
+		c1->SetLayer(Layer::Obstacle);
+		obj1->AddComponent(c1);
+		obj1->SetTag("Obstacle");
+		obj1->SetPosition(Vector3(-60 + wdif * w, height, 0));
+		obj1->SetScale(Vector3(50, 1, 1));
+		m_objManager.Add(obj1);
+
+		auto obj2 = std::make_shared<GameObject>();
+		obj2->AddComponent(std::make_shared<Model>("cube"));
+		auto c2 = std::make_shared<BoxCollider3D>();
+		c2->SetLayer(Layer::Obstacle);
+		obj2->AddComponent(c2);
+		obj2->SetTag("Obstacle");
+		obj2->SetPosition(Vector3(60 + wdif * w, height, 0));
+		obj2->SetScale(Vector3(50, 1, 1));
+
+		m_objManager.Add(obj2);
+	}
+
+	auto goal = std::make_shared<Goal>();
+	goal->SetPosition(Vector3(0, 500, 0));
+	goal->SetScale(Vector3(1000, 1, 1));
+	m_objManager.Add(goal);
+
+	auto spriteobj = std::make_shared<GameObject>();
+	spriteobj->AddComponent(std::make_shared<Sprite>("ready"));
+	spriteobj->SetScale(100);
+	m_objManager.Add(spriteobj);
 
 	EventManager::Instance().SetEvent(new TimerUI());
 	EventManager::Instance().SetEvent(new HeightGage());
@@ -30,21 +114,7 @@ void Stage1::Init()
 
 void Stage1::Update()
 {
-	auto& cam = Camera::Instance();
-	auto rotx = -Input::RightStickValue().y;
-	auto roty = Input::RightStickValue().x;
-	auto rot = Vector3(rotx, roty, 0) * 180.0f * GameTime::DeltaTime();
-
-	float movex = Input::LeftStickValue().x;
-	float movez = Input::LeftStickValue().y;
-	float movey = Input::IsButton(PadButton::R1) ? 0.1f : Input::IsButton(PadButton::L1) ? -0.1f : 0.0f;
-
-	auto forward = Vector3(movex, movey, movez) * cam.GetRotationMatrix();
-	auto move = forward * 10.0f * GameTime::DeltaTime();
-
-	cam.SetRotation(cam.GetRotation() + rot);
-	cam.SetPosition(cam.GetPosition() + forward);
-
+	
 	if (Input::IsKeyDown(DIK_S))
 	{
 		EventManager::Instance().SetEvent(new StartCall());
@@ -55,14 +125,20 @@ void Stage1::Update()
 		EventManager::Instance().SetEvent(clearcall);
 	}
 
-	m_objManager->Update();
+	m_gameManager.Update();
+	if (m_gameManager.CompareState(GameState::READY) &&
+		m_gameManager.TimeElapsedOnCurrentState() > 3) {
+		m_gameManager.ChangeState(GameState::PLAY);
+	}
+	CamMove();
 	EventManager::Instance().update();
 	GUIUpdate();
 }
 
 void Stage1::Shutdown()
 {
-	m_objManager->Shutdown();
+	m_objManager.Shutdown();
+	m_objManager.Clear();
 }
 
 std::string Stage1::NextScene()
@@ -72,41 +148,61 @@ std::string Stage1::NextScene()
 
 bool Stage1::IsEnd()
 {
-	if (clearcall == nullptr) return false;
-	
-	return clearcall->IsEnd();
+	return m_gameManager.CompareState(GameState::GOAL) &&
+		Input::IsButtonDown(PadButton::R1);
 }
+
+void Stage1::CamMove()
+{
+	if (!CanCamMove()) return;
+	auto campos = player->GetPosition() + Vector3(0, 20, -70);
+	campos = Vector3::Lerp(Vector3(m_camera.GetPosition()), campos, 0.12f);
+	m_camera.SetPosition(campos);
+}
+
+bool Stage1::CanCamMove()
+{
+	if (m_gameManager.CompareState(GameState::GOAL)) return false;
+	if (!player->IsArrive())return false;
+	return true;
+}
+
 
 void Stage1::GUIUpdate()
 {
-	auto& cam = Camera::Instance();
-
 	ImGui::StyleColorsDark();
 	ImGui::GetStyle().WindowRounding = 0;
 	ImGui::GetStyle().FrameRounding = 0;
-	ImGui::GetStyle().Colors[ImGuiCol_::ImGuiCol_Border] = ImVec4(0, 1, 1, 1);
-	ImGui::GetStyle().Colors[ImGuiCol_::ImGuiCol_TitleBg] = ImVec4(0, 0, 0, 0.5f);
-	ImGui::GetStyle().Colors[ImGuiCol_::ImGuiCol_TitleBgActive] = ImVec4(0, 1, 1, 0.5f);
-	ImGui::GetStyle().Colors[ImGuiCol_::ImGuiCol_WindowBg] = ImVec4(0, 1, 1, 0.2f);
-	ImGui::GetStyle().Colors[ImGuiCol_::ImGuiCol_Text] = ImVec4(0.5f, 1, 1, 1);
 
-	ImGui::Begin("Stage1");
-	ImGui::SetWindowSize(ImVec2(512, 96), ImGuiCond_::ImGuiCond_FirstUseEver);
-	ImGui::SetWindowPos(ImVec2(32, 64), ImGuiCond_::ImGuiCond_FirstUseEver);
+	ImGui::Begin("Camera Menu");
+	ImGui::SetWindowSize(ImVec2(512, 128), ImGuiCond_::ImGuiCond_Always);
+	ImGui::SetWindowPos(ImVec2(32, 64), ImGuiCond_::ImGuiCond_Always);
+
+	float campos[3] = { m_camera.GetPosition().x, m_camera.GetPosition().y, m_camera.GetPosition().z };
+	ImGui::DragFloat3("Camera Position", campos);
+	m_camera.SetPosition(Vector3(campos[0], campos[1], campos[2]));
+
+	float camrot[3] = { m_camera.GetRotation().x, m_camera.GetRotation().y, m_camera.GetRotation().z };
+	ImGui::DragFloat3("Camera Rotation", camrot, 1);
+	m_camera.SetRotation(Vector3(camrot[0], camrot[1], camrot[2]));
 
 	ImGui::End();
 
-	ImGui::Begin("Camera Menu");
-	ImGui::SetWindowSize(ImVec2(512, 96), ImGuiCond_::ImGuiCond_FirstUseEver);
-	ImGui::SetWindowPos(ImVec2(32, 64), ImGuiCond_::ImGuiCond_FirstUseEver);
+	ImGui::Begin("Player State");
+	ImGui::SetWindowSize(ImVec2(512, 128), ImGuiCond_::ImGuiCond_Always);
+	ImGui::SetWindowPos(ImVec2(32, 256), ImGuiCond_::ImGuiCond_Always);
 
-	float campos[3] = { cam.GetPosition().x, cam.GetPosition().y, cam.GetPosition().z };
-	ImGui::DragFloat3("Camera Position", campos);
-	cam.SetPosition(Vector3(campos[0], campos[1], campos[2]));
+	ImGui::Text("Gauge : %f", player->Gauge());
 
-	float camrot[3] = { cam.GetRotation().x, cam.GetRotation().y, cam.GetRotation().z };
-	ImGui::DragFloat3("Camera Rotation", camrot, 1);
-	cam.SetRotation(Vector3(camrot[0], camrot[1], camrot[2]));
+	ImGui::End();
+
+	ImGui::Begin("Debug");
+	ImGui::SetWindowSize(ImVec2(512, 128), ImGuiCond_::ImGuiCond_Always);
+	ImGui::SetWindowPos(ImVec2(32, 448), ImGuiCond_::ImGuiCond_Always);
+
+	ImGui::Text("FPS : %d", (int)GameTime::FPS());
+
+	ImGui::Text("TimeElapsed : %f", m_gameManager.TimeElapsedOnCurrentState());
 
 	ImGui::End();
 }
