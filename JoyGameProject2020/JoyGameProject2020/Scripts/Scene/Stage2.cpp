@@ -1,10 +1,9 @@
-#include "GamePlay.h"
+#include "Stage2.h"
 #include "Math/Vector2.h"
 #include "Math/Vector3.h"
 #include "Device/Input.h"
 #include "Device/Camera.h"
 #include "Device/GameTime.h"
-#include "Game/Player.h"
 #include "GameObject/GameObject.h"
 #include "GameObject/GameObjectManager.h"
 #include "GameObject/Event/EventManager.h"
@@ -15,53 +14,53 @@
 #include "ImGui/imgui_impl_win32.h"
 #include "ImGui/imgui_impl_dx12.h"
 
-GamePlay::GamePlay() :
-	m_objManager(GameObjectManager::Instance()) 
+void Stage2::Init()
 {
+	auto& cam = Camera::Instance();
+
+	cam.SetPosition(Vector3(0, 0, -10));
+
+	m_objManager = std::make_shared<GameObjectManager>();
 }
 
-GamePlay::~GamePlay() 
+void Stage2::Update()
 {
-}
+	auto& cam = Camera::Instance();
+	auto rotx = -Input::RightStickValue().y;
+	auto roty = Input::RightStickValue().x;
+	auto rot = Vector3(rotx, roty, 0) * 180.0f * GameTime::DeltaTime();
 
-void GamePlay::Init()
-{
-	m_objManager.Add(std::make_shared<Player>());
+	float movex = Input::LeftStickValue().x;
+	float movez = Input::LeftStickValue().y;
+	float movey = Input::IsButton(PadButton::R1) ? 0.1f : Input::IsButton(PadButton::L1) ? -0.1f : 0.0f;
+
+	auto forward = Vector3(movex, movey, movez) * cam.GetRotationMatrix();
+	auto move = forward * 10.0f * GameTime::DeltaTime();
+
+	cam.SetRotation(cam.GetRotation() + rot);
+	cam.SetPosition(cam.GetPosition() + forward);
 
 
-
-	EventManager::Instance().SetEvent(new HeightGage());
-	EventManager::Instance().SetEvent(new TimerUI());
-}
-
-void GamePlay::Update()
-{
-	if (Input::IsKeyDown(DIK_S))
-	{
-		EventManager::Instance().SetEvent(new StartCall());
-	}
-
-	EventManager::Instance().update();
+	m_objManager->Update();
 	GUIUpdate();
 }
 
-void GamePlay::Shutdown()
+void Stage2::Shutdown()
 {
-	m_objManager.Shutdown();
-	m_objManager.Clear();
+	m_objManager->Shutdown();
 }
 
-std::string GamePlay::NextScene()
+std::string Stage2::NextScene()
 {
 	return "Clear";
 }
 
-bool GamePlay::IsEnd()
+bool Stage2::IsEnd()
 {
 	return Input::IsKeyDown(DIK_SPACE);
 }
 
-void GamePlay::GUIUpdate()
+void Stage2::GUIUpdate()
 {
 	auto& cam = Camera::Instance();
 
@@ -74,6 +73,12 @@ void GamePlay::GUIUpdate()
 	ImGui::GetStyle().Colors[ImGuiCol_::ImGuiCol_WindowBg] = ImVec4(0, 1, 1, 0.2f);
 	ImGui::GetStyle().Colors[ImGuiCol_::ImGuiCol_Text] = ImVec4(0.5f, 1, 1, 1);
 
+	ImGui::Begin("Stage2");
+	ImGui::SetWindowSize(ImVec2(512, 96), ImGuiCond_::ImGuiCond_FirstUseEver);
+	ImGui::SetWindowPos(ImVec2(32, 64), ImGuiCond_::ImGuiCond_FirstUseEver);
+
+	ImGui::End();
+
 	ImGui::Begin("Camera Menu");
 	ImGui::SetWindowSize(ImVec2(512, 96), ImGuiCond_::ImGuiCond_FirstUseEver);
 	ImGui::SetWindowPos(ImVec2(32, 64), ImGuiCond_::ImGuiCond_FirstUseEver);
@@ -85,13 +90,6 @@ void GamePlay::GUIUpdate()
 	float camrot[3] = { cam.GetRotation().x, cam.GetRotation().y, cam.GetRotation().z };
 	ImGui::DragFloat3("Camera Rotation", camrot, 1);
 	cam.SetRotation(Vector3(camrot[0], camrot[1], camrot[2]));
-
-	ImGui::End();
-
-	ImGui::Begin("GamePlay");
-	ImGui::SetWindowSize(ImVec2(512, 96), ImGuiCond_::ImGuiCond_FirstUseEver);
-	ImGui::SetWindowPos(ImVec2(32, 170), ImGuiCond_::ImGuiCond_FirstUseEver);
-
 
 	ImGui::End();
 }

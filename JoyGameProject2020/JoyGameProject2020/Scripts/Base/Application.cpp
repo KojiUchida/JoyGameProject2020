@@ -9,9 +9,13 @@
 #include "Scene/GamePlay.h"
 #include "Scene/GameOver.h"
 #include "Scene/Clear.h"
-#include "GameObject/GameObjectManager.h"
+#include "Scene/StageSerect.h"
+#include "Scene/Stage1.h"
+#include "Scene/Stage2.h"
+#include "Scene/Stage3.h"
+#include "Scene/Stage4.h"
+#include "Scene/Stage5.h"
 #include "Graphics/GraphicsManager.h"
-#include "Graphics/SpriteRenderer.h"
 #include "Graphics/Renderer.h"
 #include "Physics/CollisionManager.h"
 #include "ImGui/imgui.h"
@@ -39,10 +43,8 @@ Application::Application() :
 	m_gameTime(GameTime::Instance()),
 	m_input(Input::Instance()),
 	m_graphicsManager(GraphicsManager::Instance()),
-	m_collisionManager(CollisionManager::Instance()),
-	m_objManager(GameObjectManager::Instance()),
-	m_spriteRenderer(SpriteRenderer::Instance()) ,
-	m_renderer(Renderer::Instance()) {
+	m_collisionManager(CollisionManager::Instance()) ,
+	m_renderer(Renderer::Instance()){
 }
 
 Application::~Application() {
@@ -77,25 +79,39 @@ bool Application::Init() {
 	m_graphicsManager.LoadTexture("Resources/Textures/ready_back.png", "ready_back");
 	m_graphicsManager.LoadTexture("Resources/Textures/go.png", "go");
 	m_graphicsManager.LoadTexture("Resources/Textures/title.png", "title");
-	m_graphicsManager.LoadTexture("Resources/Textures/heightgage.png", "heightgage");
 	m_graphicsManager.LoadTexture("Resources/Textures/heightgagepointer.png", "heightgagepointer");
+	m_graphicsManager.LoadTexture("Resources/Textures/0.png", "0");
+	m_graphicsManager.LoadTexture("Resources/Textures/1.png", "1");
+	m_graphicsManager.LoadTexture("Resources/Textures/2.png", "2");
+	m_graphicsManager.LoadTexture("Resources/Textures/3.png", "3");
+	m_graphicsManager.LoadTexture("Resources/Textures/4.png", "4");
+	m_graphicsManager.LoadTexture("Resources/Textures/5.png", "5");
+	m_graphicsManager.LoadTexture("Resources/Textures/6.png", "6");
+	m_graphicsManager.LoadTexture("Resources/Textures/7.png", "7");
+	m_graphicsManager.LoadTexture("Resources/Textures/8.png", "8");
+	m_graphicsManager.LoadTexture("Resources/Textures/9.png", "9");
+	m_graphicsManager.LoadTexture("Resources/Textures/dot.png", "dot");
+	m_graphicsManager.LoadTexture("Resources/Textures/bombe.png", "bombe");
+	m_graphicsManager.LoadTexture("Resources/Textures/LeftArrow.png", "LeftArrow");
+	m_graphicsManager.LoadTexture("Resources/Textures/RightArrow.png", "RightArrow");
+	m_graphicsManager.LoadTexture("Resources/Textures/stagename.png", "stagename");
+	m_graphicsManager.LoadTexture("Resources/Textures/clear.png", "clear");
+	m_graphicsManager.LoadTexture("Resources/Textures/pink.png", "pink");
 
-	m_graphicsManager.LoadModel("Resources/Models/cube/cube.obj", "cube");
-	m_graphicsManager.LoadModel("Resources/Models/dosei/dosei_quad.obj", "dosei");
-	m_graphicsManager.LoadModel("Resources/Models/grass/grass.obj", "grass");
-	m_graphicsManager.LoadModel("Resources/Models/ground/ground.obj", "ground");
-	m_graphicsManager.LoadModel("Resources/Models/plane/plane.obj", "plane");
-	m_graphicsManager.LoadModel("Resources/Models/quad/quad.obj", "quad");
-	m_graphicsManager.LoadModel("Resources/Models/skydome/skydome.obj", "skydome");
-	m_graphicsManager.LoadModel("Resources/Models/sphere/sphere.obj", "sphere", true);
+	m_graphicsManager.LoadModelData("Resources/Models/cube/cube.obj", "cube");
+	m_graphicsManager.LoadModelData("Resources/Models/dosei/dosei_quad.obj", "dosei");
+	m_graphicsManager.LoadModelData("Resources/Models/grass/grass.obj", "grass");
+	m_graphicsManager.LoadModelData("Resources/Models/ground/ground.obj", "ground");
+	m_graphicsManager.LoadModelData("Resources/Models/plane/plane.obj", "plane");
+	m_graphicsManager.LoadModelData("Resources/Models/skydome/skydome.obj", "skydome");
+	m_graphicsManager.LoadModelData("Resources/Models/sphere/sphere.obj", "sphere", true);
 
 	m_graphicsManager.LoadShader("Resources/Shaders/SpriteVertexShader.hlsl", "VSmain", "vs_5_0", "SpriteVS");
 	m_graphicsManager.LoadShader("Resources/Shaders/SpritePixelShader.hlsl", "PSmain", "ps_5_0", "SpritePS");
 
-	m_graphicsManager.LoadShader("Resources/Shaders/BasicVertexShader.hlsl", "VSmain", "vs_5_0", "BasicVS");
-	m_graphicsManager.LoadShader("Resources/Shaders/BasicPixelShader.hlsl", "PSmain", "ps_5_0", "BasicPS");
+	m_graphicsManager.LoadShader("Resources/Shaders/KadaiVertexShader.hlsl", "VSmain", "vs_5_0", "KadaiVS");
+	m_graphicsManager.LoadShader("Resources/Shaders/KadaiPixelShader.hlsl", "PSmain", "ps_5_0", "KadaiPS");
 
-	m_spriteRenderer.Init();
 	m_renderer.Init();
 
 	m_sceneManager = std::make_unique<SceneManager>();
@@ -105,7 +121,13 @@ bool Application::Init() {
 	m_sceneManager->AddScene(std::make_shared<GamePlay>(), "GamePlay");
 	m_sceneManager->AddScene(std::make_shared<GameOver>(), "GameOver");
 	m_sceneManager->AddScene(std::make_shared<Clear>(), "Clear");
-	m_sceneManager->ChangeScene("Test");
+	m_sceneManager->AddScene(std::make_shared<StageSerect>(), "StageSerect");
+	m_sceneManager->AddScene(std::make_shared<Stage1>(), "Stage1");
+	m_sceneManager->AddScene(std::make_shared<Stage2>(), "Stage2");
+	m_sceneManager->AddScene(std::make_shared<Stage3>(), "Stage3");
+	m_sceneManager->AddScene(std::make_shared<Stage4>(), "Stage4");
+	m_sceneManager->AddScene(std::make_shared<Stage5>(), "Stage5");
+	m_sceneManager->ChangeScene("Stage1");
 
 	/* ‚±‚±‚Ü‚Å‰Šú‰»ˆ— */
 
@@ -136,10 +158,9 @@ void Application::Run() {
 		ImGui::NewFrame();
 
 		m_sceneManager->Update();
-		m_objManager.Update();
-		m_collisionManager.Update();
+		m_renderer.Update();
 		m_renderer.Draw();
-		m_spriteRenderer.Draw();
+		m_collisionManager.Update();
 
 		ImGui::Render();
 		m_dxManager.GetCommandList()->SetDescriptorHeaps(1, m_dxManager.GetDescHeapForImGui().GetAddressOf());

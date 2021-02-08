@@ -9,16 +9,12 @@ EventManager & EventManager::Instance()
 
 EventManager::~EventManager()
 {
-	for (int i=0;i<playevent.size();)
-	{
-		delete(playevent[i]);
-		++i;
-	}
-	playevent.clear();
+	Clear();
 }
 
 void EventManager::initialize()
 {
+	Clear();
 }
 
 void EventManager::update()
@@ -34,6 +30,16 @@ void EventManager::update()
 		playevent[i]->update();
 		++i;
 	}
+}
+
+void EventManager::Clear()
+{
+	for (int i = 0; i < playevent.size();)
+	{
+		delete(playevent[i]);
+		++i;
+	}
+	playevent.clear();
 }
 
 void EventManager::SetEvent(iEvent* event)

@@ -10,5 +10,7 @@ namespace FileUtility {
 	std::wstring GetWideStringFromString(const std::string& str);
 	/* パスからディレクトリを取り出す */
 	std::string GetDirectory(const std::string& path);
+
+
 };
 

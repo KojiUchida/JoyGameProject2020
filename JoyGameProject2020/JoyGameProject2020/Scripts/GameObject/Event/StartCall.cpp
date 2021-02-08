@@ -11,6 +11,7 @@
 StartCall::StartCall() :
 	m_objManager(GameObjectManager::Instance())
 {
+	timer = new Timer(2, false);
 }
 
 StartCall::~StartCall()
@@ -36,7 +37,6 @@ void StartCall::initialize()
 	ready_back->SetPosition(Vector3(0, Screen::HEIGHT / 2 - 64, 1));
 	m_objManager->Add(ready_back);
 */
-	timer = new Timer(2, false);
 	timer->Start();
 }
 

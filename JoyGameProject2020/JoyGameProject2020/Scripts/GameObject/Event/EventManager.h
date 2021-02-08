@@ -8,12 +8,13 @@ class EventManager
 public:
 	EventManager() {};
 	EventManager(const EventManager&) {};
-	//EventManager&operator=(const EventManager&) {};
+	EventManager&operator=(const EventManager&) {};
 	static EventManager&Instance();
 	~EventManager();
 
 	void initialize();
 	void update();
+	void Clear();
 
 	void SetEvent(iEvent* event);
 	void EraseEvent(int place);
