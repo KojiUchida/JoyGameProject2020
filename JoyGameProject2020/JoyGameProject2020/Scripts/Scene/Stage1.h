@@ -1,14 +1,18 @@
 #pragma once
+
+#pragma once
 #include "IScene.h"
-#include "GameObject/Event/EventManager.h"
+#include "GameObject/Event/ClearCall.h"
+#include "GameObject/Event/StartCall.h"
+#include "GameObject/Event/TimerUI.h"
 
 class GameObject;
 class GameObjectManager;
-class Clear :public IScene
+class Stage1 :public IScene
 {
 public:
-	Clear() {};
-	~Clear() {};
+	Stage1() {};
+	~Stage1() {};
 
 	// IScene ÇâÓÇµÇƒåpè≥Ç≥ÇÍÇ‹ÇµÇΩ
 	virtual void Init() override;
@@ -25,4 +29,8 @@ public:
 
 private:
 	std::shared_ptr<GameObjectManager>m_objManager;
+	ClearCall*clearcall;
+	StartCall*startcall;
+
+	bool isEnd;
 };

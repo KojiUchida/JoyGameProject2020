@@ -3,7 +3,9 @@
 #include "Def/Screen.h"
 
 Camera::Camera() :
-	m_zoom(1.0f) {
+	m_zoom(1.0f),
+	m_target(nullptr)
+{
 }
 
 Camera::~Camera() {
@@ -30,6 +32,11 @@ Vector3 Camera::GetRotation() {
 	return m_rotation;
 }
 
+void Camera::SetTarget(Vector3 * target)
+{
+	m_target = target;
+}
+
 Matrix4 Camera::GetBillboard()
 {
 	//視点座標
@@ -40,7 +47,7 @@ Matrix4 Camera::GetBillboard()
 	target = target * m_rotationMatrix;
 	target = m_position + target;
 	//注視点座標
-	Vector3 targetPosition =target;
+	Vector3 targetPosition = target;
 	//上方向
 	Vector3 upVector = Vector3(0, 1, 0);
 
@@ -125,15 +132,20 @@ Matrix4 Camera::GetRotationMatrix() {
 void Camera::CalcViewMatrix() {
 	Vector3 up(0, 1, 0);
 	Vector3 eye(m_position);
-	Vector3 target(0, 0, 1);
 
-	m_rotationMatrix = Matrix4::RotateRollPitchYaw(m_rotation);
+	if (m_target == nullptr)
+	{
+		m_rotationMatrix = Matrix4::RotateRollPitchYaw(m_rotation);
 
-	target = target * m_rotationMatrix;
-	up = up * m_rotationMatrix;
-	target = eye + target;
+		Vector3 target = target * m_rotationMatrix;
+		up = up * m_rotationMatrix;
+		target = eye + target;
+		m_viewMatrix = Matrix4::LookAt(eye, target, up);
+		return;
+	}
 
-	m_viewMatrix = Matrix4::LookAt(eye, target, up);
+
+	m_viewMatrix = Matrix4::LookAt(eye, *m_target, up);
 }
 
 void Camera::CalcProjectionMatrix() {

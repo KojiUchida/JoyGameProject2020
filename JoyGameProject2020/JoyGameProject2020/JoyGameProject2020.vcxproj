@@ -143,9 +143,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Scripts\GameObject\Event\BabbleFade.cpp" />
+    <ClCompile Include="Scripts\GameObject\Event\ClearCall.cpp" />
     <ClCompile Include="Scripts\GameObject\Event\GameTimer.cpp" />
     <ClCompile Include="Scripts\GameObject\Event\HeightGage.cpp" />
     <ClCompile Include="Scripts\GameObject\Event\TimerUI.cpp" />
+    <ClCompile Include="Scripts\GameObject\Particle\BabbleFadeParticle.cpp" />
     <ClCompile Include="Scripts\Game\Player.cpp" />
     <ClCompile Include="Scripts\Base\Application.cpp" />
     <ClCompile Include="Scripts\Base\DirectXManager.cpp" />
@@ -190,6 +193,12 @@
     <ClCompile Include="Scripts\Scene\GameOver.cpp" />
     <ClCompile Include="Scripts\Scene\GamePlay.cpp" />
     <ClCompile Include="Scripts\Scene\SceneManager.cpp" />
+    <ClCompile Include="Scripts\Scene\Stage1.cpp" />
+    <ClCompile Include="Scripts\Scene\Stage2.cpp" />
+    <ClCompile Include="Scripts\Scene\Stage3.cpp" />
+    <ClCompile Include="Scripts\Scene\Stage4.cpp" />
+    <ClCompile Include="Scripts\Scene\Stage5.cpp" />
+    <ClCompile Include="Scripts\Scene\StageSerect.cpp" />
     <ClCompile Include="Scripts\Scene\TestScene.cpp" />
     <ClCompile Include="Scripts\Scene\TestScene2.cpp" />
     <ClCompile Include="Scripts\Scene\Title.cpp" />
@@ -200,9 +209,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scripts\GameObject\Component.h" />
+    <ClInclude Include="Scripts\GameObject\Event\BabbleFade.h" />
+    <ClInclude Include="Scripts\GameObject\Event\ClearCall.h" />
     <ClInclude Include="Scripts\GameObject\Event\GameTimer.h" />
     <ClInclude Include="Scripts\GameObject\Event\HeightGage.h" />
     <ClInclude Include="Scripts\GameObject\Event\TimerUI.h" />
+    <ClInclude Include="Scripts\GameObject\Particle\BabbleFadeParticle.h" />
     <ClInclude Include="Scripts\Game\Player.h" />
     <ClInclude Include="Scripts\Base\Application.h" />
     <ClInclude Include="Scripts\Base\DirectXManager.h" />
@@ -254,6 +266,12 @@
     <ClInclude Include="Scripts\Scene\GamePlay.h" />
     <ClInclude Include="Scripts\Scene\IScene.h" />
     <ClInclude Include="Scripts\Scene\SceneManager.h" />
+    <ClInclude Include="Scripts\Scene\Stage1.h" />
+    <ClInclude Include="Scripts\Scene\Stage2.h" />
+    <ClInclude Include="Scripts\Scene\Stage3.h" />
+    <ClInclude Include="Scripts\Scene\Stage4.h" />
+    <ClInclude Include="Scripts\Scene\Stage5.h" />
+    <ClInclude Include="Scripts\Scene\StageSerect.h" />
     <ClInclude Include="Scripts\Scene\TestScene.h" />
     <ClInclude Include="Scripts\Scene\TestScene2.h" />
     <ClInclude Include="Scripts\Scene\Title.h" />

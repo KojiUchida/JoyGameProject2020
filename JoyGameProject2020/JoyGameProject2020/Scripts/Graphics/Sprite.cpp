@@ -149,14 +149,15 @@ void Sprite::InitPipeline() {
 	};
 
 	D3D12_RENDER_TARGET_BLEND_DESC blendDesc{};
-	blendDesc.BlendEnable = true;
-	blendDesc.RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
-	blendDesc.BlendOpAlpha = D3D12_BLEND_OP_ADD;
-	blendDesc.SrcBlendAlpha = D3D12_BLEND_ONE;
-	blendDesc.DestBlendAlpha = D3D12_BLEND_ZERO;
-	blendDesc.BlendOp = D3D12_BLEND_OP_ADD;
-	blendDesc.SrcBlend = D3D12_BLEND_SRC_ALPHA;
-	blendDesc.DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+	blendDesc.RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL; // 標準設定
+	blendDesc.BlendEnable = true; // ブレンドを有効にする
+	blendDesc.BlendOpAlpha = D3D12_BLEND_OP_ADD; // 加算
+	blendDesc.SrcBlendAlpha = D3D12_BLEND_ONE; // ソースの値を 100% 使う
+	blendDesc.DestBlendAlpha = D3D12_BLEND_ZERO; // デストの値を 0% 使う
+	blendDesc.BlendOp = D3D12_BLEND_OP_ADD;//加算
+	blendDesc.SrcBlend = D3D12_BLEND_SRC_ALPHA;//ソースのアルファ値
+	blendDesc.DestBlend = D3D12_BLEND_INV_SRC_ALPHA;//1.0f-ソースのアルファ値
+
 
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC gpipeline{};
 	gpipeline.pRootSignature = m_rootSignature.Get();
@@ -317,7 +318,7 @@ void Sprite::UpdateConstantBuffer() {
 		Matrix4::Translate(Vector3(0.5f - m_pivot.x, m_pivot.y - 0.5f, 0)) *
 		Matrix4::Scale(Vector3(m_flipX ? -obj->GetScale().x : obj->GetScale().x, m_flipY ? obj->GetScale().y : -obj->GetScale().y, 0)) *
 		Matrix4::RotateZ(-obj->GetRotation().z) *
-		Matrix4::Translate(Vector3(obj->GetPosition().x, obj->GetPosition().y, obj->GetPosition().z));
+		Matrix4::Translate(Vector3(obj->GetPosition().x, obj->GetPosition().y, 0));
 
 	auto mat = world * Camera::Instance().GetOrthoMatrix();
 

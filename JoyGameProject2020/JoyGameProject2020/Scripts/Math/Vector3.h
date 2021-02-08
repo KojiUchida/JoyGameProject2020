@@ -44,6 +44,8 @@ struct Vector3 {
 	static const Vector3 Zero();
 	/* Vector2‚Ö•ÏŠ· */
 	const Vector2 ToVector2() const;
+
+	static const Vector3 Lerp(const Vector3& start, const Vector3& end, double t);
 };
 
 /* “ñ€‰‰Zq */

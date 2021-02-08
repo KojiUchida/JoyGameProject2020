@@ -1,14 +1,18 @@
 #pragma once
+
+#pragma once
 #include "IScene.h"
 #include "GameObject/Event/EventManager.h"
+#include "GameObject/Event/HeightGage.h"
+
 
 class GameObject;
 class GameObjectManager;
-class Clear :public IScene
+class Stage5 :public IScene
 {
 public:
-	Clear() {};
-	~Clear() {};
+	Stage5() {};
+	~Stage5() {};
 
 	// IScene ‚ğ‰î‚µ‚ÄŒp³‚³‚ê‚Ü‚µ‚½
 	virtual void Init() override;

@@ -8,6 +8,7 @@
 #include "GameObject/GameObjectManager.h"
 #include "GameObject/Event/EventManager.h"
 #include "GameObject/Event/StartCall.h"
+#include "GameObject/Event/TimerUI.h"
 #include "Graphics/Sprite.h"
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_impl_win32.h"
@@ -22,6 +23,7 @@ void GamePlay::Init()
 	m_objManager = std::make_shared<GameObjectManager>();
 
 	EventManager::Instance().SetEvent(new HeightGage());
+	EventManager::Instance().SetEvent(new TimerUI());
 }
 
 void GamePlay::Update()

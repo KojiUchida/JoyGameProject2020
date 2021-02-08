@@ -1,4 +1,4 @@
-#include "Clear.h"
+#include "Stage3.h"
 #include "Math/Vector2.h"
 #include "Math/Vector3.h"
 #include "Device/Input.h"
@@ -6,21 +6,24 @@
 #include "Device/GameTime.h"
 #include "GameObject/GameObject.h"
 #include "GameObject/GameObjectManager.h"
+#include "GameObject/Event/EventManager.h"
+#include "GameObject/Event/StartCall.h"
+#include "GameObject/Event/TimerUI.h"
+#include "Graphics/Sprite.h"
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_impl_win32.h"
 #include "ImGui/imgui_impl_dx12.h"
 
-void Clear::Init()
+void Stage3::Init()
 {
 	auto& cam = Camera::Instance();
 
 	cam.SetPosition(Vector3(0, 0, -10));
 
 	m_objManager = std::make_shared<GameObjectManager>();
-	EventManager::Instance().initialize();
 }
 
-void Clear::Update()
+void Stage3::Update()
 {
 	auto& cam = Camera::Instance();
 	auto rotx = -Input::RightStickValue().y;
@@ -37,31 +40,27 @@ void Clear::Update()
 	cam.SetRotation(cam.GetRotation() + rot);
 	cam.SetPosition(cam.GetPosition() + forward);
 
-	if (Input::IsKeyDown(DIK_Z))
-	{
-		//eventManager->SetEvent(new StartCall());
-	}
 
-	EventManager::Instance().update();
+	m_objManager->Update();
 	GUIUpdate();
 }
 
-void Clear::Shutdown()
+void Stage3::Shutdown()
 {
 	m_objManager->Shutdown();
 }
 
-std::string Clear::NextScene()
+std::string Stage3::NextScene()
 {
-	return "StageSerect";
+	return "Clear";
 }
 
-bool Clear::IsEnd()
+bool Stage3::IsEnd()
 {
 	return Input::IsKeyDown(DIK_SPACE);
 }
 
-void Clear::GUIUpdate()
+void Stage3::GUIUpdate()
 {
 	auto& cam = Camera::Instance();
 
@@ -74,6 +73,12 @@ void Clear::GUIUpdate()
 	ImGui::GetStyle().Colors[ImGuiCol_::ImGuiCol_WindowBg] = ImVec4(0, 1, 1, 0.2f);
 	ImGui::GetStyle().Colors[ImGuiCol_::ImGuiCol_Text] = ImVec4(0.5f, 1, 1, 1);
 
+	ImGui::Begin("Stage3");
+	ImGui::SetWindowSize(ImVec2(512, 96), ImGuiCond_::ImGuiCond_FirstUseEver);
+	ImGui::SetWindowPos(ImVec2(32, 64), ImGuiCond_::ImGuiCond_FirstUseEver);
+
+	ImGui::End();
+
 	ImGui::Begin("Camera Menu");
 	ImGui::SetWindowSize(ImVec2(512, 96), ImGuiCond_::ImGuiCond_FirstUseEver);
 	ImGui::SetWindowPos(ImVec2(32, 64), ImGuiCond_::ImGuiCond_FirstUseEver);
@@ -85,13 +90,6 @@ void Clear::GUIUpdate()
 	float camrot[3] = { cam.GetRotation().x, cam.GetRotation().y, cam.GetRotation().z };
 	ImGui::DragFloat3("Camera Rotation", camrot, 1);
 	cam.SetRotation(Vector3(camrot[0], camrot[1], camrot[2]));
-	
-	ImGui::End();
-
-	ImGui::Begin("Clear");
-	ImGui::SetWindowSize(ImVec2(512, 96), ImGuiCond_::ImGuiCond_FirstUseEver);
-	ImGui::SetWindowPos(ImVec2(32, 170), ImGuiCond_::ImGuiCond_FirstUseEver);
-
 
 	ImGui::End();
 }

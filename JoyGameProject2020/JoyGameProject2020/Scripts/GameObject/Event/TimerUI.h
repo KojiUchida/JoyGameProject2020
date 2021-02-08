@@ -17,7 +17,8 @@ public:
 
 private:
 	std::shared_ptr<GameObjectManager> m_objManager;
-	std::shared_ptr<GameObject> number;
-	std::shared_ptr<Sprite> n;
+	std::shared_ptr<GameObject> number[8];
+	std::shared_ptr<Sprite> n[7];
+	std::shared_ptr<Sprite> dot;
 	Timer*timer;
 };

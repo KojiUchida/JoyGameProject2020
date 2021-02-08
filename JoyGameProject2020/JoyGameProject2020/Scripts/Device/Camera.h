@@ -23,6 +23,8 @@ public:
 	/* 回転の取得 */
 	Vector3 GetRotation();
 
+	void SetTarget(Vector3* target);
+
 	/* MOE ビルボード行列取得 */
 	Matrix4 GetBillboard();
 
@@ -51,6 +53,7 @@ private:
 private:
 	Vector3 m_position;
 	Vector3 m_rotation;
+	Vector3* m_target;
 	Matrix4 m_viewMatrix;
 	Matrix4 m_projectionMatrix;
 	Matrix4 m_orthoMatrix;
