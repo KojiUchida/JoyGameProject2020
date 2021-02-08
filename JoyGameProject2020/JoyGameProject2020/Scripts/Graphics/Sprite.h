@@ -38,10 +38,11 @@ class SpriteData {
 	};
 
 public:
-	SpriteData(const std::string& filePath);
+	SpriteData(const std::string& name);
 	~SpriteData();
 
 	void Draw();
+	void SetTexture(const std::string& name);
 
 	void CreateConstantBuffer();
 	void UpdateConstantBuffer(GameObject* gameObject);
