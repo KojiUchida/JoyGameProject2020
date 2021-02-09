@@ -118,6 +118,7 @@ bool Application::Init() {
 	m_graphicsManager.LoadModel("Resources/Models/sphere/sphere.obj", "sphere", true);
 	m_graphicsManager.LoadModel("Resources/Models/cube/cube.obj", "cube");
 	m_graphicsManager.LoadModel("Resources/Models/chest/treasure_chest.obj", "chest");
+	m_graphicsManager.LoadModel("Resources/Models/player/chara_move.obj", "player");
 	
 	m_graphicsManager.LoadShader("Resources/Shaders/SpriteVertexShader.hlsl", "VSmain", "vs_5_0", "SpriteVS");
 	m_graphicsManager.LoadShader("Resources/Shaders/SpritePixelShader.hlsl", "PSmain", "ps_5_0", "SpritePS");

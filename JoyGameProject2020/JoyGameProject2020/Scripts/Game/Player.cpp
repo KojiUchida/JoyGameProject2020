@@ -24,10 +24,10 @@ Player::~Player() {
 
 void Player::Init() {
 	SetTag("Player");
-	m_model = std::make_shared<Model>("sphere");
+	m_model = std::make_shared<Model>("player");
 	AddComponent(m_model);
 	AddComponent(std::make_shared<CircleCollider3D>());
-	SetScale(Vector3(2, 4, 2));
+	SetScale(Vector3(0.7f));
 
 	m_attackTimer = std::make_unique<Timer>(ATTACK_TIME);
 	m_attackTimer->Start();
