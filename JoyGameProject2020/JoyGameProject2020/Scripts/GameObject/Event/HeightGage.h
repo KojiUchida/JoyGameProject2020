@@ -8,12 +8,14 @@ class GameObjectManager;
 class HeightGage :public iEvent
 {
 public:
-	HeightGage();
+	HeightGage(const float&maxgage);
 	~HeightGage();
 
 	virtual void initialize() override;
 	virtual void update() override;
 	virtual bool IsEnd() override;
+
+	void SetGage(const float& currentGage);
 
 private:
 	GameObjectManager& m_objManager;
@@ -28,7 +30,7 @@ private:
 	Direction direction;
 
 	float speed;
-	float num;
+	float rate;
 	float maxnum;
 
 	Vector3 pointermaxPos;

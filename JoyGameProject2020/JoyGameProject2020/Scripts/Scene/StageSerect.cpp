@@ -17,7 +17,9 @@
 
 #define PI 3.14159265
 
-StageSerect::StageSerect():cam(Camera::Instance())
+StageSerect::StageSerect():
+	cam(Camera::Instance()),
+m_objManager(GameObjectManager::Instance())
 {
 }
 
@@ -27,7 +29,8 @@ StageSerect::~StageSerect()
 
 void StageSerect::Init()
 {
-	m_objManager = std::make_shared<GameObjectManager>();
+	m_objManager.Shutdown();
+	m_objManager.Clear();
 
 	centerpos = Vector3(0);
 	count = 1;
@@ -57,7 +60,7 @@ void StageSerect::Init()
 		stages[i]->SetPosition(Vector3(x, 0, z));
 		stages[i]->SetScale(Vector3(1));
 		stages[i]->SetRotation(Vector3(0, -roty, 0));
-		m_objManager->Add(stages[i]);
+		m_objManager.Add(stages[i]);
 	}
 
 	arrowscale = Vector3(32,32,1);
@@ -67,21 +70,21 @@ void StageSerect::Init()
 
 	LeftArrow->SetPosition(Vector3(500, 560, 0));
 	LeftArrow->SetScale(arrowscale);
-	m_objManager->Add(LeftArrow);
+	m_objManager.Add(LeftArrow);
 
 	RightArrow = std::make_shared<GameObject>();
 	RightArrow->AddComponent(std::make_shared<Sprite>("RightArrow"));
 
 	RightArrow->SetPosition(Vector3(780, 560, 0));
 	RightArrow->SetScale(arrowscale);
-	m_objManager->Add(RightArrow);
+	m_objManager.Add(RightArrow);
 
 	stageName = std::make_shared<GameObject>();
 	stageName->AddComponent(std::make_shared<Sprite>("stagename"));
 
 	stageName->SetPosition(Vector3(570, 560, 0));
 	stageName->SetScale(Vector3(170, 40, 1));
-	m_objManager->Add(stageName);
+	m_objManager.Add(stageName);
 }
 
 void StageSerect::Update()
@@ -114,7 +117,7 @@ void StageSerect::Update()
 	LeftArrow->SetScale(Lscale);
 	RightArrow->SetScale(Rscale);
 
-	m_objManager->Update();
+	m_objManager.Update();
 	EventManager::Instance().update();
 	GUIUpdate();
 }

@@ -25,11 +25,14 @@ public:
 	void ChangeState(GameState state);
 	float TimeElapsedOnCurrentState();
 
+	float GetClearTime();
+
 private:
 	void OnChangeState();
 
 private:
 	GameState m_state;
 	std::shared_ptr<Timer> m_timer;
+	double cleartime;
 };
 

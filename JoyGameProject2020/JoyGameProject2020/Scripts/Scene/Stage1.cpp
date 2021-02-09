@@ -7,6 +7,8 @@
 #include "GameObject/Event/EventManager.h"
 #include "GameObject/Event/HeightGage.h"
 #include "GameObject/Event/TimerUI.h"
+#include "GameObject/Event/StartCall.h"
+#include "GameObject/Event/ClearCall.h"
 #include "Math/Vector2.h"
 #include "Math/Vector3.h"
 #include "Graphics/Model.h"
@@ -37,6 +39,9 @@ Stage1::~Stage1()
 
 void Stage1::Init()
 {
+	m_objManager.Shutdown();
+	m_objManager.Clear();
+
 	m_camera.SetPosition(Vector3(0, 0, -10));
 	m_light.SetRotate(Vector3(-90, 0, 0));
 
@@ -100,45 +105,35 @@ void Stage1::Init()
 	goal->SetScale(Vector3(1000, 1, 1));
 	m_objManager.Add(goal);
 
-	auto spriteobj = std::make_shared<GameObject>();
-	spriteobj->AddComponent(std::make_shared<Sprite>("ready"));
-	spriteobj->SetScale(100);
-	m_objManager.Add(spriteobj);
-
-	EventManager::Instance().SetEvent(new TimerUI());
-	EventManager::Instance().SetEvent(new HeightGage());
+	heightGage = new HeightGage(player->MaxGauge());
+	heightGage->initialize();
+	EventManager::Instance().SetEvent(heightGage);
+	EventManager::Instance().SetEvent(new StartCall());
 
 	isEnd = false;
-	clearcall = nullptr;
+
 }
 
 void Stage1::Update()
 {
-	
-	if (Input::IsKeyDown(DIK_S))
-	{
-		EventManager::Instance().SetEvent(new StartCall());
-	}
-	if (Input::IsKeyDown(DIK_SPACE))
-	{
-		clearcall = new ClearCall();
-		EventManager::Instance().SetEvent(clearcall);
-	}
-
 	m_gameManager.Update();
 	if (m_gameManager.CompareState(GameState::READY) &&
 		m_gameManager.TimeElapsedOnCurrentState() > 3) {
 		m_gameManager.ChangeState(GameState::PLAY);
+		EventManager::Instance().SetEvent(new TimerUI());
 	}
 	CamMove();
+	heightGage->SetGage(player->GaugeRatio());
 	EventManager::Instance().update();
 	GUIUpdate();
+
+	if (Input::IsKeyDown(DIK_SPACE)) {
+		m_gameManager.ChangeState(GameState::GOAL);
+	}
 }
 
 void Stage1::Shutdown()
 {
-	m_objManager.Shutdown();
-	m_objManager.Clear();
 }
 
 std::string Stage1::NextScene()
@@ -148,8 +143,9 @@ std::string Stage1::NextScene()
 
 bool Stage1::IsEnd()
 {
-	return m_gameManager.CompareState(GameState::GOAL) &&
-		Input::IsButtonDown(PadButton::R1);
+	/*return m_gameManager.CompareState(GameState::GOAL) &&
+		Input::IsButtonDown(PadButton::R1);*/
+	return m_gameManager.CompareState(GameState::GOAL);
 }
 
 void Stage1::CamMove()

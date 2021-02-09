@@ -144,6 +144,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Scripts\GameObject\Event\ClearCall.cpp" />
+    <ClCompile Include="Scripts\GameObject\Event\ClearTimeUI.cpp" />
     <ClCompile Include="Scripts\Game\PlayerParticle.cpp" />
     <ClCompile Include="Scripts\Game\GameManager.cpp" />
     <ClCompile Include="Scripts\Game\Goal.cpp" />
@@ -210,6 +211,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Scripts\GameObject\Event\ClearCall.h" />
+    <ClInclude Include="Scripts\GameObject\Event\ClearTimeUI.h" />
     <ClInclude Include="Scripts\Game\PlayerParticle.h" />
     <ClInclude Include="Scripts\Game\GameManager.h" />
     <ClInclude Include="Scripts\Game\Goal.h" />

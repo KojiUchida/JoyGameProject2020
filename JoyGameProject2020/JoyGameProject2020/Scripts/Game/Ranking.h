@@ -10,10 +10,11 @@ public:
 	static Ranking& Instance();
 	~Ranking();
 
+	void Initialize();
 	void ResetRanking();
 	void SetRanking(const double& time);
 	unsigned int GetRanking(const double& time);
-	double GetRanking(const unsigned int& rank);
+	double GetRankingTime(const unsigned int& rank);
 	bool IsRank(const double& time);
 
 	//↓デバッグ用表示関数

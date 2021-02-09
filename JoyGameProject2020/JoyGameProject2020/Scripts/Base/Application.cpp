@@ -94,12 +94,18 @@ bool Application::Init() {
 	m_graphicsManager.LoadTexture("Resources/Textures/7.png", "7");
 	m_graphicsManager.LoadTexture("Resources/Textures/8.png", "8");
 	m_graphicsManager.LoadTexture("Resources/Textures/9.png", "9");
+	m_graphicsManager.LoadTexture("Resources/Textures/rank1.png", "rank1");
+	m_graphicsManager.LoadTexture("Resources/Textures/rank2.png", "rank2");
+	m_graphicsManager.LoadTexture("Resources/Textures/rank3.png", "rank3");
+	m_graphicsManager.LoadTexture("Resources/Textures/rankout.png", "rankout");
 	m_graphicsManager.LoadTexture("Resources/Textures/dot.png", "dot");
 	m_graphicsManager.LoadTexture("Resources/Textures/bombe.png", "bombe");
 	m_graphicsManager.LoadTexture("Resources/Textures/LeftArrow.png", "LeftArrow");
 	m_graphicsManager.LoadTexture("Resources/Textures/RightArrow.png", "RightArrow");
 	m_graphicsManager.LoadTexture("Resources/Textures/stagename.png", "stagename");
 	m_graphicsManager.LoadTexture("Resources/Textures/clear.png", "clear");
+	m_graphicsManager.LoadTexture("Resources/Textures/cleartime.png", "cleartime");
+	m_graphicsManager.LoadTexture("Resources/Textures/ranklabel.png", "ranklabel");
 	m_graphicsManager.LoadTexture("Resources/Textures/pink.png", "pink");
 
 	m_graphicsManager.LoadModel("Resources/Models/grass/grass.obj", "grass");

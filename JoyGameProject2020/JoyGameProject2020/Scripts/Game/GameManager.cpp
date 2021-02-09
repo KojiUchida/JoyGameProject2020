@@ -1,5 +1,6 @@
 #include "GameManager.h"
 #include "Utility/Timer.h"
+#include "Game/Ranking.h"
 
 GameManager::GameManager() :
 	m_state(GameState::NONE) {
@@ -29,7 +30,12 @@ bool GameManager::CompareState(GameState state) {
 
 void GameManager::ChangeState(GameState state) {
 	m_state = state;
-	OnChangeState();
+	if (state == GameState::GOAL)
+	{
+		cleartime = TimeElapsedOnCurrentState();
+		Ranking::Instance().SetRanking(cleartime);
+	}
+		OnChangeState();
 }
 
 void GameManager::OnChangeState() {
@@ -38,4 +44,9 @@ void GameManager::OnChangeState() {
 
 float GameManager::TimeElapsedOnCurrentState() {
 	return m_timer->GetElapsed();
+}
+
+float GameManager::GetClearTime()
+{
+	return cleartime;
 }

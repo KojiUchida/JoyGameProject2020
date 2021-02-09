@@ -1,10 +1,9 @@
 #pragma once
 
 #include "IScene.h"
-#include "GameObject/Event/ClearCall.h"
-#include "GameObject/Event/StartCall.h"
 #include "Math/Vector3.h"
 #include "Utility/Random.h"
+#include "GameObject/Event/HeightGage.h"
 #include <memory>
 
 class GameObject;
@@ -48,8 +47,8 @@ private:
 	GameObjectManager& m_objManager;
 	bool m_showDebugMenu;
 
-	ClearCall*clearcall;
-	StartCall*startcall;
+	HeightGage*heightGage;
+
 
 	bool isEnd;
 };

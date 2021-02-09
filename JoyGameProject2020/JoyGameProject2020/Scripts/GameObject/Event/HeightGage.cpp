@@ -7,7 +7,8 @@
 #include "Device/Input.h"
 #include "Math/MathUtil.h"
 
-HeightGage::HeightGage():
+HeightGage::HeightGage(const float & maxgage):
+	maxnum(maxgage),
 	m_objManager(GameObjectManager::Instance())
 {
 }
@@ -19,8 +20,7 @@ HeightGage::~HeightGage()
 void HeightGage::initialize()
 {
 
-	num = 1;
-	maxnum = 500;
+	rate = 0;
 	direction = NONE;
 	speed = 1.0f;
 
@@ -42,30 +42,6 @@ void HeightGage::initialize()
 
 void HeightGage::update()
 {
-	if (Input::IsKey(DIK_A))
-	{
-		direction = UP;
-	}
-	else
-	{
-		direction = DOWN;
-	}
-
-	switch (direction)
-	{
-	case HeightGage::NONE:
-		break;
-
-	case HeightGage::UP:
-		num = (num < maxnum) ? num + speed : maxnum;
-		break;
-
-	case HeightGage::DOWN:
-		num = (num > 0) ? num - speed : 0;
-		break;
-	}
-
-	float rate = num / maxnum;
 	gagesprite->SetPosition(Vector3::Lerp(Vector3(Screen::WIDTH - 95, 570, 0), Vector3(Screen::WIDTH - 95, 215, 0), rate));
 	gagesprite->SetScale(Vector3::Lerp(Vector3(58, 0, 1), Vector3(58, 570 - 215, 0), rate));
 	m_objManager.Update();
@@ -76,4 +52,9 @@ void HeightGage::update()
 bool HeightGage::IsEnd()
 {
 	return false;
+}
+
+void HeightGage::SetGage(const float & currentGage)
+{
+	rate = currentGage;
 }

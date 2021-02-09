@@ -1,6 +1,7 @@
 #include "GameObjectManager.h"
 #include "GameObject.h"
 #include "GameObject/Component.h"
+#include <algorithm>
 
 GameObjectManager::GameObjectManager() {
 }

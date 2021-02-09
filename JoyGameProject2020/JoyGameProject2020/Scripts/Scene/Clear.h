@@ -1,6 +1,5 @@
 #pragma once
 #include "IScene.h"
-#include "GameObject/Event/EventManager.h"
 
 class GameObject;
 class GameObjectManager;
