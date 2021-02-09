@@ -143,6 +143,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Scripts\Device\SoundManager.cpp" />
     <ClCompile Include="Scripts\GameObject\Event\ClearCall.cpp" />
     <ClCompile Include="Scripts\GameObject\Event\ClearTimeUI.cpp" />
     <ClCompile Include="Scripts\Game\PlayerParticle.cpp" />
@@ -210,6 +211,7 @@
     <ClCompile Include="Scripts\Utility\Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Scripts\Device\SoundManager.h" />
     <ClInclude Include="Scripts\GameObject\Event\ClearCall.h" />
     <ClInclude Include="Scripts\GameObject\Event\ClearTimeUI.h" />
     <ClInclude Include="Scripts\Game\PlayerParticle.h" />

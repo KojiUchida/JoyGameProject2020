@@ -4,6 +4,7 @@
 #include "Math/MathUtil.h"
 #include "Device/Input.h"
 #include "Device/GameTime.h"
+#include "Device/SoundManager.h"
 #include "GameObject/GameObject.h"
 #include "GameObject/GameObjectManager.h"
 #include "GameObject/Event/EventManager.h"
@@ -94,6 +95,8 @@ void StageSerect::Init()
 	stagenumber->SetPosition(Vector3(Screen::WIDTH / 2+32, 560, 0));
 	stagenumber->SetScale(Vector3(16, 32, 1));
 	m_objManager.Add(stagenumber);
+
+	bgm = SoundManager::Instance().Play("select", true);
 }
 
 void StageSerect::Update()
@@ -133,6 +136,7 @@ void StageSerect::Update()
 
 void StageSerect::Shutdown()
 {
+	bgm->Stop();
 	cam.UnlockTarget();
 	m_objManager.Shutdown();
 	m_objManager.Clear();

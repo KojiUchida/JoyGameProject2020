@@ -4,6 +4,7 @@
 #include "Device/Input.h"
 #include "Device/Camera.h"
 #include "Device/GameTime.h"
+#include "Device/SoundManager.h"
 #include "GameObject/GameObject.h"
 #include "GameObject/GameObjectManager.h"
 #include "GameObject/Event/EventManager.h"
@@ -30,6 +31,8 @@ void Clear::Init()
 	cam.SetPosition(Vector3(0, 0, -10));
 
 	EventManager::Instance().SetEvent(new ClearTimeUI());
+
+	bgm = SoundManager::Instance().Play("result");
 }
 
 void Clear::Update()
@@ -40,6 +43,7 @@ void Clear::Update()
 
 void Clear::Shutdown()
 {
+	bgm->Stop();
 }
 
 std::string Clear::NextScene()

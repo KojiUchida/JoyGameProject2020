@@ -11,6 +11,7 @@
 #include "ImGui/imgui_impl_win32.h"
 #include "ImGui/imgui_impl_dx12.h"
 #include "Def/Screen.h"
+#include "Device/SoundManager.h"
 
 Title::Title() :
 	m_objManager(GameObjectManager::Instance()) 
@@ -28,6 +29,8 @@ void Title::Init()
 	obj->SetScale(Vector3(720,360,1));
 	obj->SetPosition(Vector3(Screen::WIDTH / 2 - 360, 50,0));
 	m_objManager.Add(obj);
+
+	bgm = SoundManager::Instance().Play("title", true);
 }
 
 void Title::Update()
@@ -37,6 +40,7 @@ void Title::Update()
 
 void Title::Shutdown()
 {
+	bgm->Stop();
 	m_objManager.Shutdown();
 	m_objManager.Clear();
 }

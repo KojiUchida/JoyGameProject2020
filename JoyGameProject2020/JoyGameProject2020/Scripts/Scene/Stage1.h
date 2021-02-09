@@ -15,6 +15,7 @@ class Sprite;
 class GameManager;
 class GameObjectManager;
 class Timer;
+class IXAudio2SourceVoice;
 class Stage1 :public IScene
 {
 public:
@@ -40,6 +41,7 @@ public:
 private:
 	std::shared_ptr<Player> player;
 	std::shared_ptr<Sprite> sprite;
+	IXAudio2SourceVoice* bgm;
 
 	Camera& m_camera;
 	Light& m_light;

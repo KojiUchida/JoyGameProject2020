@@ -7,6 +7,7 @@
 class GameObject;
 class GameObjectManager;
 class Sprite;
+class IXAudio2SourceVoice;
 class StageSerect :public IScene
 {
 public:
@@ -22,6 +23,8 @@ public:
 private:
 
 	GameObjectManager& m_objManager;
+	IXAudio2SourceVoice* bgm;
+
 	std::vector < std::shared_ptr<GameObject>>stages;
 	std::shared_ptr<GameObject> player;
 	std::shared_ptr<GameObject> LeftArrow;

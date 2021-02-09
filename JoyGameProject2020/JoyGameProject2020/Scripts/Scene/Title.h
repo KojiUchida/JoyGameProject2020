@@ -4,7 +4,8 @@
 
 class GameObject;
 class GameObjectManager;
-class Title :public IScene 
+class IXAudio2SourceVoice;
+class Title :public IScene
 {
 public:
 	Title();
@@ -25,4 +26,5 @@ public:
 
 private:
 	GameObjectManager& m_objManager;
+	IXAudio2SourceVoice* bgm;
 };

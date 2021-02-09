@@ -7,6 +7,7 @@ class SceneManager;
 class DirectXManager;
 class GameTime;
 class Input;
+class SoundManager;
 class GraphicsManager;
 class CollisionManager;
 class GameObjectManager;
@@ -43,6 +44,7 @@ private:
 	DirectXManager& m_dxManager;
 	GameTime& m_gameTime;
 	Input& m_input;
+	SoundManager& m_soundManager;
 	GraphicsManager& m_graphicsManager;
 	CollisionManager& m_collisionManager;
 	GameObjectManager& m_objManager;

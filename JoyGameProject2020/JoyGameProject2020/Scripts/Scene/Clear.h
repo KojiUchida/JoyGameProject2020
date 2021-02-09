@@ -3,6 +3,7 @@
 
 class GameObject;
 class GameObjectManager;
+class IXAudio2SourceVoice;
 class Clear :public IScene
 {
 public:
@@ -24,5 +25,5 @@ public:
 
 private:
 	GameObjectManager& m_objManager;
-
+	IXAudio2SourceVoice* bgm;
 };

@@ -3,6 +3,7 @@
 #include "DirectXManager.h"
 #include "Device/Input.h"
 #include "Device/GameTime.h"
+#include "Device/SoundManager.h"
 #include "Scene/SceneManager.h"
 #include "Scene/TestScene.h"
 #include "Scene/Title.h"
@@ -44,6 +45,7 @@ Application::Application() :
 	m_dxManager(DirectXManager::Instance()),
 	m_gameTime(GameTime::Instance()),
 	m_input(Input::Instance()),
+	m_soundManager(SoundManager::Instance()),
 	m_graphicsManager(GraphicsManager::Instance()),
 	m_collisionManager(CollisionManager::Instance()) ,
 	m_objManager(GameObjectManager::Instance()),
@@ -125,6 +127,12 @@ bool Application::Init() {
 	m_graphicsManager.LoadShader("Resources/Shaders/BasicVertexShader.hlsl", "VSmain", "vs_5_0", "BasicVS");
 	m_graphicsManager.LoadShader("Resources/Shaders/BasicPixelShader.hlsl", "PSmain", "ps_5_0", "BasicPS");
 
+	m_soundManager.Init();
+	m_soundManager.Load("Resources/Sounds/Title.mp3", "title");
+	m_soundManager.Load("Resources/Sounds/Select.mp3", "select");
+	m_soundManager.Load("Resources/Sounds/Game.mp3", "game");
+	m_soundManager.Load("Resources/Sounds/Result.mp3", "result");
+
 
 	m_spriteRenderer.Init();
 	m_renderer.Init();
@@ -173,6 +181,7 @@ void Application::Run() {
 		ImGui::NewFrame();
 
 		m_sceneManager->Update();
+		m_soundManager.Update();
 		m_objManager.Update();
 		m_renderer.Update();
 		m_renderer.Draw();
@@ -195,6 +204,7 @@ void Application::Shutdown() {
 	ImGui::DestroyContext();
 
 	m_sceneManager->Shutdown();
+	m_soundManager.Shutdown();
 	m_input.Shutdown();
 	UnregisterClass(m_windowClass.lpszClassName, m_windowClass.hInstance);
 	ShowCursor(true);

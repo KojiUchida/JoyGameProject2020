@@ -2,6 +2,7 @@
 #include "Device/Input.h"
 #include "Device/Camera.h"
 #include "Device/GameTime.h"
+#include "Device/SoundManager.h"
 #include "GameObject/GameObject.h"
 #include "GameObject/GameObjectManager.h"
 #include "GameObject/Event/EventManager.h"
@@ -109,6 +110,7 @@ void Stage1::Init()
 
 	isEnd = false;
 
+	bgm = SoundManager::Instance().Play("game", true);
 }
 
 void Stage1::Update()
@@ -131,6 +133,7 @@ void Stage1::Update()
 
 void Stage1::Shutdown()
 {
+	bgm->Stop();
 }
 
 std::string Stage1::NextScene()
