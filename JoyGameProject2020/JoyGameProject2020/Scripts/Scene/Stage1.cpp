@@ -67,7 +67,7 @@ void Stage1::Init()
 
 	Random rnd{};
 	float height = 0.0f;
-	for (int i = 0; i < 30; ++i) {
+	for (int i = 0; i < 25; ++i) {
 		const float wdif = 20;
 		const float ydif = 10;
 		const float heightInterval = 30;
@@ -99,7 +99,7 @@ void Stage1::Init()
 	}
 
 	auto goal = std::make_shared<Goal>();
-	goal->SetPosition(Vector3(0, 500, 0));
+	goal->SetPosition(Vector3(0, 900, 0));
 	goal->SetScale(Vector3(1000, 1, 1));
 	m_objManager.Add(goal);
 

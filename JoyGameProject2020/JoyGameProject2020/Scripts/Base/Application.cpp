@@ -174,7 +174,7 @@ void Application::Run() {
 
 		m_gameTime.Update();
 
-		m_dxManager.BeginScene();
+		m_dxManager.BeginScene(Color4(0, 0, 0.2f, 1));
 
 		ImGui_ImplDX12_NewFrame();
 		ImGui_ImplWin32_NewFrame();

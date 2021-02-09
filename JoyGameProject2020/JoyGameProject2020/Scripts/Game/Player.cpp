@@ -55,7 +55,7 @@ void Player::Shutdown() {
 
 void Player::OnCollisionEnter(std::shared_ptr<GameObject> other) {
 	if (other->CompareTag("Obstacle")) {
-		m_gauge -= 10;
+		m_gauge -= 20;
 		m_gauge = Math::Clamp(m_gauge, 0.0f, GAUGE_MAX);
 	}
 }

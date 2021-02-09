@@ -41,7 +41,7 @@ void GameOver::Update()
 	float rate = Easing::EaseOutElastic(GameTime::DeltaTime());
 	gameover->SetPosition(Vector3::Lerp(gameover->GetPosition(), endpos,rate));
 
-	GUIUpdate();
+	//GUIUpdate();
 }
 
 void GameOver::Shutdown()
@@ -57,7 +57,8 @@ std::string GameOver::NextScene()
 
 bool GameOver::IsEnd()
 {
-	return Input::IsKeyDown(DIK_SPACE);
+	return Input::IsKeyDown(DIK_SPACE) ||
+		Input::IsButtonDown(PadButton::R1);
 }
 
 void GameOver::GUIUpdate()

@@ -35,7 +35,7 @@ void Title::Init()
 
 void Title::Update()
 {
-	GUIUpdate();
+	//GUIUpdate();
 }
 
 void Title::Shutdown()
@@ -52,7 +52,8 @@ std::string Title::NextScene()
 
 bool Title::IsEnd()
 {
-	return Input::IsKeyDown(DIK_SPACE);
+	return Input::IsKeyDown(DIK_SPACE) ||
+		Input::IsButtonDown(PadButton::R1);
 }
 
 void Title::GUIUpdate()

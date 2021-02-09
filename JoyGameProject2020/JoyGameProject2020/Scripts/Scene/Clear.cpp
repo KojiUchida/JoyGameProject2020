@@ -26,6 +26,7 @@ void Clear::Init()
 {
 	m_objManager.Shutdown();
 	m_objManager.Clear();
+
 	auto& cam = Camera::Instance();
 
 	cam.SetPosition(Vector3(0, 0, -10));
@@ -38,12 +39,14 @@ void Clear::Init()
 void Clear::Update()
 {
 	EventManager::Instance().update();
-	GUIUpdate();
+	//GUIUpdate();
 }
 
 void Clear::Shutdown()
 {
 	bgm->Stop();
+	m_objManager.Shutdown();
+	m_objManager.Clear();
 }
 
 std::string Clear::NextScene()
@@ -53,7 +56,8 @@ std::string Clear::NextScene()
 
 bool Clear::IsEnd()
 {
-	return Input::IsKeyDown(DIK_SPACE);
+	return Input::IsKeyDown(DIK_SPACE) ||
+		Input::IsButtonDown(PadButton::R1);
 }
 
 void Clear::GUIUpdate()

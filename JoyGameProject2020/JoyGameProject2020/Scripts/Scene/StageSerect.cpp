@@ -31,9 +31,6 @@ StageSerect::~StageSerect()
 
 void StageSerect::Init()
 {
-	m_objManager.Shutdown();
-	m_objManager.Clear();
-
 	centerpos = Vector3(0);
 	count = 1;
 	stagenum = 5;
@@ -131,7 +128,7 @@ void StageSerect::Update()
 	RightArrow->SetScale(Rscale);
 
 	EventManager::Instance().update();
-	GUIUpdate();
+	//GUIUpdate();
 }
 
 void StageSerect::Shutdown()
@@ -149,7 +146,8 @@ std::string StageSerect::NextScene()
 
 bool StageSerect::IsEnd()
 {
-	return Input::IsKeyDown(DIK_SPACE);
+	return Input::IsKeyDown(DIK_SPACE) ||
+		Input::IsButtonDown(PadButton::R1);
 }
 
 void StageSerect::GUIUpdate()
