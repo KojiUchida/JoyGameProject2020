@@ -107,6 +107,8 @@ bool Application::Init() {
 	m_graphicsManager.LoadTexture("Resources/Textures/cleartime.png", "cleartime");
 	m_graphicsManager.LoadTexture("Resources/Textures/ranklabel.png", "ranklabel");
 	m_graphicsManager.LoadTexture("Resources/Textures/pink.png", "pink");
+	m_graphicsManager.LoadTexture("Resources/Textures/gameover.png", "gameover");
+	m_graphicsManager.LoadTexture("Resources/Textures/fade.png", "fade");
 
 	m_graphicsManager.LoadModel("Resources/Models/grass/grass.obj", "grass");
 	m_graphicsManager.LoadModel("Resources/Models/ground/ground.obj", "ground");

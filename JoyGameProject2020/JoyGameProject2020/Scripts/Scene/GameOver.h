@@ -25,6 +25,5 @@ public:
 
 private:
 	GameObjectManager& m_objManager;
-
-
+	std::shared_ptr<GameObject> gameover;
 };

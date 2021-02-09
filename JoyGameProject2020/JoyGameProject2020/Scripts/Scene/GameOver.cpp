@@ -6,10 +6,13 @@
 #include "Device/GameTime.h"
 #include "GameObject/GameObject.h"
 #include "GameObject/GameObjectManager.h"
+#include "Def/Screen.h"
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_impl_win32.h"
 #include "ImGui/imgui_impl_dx12.h"
 #include "Graphics/Sprite.h"
+#include "Math/Easing.h"
+#include "Device/GameTime.h"
 
 GameOver::GameOver() :
 	m_objManager(GameObjectManager::Instance()) 
@@ -22,15 +25,22 @@ GameOver::~GameOver()
 
 void GameOver::Init()
 {
-	auto obj = std::make_shared<GameObject>();
-	obj->SetScale(500);
-	obj->AddComponent(std::make_shared<Sprite>("nontan"));
-	m_objManager.Add(obj);
+	gameover = std::make_shared<GameObject>();
+	gameover->AddComponent(std::make_shared<Sprite>("gameover"));
+	gameover->SetScale(Vector3(512, 128, 1));
+	gameover->SetPosition(Vector3(Screen::WIDTH / 2 - 256, -128, 1));
+	m_objManager.Add(gameover);
+
+
 }
 
 void GameOver::Update()
 {
-	EventManager::Instance().update();
+	Vector3 endpos = Vector3(Screen::WIDTH / 2 - 256, 300, 1);
+
+	float rate = Easing::EaseOutElastic(GameTime::DeltaTime());
+	gameover->SetPosition(Vector3::Lerp(gameover->GetPosition(), endpos,rate));
+
 	GUIUpdate();
 }
 
@@ -42,7 +52,7 @@ void GameOver::Shutdown()
 
 std::string GameOver::NextScene()
 {
-	return "GamePlay";
+	return "StageSerect";
 }
 
 bool GameOver::IsEnd()

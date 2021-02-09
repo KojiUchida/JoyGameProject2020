@@ -123,9 +123,9 @@ void Stage1::Update()
 	heightGage->SetGage(player->GaugeRatio());
 	EventManager::Instance().update();
 	//GUIUpdate();
-
-	if (Input::IsKeyDown(DIK_SPACE)) {
-		m_gameManager.ChangeState(GameState::GOAL);
+	if (Input::IsKeyDown(DIK_SPACE))
+	{
+		m_gameManager.ChangeState(GameState::GAMEOVER);
 	}
 }
 
