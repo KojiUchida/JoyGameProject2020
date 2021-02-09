@@ -25,6 +25,7 @@ public:
 	Vector3 GetRotation();
 
 	void SetTarget(const Vector3& target);
+	void UnlockTarget();
 
 	/* MOE ビルボード行列取得 */
 	Matrix4 GetBillboard();

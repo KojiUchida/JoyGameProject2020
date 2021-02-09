@@ -55,7 +55,6 @@ void TimerUI::update()
 		n[i]->SetTexture(a);
 		++i;
 	}
-	m_objManager.Update();
 }
 
 bool TimerUI::IsEnd()

@@ -39,9 +39,6 @@ Stage1::~Stage1()
 
 void Stage1::Init()
 {
-	m_objManager.Shutdown();
-	m_objManager.Clear();
-
 	m_camera.SetPosition(Vector3(0, 0, -10));
 	m_light.SetRotate(Vector3(-90, 0, 0));
 

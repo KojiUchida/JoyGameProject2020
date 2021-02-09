@@ -117,13 +117,15 @@ void StageSerect::Update()
 	LeftArrow->SetScale(Lscale);
 	RightArrow->SetScale(Rscale);
 
-	m_objManager.Update();
 	EventManager::Instance().update();
 	GUIUpdate();
 }
 
 void StageSerect::Shutdown()
 {
+	cam.UnlockTarget();
+	m_objManager.Shutdown();
+	m_objManager.Clear();
 }
 
 std::string StageSerect::NextScene()

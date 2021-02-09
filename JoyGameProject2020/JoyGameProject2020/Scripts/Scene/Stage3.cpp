@@ -41,13 +41,13 @@ void Stage3::Update()
 	cam.SetPosition(cam.GetPosition() + forward);
 
 */
-	m_objManager->Update();
 	GUIUpdate();
 }
 
 void Stage3::Shutdown()
 {
 	m_objManager->Shutdown();
+	m_objManager->Clear();
 }
 
 std::string Stage3::NextScene()

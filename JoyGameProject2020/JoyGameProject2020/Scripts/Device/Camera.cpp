@@ -38,6 +38,10 @@ void Camera::SetTarget(const Vector3 & target)
 	isTargetLock = true;
 }
 
+void Camera::UnlockTarget() {
+	isTargetLock = false;
+}
+
 Matrix4 Camera::GetBillboard() {
 	//‹“_À•W
 	Vector3 eyePosition = m_position;
