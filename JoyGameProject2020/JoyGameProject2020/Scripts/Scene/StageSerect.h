@@ -6,6 +6,7 @@
 
 class GameObject;
 class GameObjectManager;
+class Sprite;
 class StageSerect :public IScene
 {
 public:
@@ -26,6 +27,8 @@ private:
 	std::shared_ptr<GameObject> LeftArrow;
 	std::shared_ptr<GameObject> RightArrow;
 	std::shared_ptr<GameObject> stageName;
+	std::shared_ptr<Sprite> stagenumber_s;
+	std::shared_ptr<GameObject> stagenumber;
 	
 
 	Camera&cam;
