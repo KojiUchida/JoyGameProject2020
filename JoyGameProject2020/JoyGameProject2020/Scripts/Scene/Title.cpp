@@ -25,18 +25,13 @@ void Title::Init()
 {
 	auto obj = std::make_shared<GameObject>();
 	obj->AddComponent(std::make_shared<Sprite>("title"));
-	obj->SetScale(500);
-	obj->SetPosition(Vector3(Screen::WIDTH / 2 - 256, 1,0));
+	obj->SetScale(Vector3(720,360,1));
+	obj->SetPosition(Vector3(Screen::WIDTH / 2 - 360, 50,0));
 	m_objManager.Add(obj);
 }
 
 void Title::Update()
 {
-	if (Input::IsKeyDown(DIK_Z))
-	{
-		//eventManager->SetEvent(new StartCall());
-	}
-	//EventManager::Instance().update();
 	GUIUpdate();
 }
 
