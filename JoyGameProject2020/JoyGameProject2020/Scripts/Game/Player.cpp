@@ -39,6 +39,10 @@ void Player::Update() {
 		m_isStart = true;
 	}
 
+	if (m_isStart && Gauge() <= 0) {
+		GameManager::Instance().ChangeState(GameState::GAMEOVER);
+	}
+
 	Rotation();
 	Manipulation();
 	m_gauge = Math::Clamp(m_gauge, 0.0f, GAUGE_MAX);

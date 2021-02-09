@@ -50,7 +50,7 @@ void StageSerect::Init()
 	for (int i = 0; i < stagenum; ++i)
 	{
 		stages[i] = std::make_shared<GameObject>();
-		stages[i]->AddComponent(std::make_shared<Model>("treasure_chest"));
+		stages[i]->AddComponent(std::make_shared<Model>("chest"));
 		float stage_angle = i * (360 / stagenum);
 		float x = stage_r * cos(PI / 180 * stage_angle);
 		float z = stage_r * sin(PI / 180 * stage_angle);

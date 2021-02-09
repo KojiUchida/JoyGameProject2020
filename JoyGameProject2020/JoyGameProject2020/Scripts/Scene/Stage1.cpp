@@ -122,7 +122,7 @@ void Stage1::Update()
 	CamMove();
 	heightGage->SetGage(player->GaugeRatio());
 	EventManager::Instance().update();
-	GUIUpdate();
+	//GUIUpdate();
 
 	if (Input::IsKeyDown(DIK_SPACE)) {
 		m_gameManager.ChangeState(GameState::GOAL);
@@ -135,6 +135,7 @@ void Stage1::Shutdown()
 
 std::string Stage1::NextScene()
 {
+	if (m_gameManager.CompareState(GameState::GAMEOVER)) return "GameOver";
 	return "Clear";
 }
 
@@ -142,7 +143,7 @@ bool Stage1::IsEnd()
 {
 	/*return m_gameManager.CompareState(GameState::GOAL) &&
 		Input::IsButtonDown(PadButton::R1);*/
-	return m_gameManager.CompareState(GameState::GOAL);
+	return m_gameManager.CompareState(GameState::GAMEOVER) || m_gameManager.CompareState(GameState::GOAL);
 }
 
 void Stage1::CamMove()
@@ -156,7 +157,7 @@ void Stage1::CamMove()
 bool Stage1::CanCamMove()
 {
 	if (m_gameManager.CompareState(GameState::GOAL)) return false;
-	if (!player->IsArrive())return false;
+	if (m_gameManager.CompareState(GameState::GAMEOVER))return false;
 	return true;
 }
 

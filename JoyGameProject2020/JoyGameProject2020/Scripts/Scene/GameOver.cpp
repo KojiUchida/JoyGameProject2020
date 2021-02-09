@@ -9,6 +9,7 @@
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_impl_win32.h"
 #include "ImGui/imgui_impl_dx12.h"
+#include "Graphics/Sprite.h"
 
 GameOver::GameOver() :
 	m_objManager(GameObjectManager::Instance()) 
@@ -21,34 +22,14 @@ GameOver::~GameOver()
 
 void GameOver::Init()
 {
-	auto& cam = Camera::Instance();
-
-	cam.SetPosition(Vector3(0, 0, -10));
-	
+	auto obj = std::make_shared<GameObject>();
+	obj->SetScale(500);
+	obj->AddComponent(std::make_shared<Sprite>("nontan"));
+	m_objManager.Add(obj);
 }
 
 void GameOver::Update()
 {
-	auto& cam = Camera::Instance();
-	auto rotx = -Input::RightStickValue().y;
-	auto roty = Input::RightStickValue().x;
-	auto rot = Vector3(rotx, roty, 0) * 180.0f * GameTime::DeltaTime();
-
-	float movex = Input::LeftStickValue().x;
-	float movez = Input::LeftStickValue().y;
-	float movey = Input::IsButton(PadButton::R1) ? 0.1f : Input::IsButton(PadButton::L1) ? -0.1f : 0.0f;
-
-	auto forward = Vector3(movex, movey, movez) * Matrix4::RotationFromQuaternion(cam.rotation);
-	auto move = forward * 10.0f * GameTime::DeltaTime();
-
-	cam.SetRotation(cam.GetRotation() + rot);
-	cam.SetPosition(cam.GetPosition() + forward);
-
-	if (Input::IsKeyDown(DIK_Z))
-	{
-		//eventManager->SetEvent(new StartCall());
-	}
-
 	EventManager::Instance().update();
 	GUIUpdate();
 }

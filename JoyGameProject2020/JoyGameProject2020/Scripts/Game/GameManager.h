@@ -6,6 +6,7 @@ enum class GameState {
 	READY,
 	PLAY,
 	GOAL,
+	GAMEOVER,
 };
 
 class Timer;

@@ -61,13 +61,13 @@ Application& Application::Instance() {
 
 bool Application::Init() {
 #if _DEBUG
-	/* ƒfƒoƒbƒOŽž‚Íƒƒ‚ƒŠƒŠ[ƒN‚ðŒŸoŒŸo‚·‚é */
+	/* ãƒ‡ãƒãƒƒã‚°æ™‚ã¯ãƒ¡ãƒ¢ãƒªãƒªãƒ¼ã‚¯ã‚’æ¤œå‡ºæ¤œå‡ºã™ã‚‹ */
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif 
 
 	CreateGameWindow();
 
-	/* ‚±‚±‚©‚ç‰Šú‰»ˆ— */
+	/* ã“ã“ã‹ã‚‰åˆæœŸåŒ–å‡¦ç† */
 
 	m_dxManager.Init(m_hwnd);
 
@@ -115,7 +115,7 @@ bool Application::Init() {
 	m_graphicsManager.LoadModel("Resources/Models/skydome/skydome.obj", "skydome");
 	m_graphicsManager.LoadModel("Resources/Models/sphere/sphere.obj", "sphere", true);
 	m_graphicsManager.LoadModel("Resources/Models/cube/cube.obj", "cube");
-	m_graphicsManager.LoadModel("Resources/Models/treasure_chest/treasure_chest.obj", "treasure_chest");
+	m_graphicsManager.LoadModel("Resources/Models/chest/treasure_chest.obj", "chest");
 	
 	m_graphicsManager.LoadShader("Resources/Shaders/SpriteVertexShader.hlsl", "VSmain", "vs_5_0", "SpriteVS");
 	m_graphicsManager.LoadShader("Resources/Shaders/SpritePixelShader.hlsl", "PSmain", "ps_5_0", "SpritePS");
@@ -141,7 +141,7 @@ bool Application::Init() {
 	m_sceneManager->AddScene(std::make_shared<Stage5>(), "Stage5");
 	m_sceneManager->ChangeScene("Title");
 
-	/* ‚±‚±‚Ü‚Å‰Šú‰»ˆ— */
+	/* ã“ã“ã¾ã§åˆæœŸåŒ–å‡¦ç† */
 
 	return true;
 }
@@ -157,7 +157,7 @@ void Application::Run() {
 			break;
 		}
 
-		/* ‚±‚±‚©‚çXVˆ— */
+		/* ã“ã“ã‹ã‚‰æ›´æ–°å‡¦ç† */
 
 		m_input.Update();
 
@@ -182,7 +182,7 @@ void Application::Run() {
 
 		m_dxManager.EndScene();
 
-		/* ‚±‚±‚Ü‚ÅXVˆ— */
+		/* ã“ã“ã¾ã§æ›´æ–°å‡¦ç† */
 	}
 }
 
@@ -234,7 +234,7 @@ void Application::CreateGameWindow() {
 void Application::InitImGui() {
 	ImGui::CreateContext();
 	auto result = ImGui_ImplWin32_Init(m_hwnd);
-	_ASSERT_EXPR(result, L"ImGui‚Ì‰Šú‰»‚ÉŽ¸”s‚µ‚Ü‚µ‚½");
+	_ASSERT_EXPR(result, L"ImGuiã®åˆæœŸåŒ–ã«å¤±æ•—ã—ã¾ã—ãŸ");
 	result = ImGui_ImplDX12_Init(m_dxManager.GetDevice().Get(),
 		3,
 		DXGI_FORMAT_R8G8B8A8_UNORM,
@@ -242,5 +242,5 @@ void Application::InitImGui() {
 		m_dxManager.GetDescHeapForImGui()->GetCPUDescriptorHandleForHeapStart(),
 		m_dxManager.GetDescHeapForImGui()->GetGPUDescriptorHandleForHeapStart()
 	);
-	_ASSERT_EXPR(result, L"ImGui‚Ì‰Šú‰»‚ÉŽ¸”s‚µ‚Ü‚µ‚½");
+	_ASSERT_EXPR(result, L"ImGuiã®åˆæœŸåŒ–ã«å¤±æ•—ã—ã¾ã—ãŸ");
 }
