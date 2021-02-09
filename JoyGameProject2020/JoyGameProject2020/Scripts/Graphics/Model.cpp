@@ -255,6 +255,10 @@ void ModelData::LoadMtl(const std::string& filePath) {
 			}
 		}
 	}
+
+	if (m_materials.size() == 0) {
+		m_materials.push_back(Material());
+	}
 }
 
 void ModelData::CreateTransformBuffer() {

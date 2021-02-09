@@ -53,11 +53,11 @@ public:
 	};
 
 	struct SurfaceMaterial {
-		Vector3 ambientColor = Vector3(1, 1, 1);
+		Vector3 ambientColor = Vector3(0.5f);
 		float alpha = 1.0f;
-		Vector3 diffuseColor = Vector3(1, 1, 1);
+		Vector3 diffuseColor = Vector3(0.5f);
 		float shininess = 1.0f;
-		Vector3 specularColor = Vector3(1, 1, 1);
+		Vector3 specularColor = Vector3(0.5f);
 	};
 
 	struct AdditionalMaterial {
