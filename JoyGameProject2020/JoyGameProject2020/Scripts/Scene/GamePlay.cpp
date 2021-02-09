@@ -28,9 +28,6 @@ void GamePlay::Init()
 {
 	m_objManager.Add(std::make_shared<Player>());
 
-
-
-	EventManager::Instance().SetEvent(new HeightGage());
 	EventManager::Instance().SetEvent(new TimerUI());
 }
 

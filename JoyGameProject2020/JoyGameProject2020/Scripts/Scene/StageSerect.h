@@ -20,7 +20,7 @@ public:
 
 private:
 
-	std::shared_ptr<GameObjectManager>m_objManager;
+	GameObjectManager& m_objManager;
 	std::vector < std::shared_ptr<GameObject>>stages;
 	std::shared_ptr<GameObject> player;
 	std::shared_ptr<GameObject> LeftArrow;

@@ -6,6 +6,8 @@
 #include "Device/GameTime.h"
 #include "GameObject/GameObject.h"
 #include "GameObject/GameObjectManager.h"
+#include "GameObject/Event/EventManager.h"
+#include "GameObject/Event/ClearTimeUI.h"
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_impl_win32.h"
 #include "ImGui/imgui_impl_dx12.h"
@@ -21,46 +23,28 @@ Clear::~Clear()
 
 void Clear::Init()
 {
+	m_objManager.Shutdown();
+	m_objManager.Clear();
 	auto& cam = Camera::Instance();
 
 	cam.SetPosition(Vector3(0, 0, -10));
+
+	EventManager::Instance().SetEvent(new ClearTimeUI());
 }
 
 void Clear::Update()
 {
-	auto& cam = Camera::Instance();
-	auto rotx = -Input::RightStickValue().y;
-	auto roty = Input::RightStickValue().x;
-	auto rot = Vector3(rotx, roty, 0) * 180.0f * GameTime::DeltaTime();
-
-	float movex = Input::LeftStickValue().x;
-	float movez = Input::LeftStickValue().y;
-	float movey = Input::IsButton(PadButton::R1) ? 0.1f : Input::IsButton(PadButton::L1) ? -0.1f : 0.0f;
-
-	auto forward = Vector3(movex, movey, movez) * Matrix4::RotationFromQuaternion(cam.rotation);
-	auto move = forward * 10.0f * GameTime::DeltaTime();
-
-	cam.SetRotation(cam.GetRotation() + rot);
-	cam.SetPosition(cam.GetPosition() + forward);
-
-	if (Input::IsKeyDown(DIK_Z))
-	{
-		//eventManager->SetEvent(new StartCall());
-	}
-
 	EventManager::Instance().update();
 	GUIUpdate();
 }
 
 void Clear::Shutdown()
 {
-	m_objManager.Shutdown();
-	m_objManager.Clear();
 }
 
 std::string Clear::NextScene()
 {
-	return "GamePlay";
+	return "StageSerect";
 }
 
 bool Clear::IsEnd()

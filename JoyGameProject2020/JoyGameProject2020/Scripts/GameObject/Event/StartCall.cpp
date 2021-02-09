@@ -11,7 +11,7 @@
 StartCall::StartCall() :
 	m_objManager(GameObjectManager::Instance())
 {
-	timer = new Timer(2, false);
+	timer = new Timer(3, false);
 }
 
 StartCall::~StartCall()
@@ -23,6 +23,13 @@ void StartCall::initialize()
 {
 	direction = FIRST;
 	posMoverate = 1;
+	
+	/*ready_back = std::make_shared<GameObject>();
+	ready_back->AddComponent(std::make_shared<Sprite>("ready_back"));
+	ready_back->SetScale(Vector3(1280, 1, 1));
+	ready_back->SetPosition(Vector3(0, Screen::HEIGHT / 2 - 64, 1));
+	m_objManager.Add(ready_back);*/
+	
 	firstpos = Vector3(Screen::WIDTH, Screen::HEIGHT / 2 - 64, 0);
 	endpos = Vector3(Screen::WIDTH / 2 - 320, Screen::HEIGHT / 2 - 64, 0);
 
@@ -31,12 +38,8 @@ void StartCall::initialize()
 	ready->SetScale(Vector3(640, 128, 1));
 	ready->SetPosition(firstpos);
 	m_objManager.Add(ready);
-	/*ready_back = std::make_shared<GameObject>();
-	ready_back->AddComponent(std::make_shared<Sprite>("ready_back"));
-	ready_back->SetScale(Vector3(1280, 1, 1));
-	ready_back->SetPosition(Vector3(0, Screen::HEIGHT / 2 - 64, 1));
-	m_objManager->Add(ready_back);
-*/
+	
+
 	timer->Start();
 }
 
@@ -44,7 +47,7 @@ void StartCall::update()
 {
 	timer->Update();
 	float nowtime = timer->GetRatioElapsed();
-	posMoverate = Easing::EaseOutQuint(nowtime);
+	posMoverate = Easing::EaseOutQuint(nowtime*1.2f);
 	Vector3 obj1pos(0);
 	obj1pos.x = Math::Lerp((double)firstpos.x, (double)endpos.x, posMoverate);
 	obj1pos.x = Math::Clamp(obj1pos.x, endpos.x, firstpos.x);
@@ -70,7 +73,8 @@ void StartCall::update()
 	float scaleY = Math::Lerp(0.0, (double)maxheight, Easing::EaseOutQuint(nowtime) * 2);
 	scaleY = Math::Clamp(scaleY, 0.0f, maxheight);
 
-//	ready_back->SetScale(Vector3(1280,scaleY,1));
+	//ready_back->SetScale(Vector3(1280,scaleY,1));
+	if (timer->IsTime())go->Destroy(); 
 }
 
 bool StartCall::IsEnd()

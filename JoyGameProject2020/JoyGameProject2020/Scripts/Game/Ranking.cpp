@@ -14,6 +14,11 @@ Ranking::~Ranking()
 	times.clear();
 }
 
+void Ranking::Initialize()
+{
+	//times.resize(10)
+}
+
 void Ranking::ResetRanking()
 {
 	times.clear();
@@ -48,9 +53,13 @@ unsigned int Ranking::GetRanking(const double& time)
 	return itr - times.begin() + 1;
 }
 
-double Ranking::GetRanking(const unsigned int & rank)
+double Ranking::GetRankingTime(const unsigned int & rank)
 {
-	return times[rank];
+	if (times.size() < rank)
+	{
+		return 0;
+	}
+	return times[rank-1];
 }
 
 bool Ranking::IsRank(const double & time)

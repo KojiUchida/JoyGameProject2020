@@ -190,6 +190,11 @@ float Player::GaugeRatio() {
 	return (m_gauge / GAUGE_MAX);
 }
 
+float Player::MaxGauge()
+{
+	return GAUGE_MAX;
+}
+
 bool Player::CanAttack() {
 	if (GameManager::Instance().CompareState(GameState::READY))return false;
 	return m_gauge > ATTACK_GAUGE;

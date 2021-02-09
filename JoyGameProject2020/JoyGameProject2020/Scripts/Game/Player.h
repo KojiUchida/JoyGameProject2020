@@ -36,6 +36,7 @@ public:
 	bool IsArrive();
 	float Gauge();
 	float GaugeRatio();
+	float MaxGauge();
 
 private:
 	void Manipulation();
