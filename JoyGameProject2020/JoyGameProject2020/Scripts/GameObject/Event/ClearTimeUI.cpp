@@ -35,13 +35,13 @@ ClearTimeUI::~ClearTimeUI()
 void ClearTimeUI::initialize()
 {
 	int width = 300;
-	int height = 300;
+	int height = 400;
 	int interval = 70;
 
 	cleartimelavel = std::make_shared<GameObject>();
 	cleartimelavel->AddComponent(std::make_shared<Sprite>("cleartime"));
 	cleartimelavel->SetScale(Vector3(512, 64, 1));
-	cleartimelavel->SetPosition(Vector3(Screen::WIDTH/2-256, 10, 0));
+	cleartimelavel->SetPosition(Vector3(Screen::WIDTH/2-256, 110, 0));
 	m_objManager.Add(cleartimelavel);
 
 	auto ranklabel = std::make_shared<GameObject>();
@@ -86,7 +86,7 @@ void ClearTimeUI::initialize()
 		cleartime[i]->SetScale(Vector3(32, 64, 0));
 
 		int x = (i < 5) ? i * 32 : (i + 1) * 32;
-		cleartime[i]->SetPosition(Vector3(x + Screen::WIDTH / 2 - 128, 84, 0));
+		cleartime[i]->SetPosition(Vector3(x + Screen::WIDTH / 2 - 128, 184, 0));
 		m_objManager.Add(cleartime[i]);
 		++i;
 	}
@@ -95,7 +95,7 @@ void ClearTimeUI::initialize()
 	cleartime[7] = std::make_shared<GameObject>();
 	cleartime[7]->AddComponent(dot0);
 	cleartime[7]->SetScale(Vector3(32, 64, 0));
-	cleartime[7]->SetPosition(Vector3(5 * 32 + Screen::WIDTH / 2 - 128,84, 0));
+	cleartime[7]->SetPosition(Vector3(5 * 32 + Screen::WIDTH / 2 - 128,184, 0));
 	m_objManager.Add(cleartime[7]);
 
 	for (int i = 0; i < 7;)

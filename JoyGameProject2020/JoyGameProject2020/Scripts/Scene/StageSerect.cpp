@@ -11,6 +11,7 @@
 #include "GameObject/Event/TimerUI.h"
 #include "Graphics/Model.h"
 #include "Graphics/Sprite.h"
+#include "Def/Screen.h"
 #include "ImGui/imgui.h"
 #include "ImGui/imgui_impl_win32.h"
 #include "ImGui/imgui_impl_dx12.h"
@@ -68,23 +69,31 @@ void StageSerect::Init()
 	LeftArrow = std::make_shared<GameObject>();
 	LeftArrow->AddComponent(std::make_shared<Sprite>("LeftArrow"));
 
-	LeftArrow->SetPosition(Vector3(500, 560, 0));
+	LeftArrow->SetPosition(Vector3(Screen::WIDTH / 2-200-32, 560, 0));
 	LeftArrow->SetScale(arrowscale);
 	m_objManager.Add(LeftArrow);
 
 	RightArrow = std::make_shared<GameObject>();
 	RightArrow->AddComponent(std::make_shared<Sprite>("RightArrow"));
 
-	RightArrow->SetPosition(Vector3(780, 560, 0));
+	RightArrow->SetPosition(Vector3(Screen::WIDTH / 2+ 200, 560, 0));
 	RightArrow->SetScale(arrowscale);
 	m_objManager.Add(RightArrow);
 
 	stageName = std::make_shared<GameObject>();
 	stageName->AddComponent(std::make_shared<Sprite>("stagename"));
 
-	stageName->SetPosition(Vector3(570, 560, 0));
-	stageName->SetScale(Vector3(170, 40, 1));
+	stageName->SetPosition(Vector3(Screen::WIDTH/2-74, 560, 0));
+	stageName->SetScale(Vector3(128, 32, 1));
 	m_objManager.Add(stageName);
+
+	stagenumber = std::make_shared<GameObject>();
+	stagenumber_s = std::make_shared<Sprite>("0");
+	stagenumber->AddComponent(stagenumber_s);
+
+	stagenumber->SetPosition(Vector3(Screen::WIDTH / 2+32, 560, 0));
+	stagenumber->SetScale(Vector3(16, 32, 1));
+	m_objManager.Add(stagenumber);
 }
 
 void StageSerect::Update()
@@ -100,10 +109,11 @@ void StageSerect::Update()
 		RightArrow->SetScale(arrowscale + Vector3(40, 40, 0));
 	}
 
+	stagenumber_s->SetTexture(std::to_string(count));
 
 	float camera_angle = count * (360 / stagenum);
-	float x = (stage_r + 20) * cos(PI / 180 * camera_angle);
-	float z = (stage_r + 20) * sin(PI / 180 * camera_angle);
+	float x = (stage_r + 10) * cos(PI / 180 * camera_angle);
+	float z = (stage_r + 10) * sin(PI / 180 * camera_angle);
 
 	Vector3 endpos = Vector3(x, 0, z);
 	Vector3 pos= Vector3::Lerp(cam.GetPosition(), endpos, (float)GameTime::DeltaTime()*3);
