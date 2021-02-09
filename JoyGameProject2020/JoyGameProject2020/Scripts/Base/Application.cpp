@@ -169,6 +169,7 @@ void Application::Run() {
 		ImGui::NewFrame();
 
 		m_sceneManager->Update();
+		m_objManager.Update();
 		m_renderer.Update();
 		m_renderer.Draw();
 		m_spriteRenderer.Draw();

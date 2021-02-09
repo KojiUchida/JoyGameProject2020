@@ -44,9 +44,6 @@ void HeightGage::update()
 {
 	gagesprite->SetPosition(Vector3::Lerp(Vector3(Screen::WIDTH - 95, 570, 0), Vector3(Screen::WIDTH - 95, 215, 0), rate));
 	gagesprite->SetScale(Vector3::Lerp(Vector3(58, 0, 1), Vector3(58, 570 - 215, 0), rate));
-	m_objManager.Update();
-
-
 }
 
 bool HeightGage::IsEnd()
