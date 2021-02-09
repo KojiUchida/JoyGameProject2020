@@ -94,7 +94,7 @@ void ModelData::LoadObj(const std::string& filePath, bool smooth) {
 		if (strcmp(buffer, "vt") == 0) {
 			float x, y;
 			fin >> x >> y;
-			tmpUVs.push_back(Vector2(x, y));
+			tmpUVs.push_back(Vector2(x, -y));
 		}
 		if (strcmp(buffer, "vn") == 0) {
 			float x, y, z;
